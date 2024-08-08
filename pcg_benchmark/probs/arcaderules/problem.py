@@ -7,10 +7,10 @@ import math
 import numpy as np
 
 def _getMap(objects, width, height):
-    layout = np.zeros((height+2, width+2))
+    layout = np.zeros((height, width))
     for obj in objects:
         if obj["alive"]:
-            layout[obj["y"]][obj["x"]] += 1
+            layout[obj["y"]-1][obj["x"]-1] += 1
     return layout
 
 class ArcadeRulesProblem(Problem):
@@ -158,27 +158,27 @@ class ArcadeRulesProblem(Problem):
         return (stats + winValue + challenge + death) / 4.0
     
     def diversity(self, info1, info2):
-        reds_1 = np.zeros((self._height+2, self._height+2))
-        greens_1 = np.zeros((self._height+2, self._height+2))
-        yellows_1 = np.zeros((self._height+2, self._height+2))
+        reds_1 = np.zeros((self._height, self._width))
+        greens_1 = np.zeros((self._height, self._width))
+        yellows_1 = np.zeros((self._height, self._width))
         for s,_ in info1["do_nothing"] + info1["random"] + info1["flat_mcts"]:
             reds_1 += _getMap(s._reds, self._width, self._height)
             greens_1 += _getMap(s._greens, self._width, self._height)
             yellows_1 += _getMap(s._yellows, self._width, self._height)
-        player_1 = np.zeros((self._height+2, self._height+2))
+        player_1 = np.zeros((self._height, self._width))
         for s,_ in info1["flat_mcts"]:
-            player_1[s._player["y"]][s._player["x"]] += 1
+            player_1[s._player["y"]-1][s._player["x"]-1] += 1
         
-        reds_2 = np.zeros((self._height+2, self._height+2))
-        greens_2 = np.zeros((self._height+2, self._height+2))
-        yellows_2 = np.zeros((self._height+2, self._height+2))
+        reds_2 = np.zeros((self._height, self._width))
+        greens_2 = np.zeros((self._height, self._width))
+        yellows_2 = np.zeros((self._height, self._width))
         for s,_ in info2["do_nothing"] + info2["random"] + info2["flat_mcts"]:
             reds_2 += _getMap(s._reds, self._width, self._height)
             greens_2 += _getMap(s._greens, self._width, self._height)
             yellows_2 += _getMap(s._yellows, self._width, self._height)
-        player_2 = np.zeros((self._height+2, self._height+2))
+        player_2 = np.zeros((self._height, self._width))
         for s,_ in info2["flat_mcts"]:
-            player_2[s._player["y"]][s._player["x"]] += 1
+            player_2[s._player["y"]-1][s._player["x"]-1] += 1
 
         obj_div = abs((reds_1 > 0).astype(int) - (reds_2 > 0).astype(int)).sum() +\
             abs((greens_1 > 0).astype(int) - (greens_2 > 0).astype(int)).sum() +\

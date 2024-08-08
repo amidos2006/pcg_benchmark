@@ -26,7 +26,7 @@ class RandomAgent:
         return self._random.choice([{"x":-1,"y":0},{"x":1,"y":0},{"x":0,"y":-1},{"x":0,"y":1},{"x":0, "y": 0}])
 
 class FlatMCTSAgent:
-    def __init__(self, seed, constant=math.sqrt(2), power=50):
+    def __init__(self, seed, constant=math.sqrt(2), power=40):
         self._constant = constant
         self._power = power
         self._random = np.random.default_rng(seed)
@@ -91,7 +91,7 @@ class State:
     def __init__(self, engine, x, y, score=0, time=0):
         self._engine = engine
 
-        self._player = {"x": x, "y": y, "score": score, "time": 0, "alive": True}
+        self._player = {"x": x, "y": y, "score": score, "time": time, "alive": True}
         self._reds = []
         self._greens = []
         self._yellows = []
@@ -177,7 +177,7 @@ class State:
         return result
 
 class Engine:
-    def __init__(self, content, layout, maxTime=50):
+    def __init__(self, content, layout, maxTime=40):
         self._content = content
         self._maxTime = maxTime
         self._layout = np.pad(np.array(layout), 1)
