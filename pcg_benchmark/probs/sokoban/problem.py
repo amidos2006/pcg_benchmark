@@ -1,4 +1,4 @@
-from pcg_benchmark.probs.problem import Problem
+from pcg_benchmark.probs import Problem
 from pcg_benchmark.spaces import ArraySpace, IntegerSpace, DictionarySpace
 from pcg_benchmark.probs.utils import get_number_regions, get_range_reward, get_num_tiles, discretize, get_distance_length, get_normalized_value
 from pcg_benchmark.probs.sokoban.engine import State,BFSAgent,AStarAgent

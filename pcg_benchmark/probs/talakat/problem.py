@@ -1,4 +1,4 @@
-from pcg_benchmark.probs.problem import Problem
+from pcg_benchmark.probs import Problem
 from pcg_benchmark.probs.utils import get_range_reward
 from pcg_benchmark.spaces import ArraySpace, IntegerSpace, FloatSpace, DictionarySpace
 from pcg_benchmark.probs.talakat.engine import parameters, generateTalakatScript, runPattern

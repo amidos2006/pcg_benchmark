@@ -1,4 +1,4 @@
-from pcg_benchmark.probs.problem import Problem
+from pcg_benchmark.probs import Problem
 from pcg_benchmark.probs.ddave.engine import State,BFSAgent,AStarAgent
 from pcg_benchmark.probs.utils import get_num_tiles, _get_certain_tiles, get_range_reward
 from pcg_benchmark.spaces import ArraySpace, DictionarySpace, IntegerSpace

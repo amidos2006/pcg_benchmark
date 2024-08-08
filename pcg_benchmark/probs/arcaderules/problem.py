@@ -1,4 +1,4 @@
-from pcg_benchmark.probs.problem import Problem
+from pcg_benchmark.probs import Problem
 from pcg_benchmark.spaces import DictionarySpace, ArraySpace, IntegerSpace
 from pcg_benchmark.probs.utils import get_number_regions, get_range_reward
 from pcg_benchmark.probs.arcaderules.engine import runGame, Engine, DoNothingAgent, RandomAgent, FlatMCTSAgent
@@ -60,17 +60,17 @@ class ArcadeRulesProblem(Problem):
         lvl = np.array(super().random_control())
         while(get_number_regions(lvl, [1]) != 1):
             lvl = np.array(super().random_control())
-            symmetry = np.random.randint(2)
+            symmetry = self._random.integers(2)
             quarters = [np.ones((int(self._height / 2), int(self._width / 2))).astype(int)]
             if symmetry > 0:
                 quarters.append(np.ones((int(self._height / 2), int(self._width / 2))).astype(int))
             for q in quarters:
-                number = np.random.randint(int(min(q.shape[0]/2, q.shape[1]/2))) + 2
+                number = self._random.integers(int(min(q.shape[0]/2, q.shape[1]/2))) + 2
                 for _ in range(number):
-                    dir = np.random.randint(2)
-                    length = np.random.randint(max(q.shape[dir], 2)) + 1
-                    x = np.random.randint(max(int(q.shape[1]/2), 2))
-                    y = np.random.randint(max(int(q.shape[0]/2), 2))
+                    dir = self._random.integers(2)
+                    length = self._random.integers(max(q.shape[dir], 2)) + 1
+                    x = self._random.integers(max(int(q.shape[1]/2), 2))
+                    y = self._random.integers(max(int(q.shape[0]/2), 2))
                     for i in range(length):
                         nx, ny = x + dir * i, y + (1-dir) * i
                         if nx > q.shape[1]-1 or ny > q.shape[0]-1:
@@ -78,12 +78,12 @@ class ArcadeRulesProblem(Problem):
                         q[ny][nx] = 0
             if len(quarters) == 1:
                 newQuarter = quarters[0].copy()
-                flip = np.random.randint(3)
+                flip = self._random.integers(3)
                 if flip:
                     newQuarter = np.flip(newQuarter, axis=flip-1)
                 quarters.append(newQuarter)
                 
-            flip = np.random.randint(2)
+            flip = self._random.integers(2)
             for y in range(quarters[0].shape[0]):
                 for x in range(quarters[0].shape[1]):
                     lvl[y][x] = quarters[0][y][x]

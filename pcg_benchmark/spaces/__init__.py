@@ -4,6 +4,16 @@ from pcg_benchmark.spaces.array import ArraySpace
 from pcg_benchmark.spaces.generic import GenericSpace
 from pcg_benchmark.spaces.dictionary import DictionarySpace
 
+"""
+Check if the two input content are equal
+
+Parameters:
+    content1 (any): sampled content from a space
+    content2 (any): sampled content from a space
+
+Returns:
+    bool: return if content1 and content 2 are equal in all the values
+"""
 def isContentEqual(content1, content2):
     try:
         if not hasattr(content1, "__len__"):

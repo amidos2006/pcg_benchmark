@@ -81,14 +81,41 @@ class GenericSpace(Space):
             value = 1
         self._value = value
 
+    """
+    Get the allowed range recursively for the generic space
+
+    Returns:
+        any: a recursive range of the used spaces where each one will have "min" and "max" values
+    """
     def range(self):
         return _recursiveRange(self._value)
 
+    """
+    Adjust the seed for the random generator for all the spaces
+
+    Parameters:
+        seed (int): the seed value for the used random generator
+    """
     def seed(self, seed):
         _recursiveSeed(self._value, seed)
     
+    """
+    Check if the parameter is sampled from that space recursively
+
+    Parameters:
+        value (any): a sampled content that need to be tested
+
+    Returns:
+        bool: True if the parameter is sampled from this space
+    """
     def isSampled(self, value):
         return _recursiveIsSampled(self._value, value)
 
+    """
+    Sample a content from this space recursively
+
+    Returns:
+        any: a sampled content from the space that follow the same data structure
+    """
     def sample(self):
         return _recursiveSample(self._value)

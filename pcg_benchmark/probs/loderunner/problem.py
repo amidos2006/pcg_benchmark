@@ -1,4 +1,4 @@
-from pcg_benchmark.probs.problem import Problem
+from pcg_benchmark.probs import Problem
 from pcg_benchmark.spaces import DictionarySpace, ArraySpace, IntegerSpace
 from pcg_benchmark.probs.loderunner.utils import play_loderunner, read_loderunner, js_dist
 from pcg_benchmark.probs.utils import get_num_tiles, _get_certain_tiles, get_vert_histogram, get_horz_histogram, get_range_reward

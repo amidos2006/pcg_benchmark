@@ -16,37 +16,103 @@ def _recursiveDiversity(structureContent):
             sc["similar"] -= 1
     _recursiveDiversity(structureContent[1:])
 
+"""
+"""
 class PCGEnv:
+    """
+    Parameters:
+        name(string): the string name that defines the current problem
+        problem(Problem): a subclass of Problem that need to be solved
+    """
     def __init__(self, name, problem):
         self._name = name
         self._problem = problem
 
+    """
+    Adjust the seed of the random number generator used by the problem spaces
+
+    Parameters:
+        seed(int): the seed for the random number generator used by the problem
+    """
     def seed(self, seed):
         self._problem.seed(seed)
 
+    """
+    Modify the parameters for the current problem
+
+    Parameters:
+        kwargs(any): depends on the problem parameters, you can modify them here
+    """
     def parameters(self, **kwargs):
         if kwargs.get("seed", None) != None:
             self.seed(kwargs.get("seed"))
         self._problem.parameters(**kwargs)
 
+    """
+    Generate a group of random content for the current problem
+
+    Parameters:
+        amount(int): the number of random generated content needed
+
+    Returns:
+        any|any[]: a single or an array of random generated content
+    """
     def random_content(self, amount=100):
         result = []
         for _ in range(amount):
             result.append(self._problem.random_content())
+        if amount == 1:
+            return result[0]
         return result
     
+    """
+    Generate a group of random control parameters for the current problem
+
+    Parameters:
+        amount(int): the number of random generated control parameters
+
+    Returns:
+        any|any[]: a single or an array of random generated control parameters
+    """
     def random_control(self, amount=100):
         result = []
         for _ in range(amount):
             result.append(self._problem.random_control())
+        if amount == 1:
+            return result[0]
         return result
     
+    """
+    Get the allowed range of the content
+
+    Returns:
+        any: the allowed range of the content
+    """
     def content_range(self):
         return self._problem.content_range()
     
+    """
+    Get the allowed range of the control parameters
+
+    Returns:
+        any: the allowed range of the control parameters
+    """
     def control_range(self):
         return self._problem.control_range()
     
+    """
+    Calculate some basic information about the contents. These information can be used to speed quality,
+    diversity, and controlability calculations. You can send this to any of the other functions (quality, 
+    diversity, controlability) and they will immedietly return the results as all the information are
+    precomputed. 
+
+    Parameters:
+        contents(any|any[]): a single or an array of content that need to be analyzed
+
+    Returns:
+        any|any[]: a single or an array of information that can be cached to speed quality, diversity, 
+        controlability calculations.
+    """
     def info(self, contents):
         is_array = hasattr(contents, "__len__") and not isinstance(contents, dict)
         if is_array:
@@ -65,6 +131,16 @@ class PCGEnv:
             info[0]
         return info
         
+    """
+    Calculate the quality of the contents provided for the current problem
+
+    Parameters:
+        contents(any|any[]): a single or an array of contents or infos that need to be evaluated for quality
+
+    Returns:
+        float,float[],any[]: percentage of passed content, an array of the quality of each content between 0 and 1, 
+        an array of the info of all the contents that can be cached to speed all the calculations
+    """
     def quality(self, contents):
         is_array = hasattr(contents, "__len__") and not isinstance(contents, dict)
         if is_array:
@@ -88,6 +164,16 @@ class PCGEnv:
             return float(quality[0] >= 1), quality[0], infos[0]
         return (quality >= 1).sum() / len(infos), quality, infos
 
+    """
+    Calculate the diversity of the contents provided for the current problem
+
+    Parameters:
+        contents(any|any[]): a single or an array of contents or infos that need to be evaluated for diversity
+
+    Returns:
+        float,float[],any[]: percentage of passed content, an array of the diversity values for each content 
+        between 0 and 1, an array of the info of all the contents that can be cached to speed all the calculations
+    """
     def diversity(self, contents):
         is_array = hasattr(contents, "__len__") and not isinstance(contents, dict)
         if is_array:
@@ -133,6 +219,18 @@ class PCGEnv:
             return float(diversity[0] >= 1), diversity[0], infos[0]
         return (diversity >= 1).sum() / len(infos), diversity, infos
 
+    """
+    Calculate the controlability of the provided contents with respect to the provided controls 
+    for the current problem
+
+    Parameters:
+        contents(any|any[]): a single or an array of contents or infos that need to be evaluated for controlability
+        controls(any|any[]): a single or an array of controls that is used to evaluate the control of the contents
+
+    Returns:
+        float,float[],any[]: percentage of passed content, an array of the controlability values for each content 
+        between 0 and 1, an array of the info of all the contents that can be cached to speed all the calculations
+    """
     def controlability(self, contents, controls):
         is_array = hasattr(contents, "__len__") and not isinstance(contents, dict)
         if is_array:
@@ -159,6 +257,19 @@ class PCGEnv:
             return float(controlability[0] >= 1), controlability[0], infos[0]
         return (controlability >= 1).sum() / len(infos), controlability, infos
     
+    """
+    Evaluate the input contets and controls for quality, diversity, and controlability for the current problem
+
+    Parameters:
+        contents(any|any[]): a single or an array of contents or infos that need to be evaluated
+        controls(any|any[]): a single or an array of controls that is used to evaluate the control of the contents
+
+    Returns:
+        float,float,float,dict[string,float[]],any[]: percentage of quality passed content, 
+        percentage of diversity passed content, percentage of controlability passed content, 
+        a dictionary of float arrays that contains the details for quality, diversity, and controlability, 
+        an array of the info of all the contents that can be cached to speed all the calculations
+    """
     def evaluate(self, contents, controls):
         infos = self.info(contents)
         q_score, quality, _ = self.quality(infos)
@@ -171,6 +282,15 @@ class PCGEnv:
             "controlability": controlability
         }, infos
     
+    """
+    Generate an PIL.Image for each of the content
+
+    Parameters:
+        contents(any|any[]): a single or an array of the content that need to be rendered
+
+    Returns:
+        Image|Image[]: a PIL.Image for each of the input content
+    """
     def render(self, contents):
         single_input = False
         if self._problem._content_space.isSampled(contents):

@@ -1,4 +1,4 @@
-from pcg_benchmark.probs.problem import Problem
+from pcg_benchmark.probs import Problem
 from pcg_benchmark.probs.utils import get_range_reward
 from pcg_benchmark.spaces import DictionarySpace, ArraySpace, IntegerSpace
 import os
@@ -92,7 +92,7 @@ class BuildingProblem(Problem):
         for k in control:
             control[k] = int((control[k] / sum_all) * self._target)
             remaining -= control[k]
-        control[np.random.choice(list(control.keys()))] += remaining
+        control[self._random.choice(list(control.keys()))] += remaining
         return control
         
     def info(self, content):

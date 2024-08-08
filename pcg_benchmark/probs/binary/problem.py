@@ -1,4 +1,4 @@
-from pcg_benchmark.probs.problem import Problem
+from pcg_benchmark.probs import Problem
 from pcg_benchmark.spaces import ArraySpace, IntegerSpace, DictionarySpace
 from pcg_benchmark.probs.utils import get_range_reward, get_number_regions, get_longest_path
 import numpy as np
