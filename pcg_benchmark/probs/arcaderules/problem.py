@@ -30,8 +30,8 @@ class ArcadeRulesProblem(Problem):
         
         self._diversity = kwargs.get("diversity", 0.25)
         self._s_target = kwargs.get("safety", 5)
-        self._d_target = kwargs.get("minToDeath", 20)
-        self._target = kwargs.get("minToWin", 40)
+        self._d_target = kwargs.get("minToDeath", 15)
+        self._target = kwargs.get("minToWin", 30)
 
         temp = {
             "x": IntegerSpace(self._width),
@@ -180,8 +180,9 @@ class ArcadeRulesProblem(Problem):
         for s,_ in info2["flat_mcts"]:
             player_2[s._player["y"]][s._player["x"]] += 1
 
-        obj_div = abs(reds_1 > 0 - reds_2 > 0).sum() + abs(greens_1 > 0 - greens_2 > 0).sum() +\
-            abs(yellows_1 > 0 - yellows_2 > 0).sum()
+        obj_div = abs((reds_1 > 0).astype(int) - (reds_2 > 0).astype(int)).sum() +\
+            abs((greens_1 > 0).astype(int) - (greens_2 > 0).astype(int)).sum() +\
+            abs((yellows_1 > 0).astype(int) - (yellows_2 > 0).astype(int)).sum()
         play_div = (abs(player_1 - player_2) > 0).sum()
         
         return get_range_reward((obj_div + play_div) / 2.0, 0, self._diversity * self._width * self._height, self._width, self._height)
