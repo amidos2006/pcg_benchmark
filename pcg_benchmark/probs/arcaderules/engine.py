@@ -19,20 +19,24 @@ class DoNothingAgent:
         return {"x": 0, "y": 0}
     
 class RandomAgent:
+    def __init__(self, seed):
+        self._random = np.random.default_rng(seed)
+
     def action(self, state):
-        return np.random.choice([{"x":-1,"y":0},{"x":1,"y":0},{"x":0,"y":-1},{"x":0,"y":1},{"x":0, "y": 0}])
+        return self._random.choice([{"x":-1,"y":0},{"x":1,"y":0},{"x":0,"y":-1},{"x":0,"y":1},{"x":0, "y": 0}])
 
 class FlatMCTSAgent:
-    def __init__(self, constant=math.sqrt(2), power=50):
+    def __init__(self, seed, constant=math.sqrt(2), power=50):
         self._constant = constant
         self._power = power
+        self._random = np.random.default_rng(seed)
 
     def _ucbValue(self, value, totalValue, totalVisits):
         return value["value"] / max(1, totalValue) + self._constant * math.sqrt(math.log(totalVisits) / value["visits"])
     
     def _simulate(self, state):
         while not (state.isWin() or state.isLose()):
-            dir = np.random.choice([{"x":-1,"y":0},{"x":1,"y":0},{"x":0,"y":-1},{"x":0,"y":1},{"x":0, "y": 0}])
+            dir = self._random.choice([{"x":-1,"y":0},{"x":1,"y":0},{"x":0,"y":-1},{"x":0,"y":1},{"x":0, "y": 0}])
             state.update(dir["x"], dir["y"])
         if state.isWin():
             return 1
@@ -184,6 +188,7 @@ class Engine:
                     self._dikjstra[f"{x},{y}"] = _run_dikjstra(x, y, self._layout, [1])[0]
     
     def initialize(self):
+        self._random = np.random.default_rng(self._content["seed"])
         state = State(self, self._content["x"] + 1, self._content["y"] + 1)
         for i in range(self._content["redStart"]["num"]):
             x, y = self._content["redStart"]["x"][i]+1, self._content["redStart"]["y"][i]+1
@@ -214,17 +219,17 @@ class Engine:
             obj["alive"] = int(obj["value"] / 5) % 2 == 0
         if self._content[t.get_name()] == 2:
             if obj["value"] % 5 == 1: 
-                obj["state"] = np.random.randint(4)
+                obj["state"] = self._random.integers(4)
             dir = [{"x":-1,"y":0},{"x":1,"y":0},{"x":0,"y":-1},{"x":0,"y":1}][obj["state"]]
             self.move(obj, dir["x"], dir["y"])
         if self._content[t.get_name()] == 3:
             if obj["value"] % 10 == 1: 
-                obj["state"] = np.random.randint(4)
+                obj["state"] = self._random.integers(4)
             dir = [{"x":-1,"y":0},{"x":1,"y":0},{"x":0,"y":-1},{"x":0,"y":1}][obj["state"]]
             self.move(obj, dir["x"], dir["y"])
         if self._content[t.get_name()] == 4:
             if obj["value"] == 1:
-                obj["state"] = np.random.randint(2)
+                obj["state"] = self._random.integers(2)
             dir = [{"x":-1,"y":0},{"x":1,"y":0}][obj["state"]]
             moved = self.move(obj, dir["x"], dir["y"])
             if not moved:
@@ -232,7 +237,7 @@ class Engine:
                 self.move(obj, dir["x"], dir["y"])
         if self._content[t.get_name()] == 5:
             if obj["value"] == 1:
-                obj["state"] = np.random.randint(2)
+                obj["state"] = self._random.integers(2)
             dir = [{"x":0,"y":-1},{"x":0,"y":1}][obj["state"]]
             moved = self.move(obj, dir["x"], dir["y"])
             if not moved:

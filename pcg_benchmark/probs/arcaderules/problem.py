@@ -36,6 +36,7 @@ class ArcadeRulesProblem(Problem):
         temp = {
             "x": IntegerSpace(self._width),
             "y": IntegerSpace(self._height),
+            "seed": IntegerSpace(pow(10, 6)),
             "win": IntegerSpace(4)
         }
         for key in ["red", "yellow", "green"]:
@@ -115,8 +116,8 @@ class ArcadeRulesProblem(Problem):
         if player > 0:
             engine = Engine(content, self._layout)
             doNothing = runGame(engine, DoNothingAgent())
-            random = runGame(engine, RandomAgent())
-            flatMCTS = runGame(engine, FlatMCTSAgent())
+            random = runGame(engine, RandomAgent(content["seed"]))
+            flatMCTS = runGame(engine, FlatMCTSAgent(content["seed"]))
             maxTime = engine._maxTime
         return {
             "player": {"x": content["x"], "y": content["y"]},
@@ -152,7 +153,7 @@ class ArcadeRulesProblem(Problem):
             winRandom = int(info["random"][-1][0].isWin())
             winNothing = int(info["do_nothing"][-1][0].isWin())
             winValue = get_range_reward(winMCTS - winRandom - winNothing, -2, 2)
-            challenge = get_range_reward(len(int["flat_mcts"]), 0, self._target, info["max_time"])
+            challenge = get_range_reward(len(info["flat_mcts"]), 0, self._target, info["max_time"])
         
         return (stats + winValue + challenge + death) / 4.0
     
@@ -160,23 +161,23 @@ class ArcadeRulesProblem(Problem):
         reds_1 = np.zeros((self._height+2, self._height+2))
         greens_1 = np.zeros((self._height+2, self._height+2))
         yellows_1 = np.zeros((self._height+2, self._height+2))
-        for s in info1["do_nothing"] + info1["random"] + info1["flat_mcts"]:
+        for s,_ in info1["do_nothing"] + info1["random"] + info1["flat_mcts"]:
             reds_1 += _getMap(s._reds, self._width, self._height)
             greens_1 += _getMap(s._greens, self._width, self._height)
             yellows_1 += _getMap(s._yellows, self._width, self._height)
         player_1 = np.zeros((self._height+2, self._height+2))
-        for s in info1["flat_mcts"]:
+        for s,_ in info1["flat_mcts"]:
             player_1[s._player["y"]][s._player["x"]] += 1
         
         reds_2 = np.zeros((self._height+2, self._height+2))
         greens_2 = np.zeros((self._height+2, self._height+2))
         yellows_2 = np.zeros((self._height+2, self._height+2))
-        for s in info2["do_nothing"] + info2["random"] + info2["flat_mcts"]:
+        for s,_ in info2["do_nothing"] + info2["random"] + info2["flat_mcts"]:
             reds_2 += _getMap(s._reds, self._width, self._height)
             greens_2 += _getMap(s._greens, self._width, self._height)
             yellows_2 += _getMap(s._yellows, self._width, self._height)
         player_2 = np.zeros((self._height+2, self._height+2))
-        for s in info2["flat_mcts"]:
+        for s,_ in info2["flat_mcts"]:
             player_2[s._player["y"]][s._player["x"]] += 1
 
         obj_div = abs(reds_1 > 0 - reds_2 > 0).sum() + abs(greens_1 > 0 - greens_2 > 0).sum() +\
@@ -208,7 +209,7 @@ class ArcadeRulesProblem(Problem):
         draw = ImageDraw.Draw(img)
         x = 8
         y = 8
-        draw.text((x,y), f"Start: {content['x']},{content['y']}", fill=(60,172,215,255))
+        draw.text((x,y), f"Start: {content['x']},{content['y']} - {content['seed']}", fill=(60,172,215,255))
         y+=20
         draw.text((x,y), "Behavior:", fill=(207,198,184,255))
         y+= 12
