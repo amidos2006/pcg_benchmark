@@ -193,7 +193,7 @@ class ArcadeRulesProblem(Problem):
             player = 1.0
         value, total = 0, 0
         for key in ["red", "yellow", "green"]:
-            for loc in range(len(info[key])):
+            for loc in info[key]:
                 if control[loc["y"]][loc["x"]] == 1:
                     value += 1.0
                 total += 1.0
