@@ -1,0 +1,13 @@
+{
+    "width": 400,
+    "height": 640,
+
+    "maxNumSpawners": 50,
+    "maxNumBullets": 250,
+    "maxHealth": 150,
+    "maxValue": 50,
+    "repeatingAction": 10,
+
+    "bucketsX": 10,
+    "bucketsY": 15
+}
