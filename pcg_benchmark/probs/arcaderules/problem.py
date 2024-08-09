@@ -310,7 +310,7 @@ class ArcadeRulesProblem(Problem):
             locs = ""
             for i in range(content[f"{key}Start"]["num"]):
                 locs += f"- {content[f'{key}Start']['x'][i]},{content[f'{key}Start']['y'][i]} "
-            draw.text((x,y), f"{key}: {behaviors[content[key]]} {locs}", fill=(191,121,88,255))
+            draw.text((x,y), f"{key}: {behaviors[int(content[key])]} {locs}", fill=(191,121,88,255))
             y += 12
         y += 8
         x = 8
@@ -319,9 +319,9 @@ class ArcadeRulesProblem(Problem):
         x = 16
         for key in ["player-red", "player-green", "player-yellow", "red-red", "red-green",\
                     "red-yellow", "green-green", "green-yellow", "yellow-yellow"]:
-            draw.text((x,y), f"{key}: {action[content[key]['action']]} - {score[content[key]['score']]}", fill=(191,121,88,255))
+            draw.text((x,y), f"{key}: {action[int(content[key]['action'])]} - {score[int(content[key]['score'])]}", fill=(191,121,88,255))
             y += 12
         y += 8
         x = 8
-        draw.text((x,y), f"Win: {win[content['win']]}", fill=(244,180,27,255))
+        draw.text((x,y), f"Win: {win[int(content['win'])]}", fill=(244,180,27,255))
         return img

@@ -1,3 +1,6 @@
+<p align="center">
+	<img height="300px" src="../../../images/ddave/example.png"/>
+</p>
 <h1 align="center">
 Dangerous Dave Problem
 </h1>

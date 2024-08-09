@@ -1,3 +1,6 @@
+<p align="center">
+	<img height="300px" src="../../../images/building/example.png"/>
+</p>
 <h1 align="center">
 Building Problem
 </h1>
