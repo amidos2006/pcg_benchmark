@@ -1,12 +1,18 @@
+<p align="center">
+	<img height="300px" src="../../../images/arcaderules/1.png"/>
+    <img height="300px" src="../../../images/arcaderules/2.png"/>
+    <img height="300px" src="../../../images/arcaderules/3.png"/>
+</p>
 <h1 align="center">
 Arcade Rules Problem
 </h1>
+
 Arcade Rules Problem based on the simple framework introduced by Togelius in 2008 in "An Experiment in Automatic Game Design". The goal is to generate new games and test them on a fixed layout or the one provided by the control parameter.
 
 The problem has 3 variants:
-- **arcade-v0:** generate a group of rules and test them on a 7x7 level excluding the borders
-- **arcade-wide-v0:** generate a group of rules and test them on 15x7 level excluding the borders
-- **arcade-large-v0** generate a group of rules and test them on 15x15 level excluding the borders
+- `arcade-v0`: generate a group of rules and test them on a 7x7 level excluding the borders
+- `arcade-wide-v0`: generate a group of rules and test them on 15x7 level excluding the borders
+- `arcade-large-v0`: generate a group of rules and test them on 15x15 level excluding the borders
 
 ## Content Structure
 The content is a dictionary that has all the information about the current evolved game. Here is an example of the content that can be evaluated by the system:
@@ -73,15 +79,15 @@ The content is a dictionary that has all the information about the current evolv
 }
 ```
 As seen in the example, the dictionary has to have the following fields:
-- **x(int):** the player starting x location
-- **y(int):** the player starting y location
-- **seed(int):** the game seed for enemies with random movement and AI evaluation
-- **win(int):** the win condition 
+- `x(int)`: the player starting x location
+- `y(int)`: the player starting y location
+- `seed(int)`: the game seed for enemies with random movement and AI evaluation
+- `win(int)`: the win condition 
   - *0:* when time reach max time which is 40
   - *1:* when the player's score >= 5
   - *2:* when the player's score >= 10
   - *3:* when the player's score >= 20
-- **red(int)|green(int)|yellow(int):** the behavior for each colored object 
+- `red(int)`|`green(int)`|`yellow(int)`: the behavior for each colored object 
   - *0:* the object is still
   - *1:* the object change states like spikes every 5 steps
   - *2:* random walking and changing direction every 5 steps
@@ -90,17 +96,17 @@ As seen in the example, the dictionary has to have the following fields:
   - *5:* walking back and forth vertically
   - *6:* chase the player character (always move one tile closer)
   - *7:* flee from the player character (always move one tile further away)
-- **redStart(dict[str,any])|greenStart(dict[str,any])|yellowStart(dict[str,any]):** this control the starting location and number of objects. 
-  - **num:** the number of objects of that color (this is can be [0, 1, 2, 3, 4])
-  - **x:** the x location of the object of that color (this is an array of length 4)
-  - **y:** the y location of the object of that color (this is an array of length 4)
-- **player-red(dict[str,int])|player-green(dict[str,int])|player-yellow(dict[str,int])|red-red(dict[str,int])|red-green(dict[str,int])|red-yellow(dict[str,int])|green-green(dict[str,int])|green-yellow(dict[str,int])|yellow-yellow(dict[str,int]):** this is the collision interaction between different objects
-  - **action:** this is what happens when the two objects collides
+- `redStart(dict[str,any])`|`greenStart(dict[str,any])`|`yellowStart(dict[str,any])`: this control the starting location and number of objects. 
+  - `num`: the number of objects of that color (this is can be [0, 1, 2, 3, 4])
+  - `x`: the x location of the object of that color (this is an array of length 4)
+  - `y`: the y location of the object of that color (this is an array of length 4)
+- `player-red(dict[str,int])`|`player-green(dict[str,int])`|`player-yellow(dict[str,int])`|`red-red(dict[str,int])`|`red-green(dict[str,int])`|`red-yellow(dict[str,int])`|`green-green(dict[str,int])`|`green-yellow(dict[str,int])`|`yellow-yellow(dict[str,int])`: this is the collision interaction between different objects
+  - `action`: this is what happens when the two objects collides
     - *0:* nothing happens
     - *1:* kill the first object
     - *2:* kill the second object 
     - *3:* kill both objects
-  - **score:** the score change of the player
+  - `score`: the score change of the player
     - *0:* no change
     - *1:* add 1 score point
     - *2:* add 2 score points
@@ -117,6 +123,15 @@ This is the control parameter of the problem. The control parameter is just a 2D
 1111111
 0000011
 ```
+
+## Adding a new Variant
+If you want to add new variants for this framework, you can add it to [`__init__.py`](https://github.com/amidos2006/pcg_benchmark/blob/main/pcg_benchmark/probs/arcaderules/__init__.py) file. To add new variant please try to follow the following name structure `arcade-{variant}-{version}` where `{version}` if first time make sure it is `v0`. The following parameter can be changed to create the variant:
+- `width(int)`: the width of the level that need to be tested against for the rule set
+- `height(int)`: the height of the level that need to be tested against for the rule set
+- `diversity(float)`: the diversity percentage that if passes it it is 1 (optional=0.4) 
+- `safety(float)`: the safety percentage that the do nothing agent need to not die until (optional=0.15) 
+- `minToDeath(float)`: the minimum percentage that random and agent need to lose in (optional=0.4)
+- `minToWin(float)`: the minimum percentage of steps needed for the flatmcts agent to take before winning (optional=0.75) 
 
 ## Quality Measurement
 To pass the quality criteria, you need to pass multitude of criteria
@@ -150,4 +165,5 @@ To pass the diversity criteria, you need to pass two main criteria
 - player moving histogram should be different between games
 
 ## Controlability Measurement
-To pass the controlability criteria, you need to make sure all the objects can be laid correctly without problems
+To pass the controlability criteria, you need to make sure all the objects can be laid correctly without problems.
+

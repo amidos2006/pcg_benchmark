@@ -51,7 +51,7 @@ class PCGEnv:
     Returns:
         any|any[]: a single or an array of random generated content
     """
-    def random_content(self, amount=100):
+    def random_content(self, amount=1):
         result = []
         for _ in range(amount):
             result.append(self._problem.random_content())
@@ -68,7 +68,7 @@ class PCGEnv:
     Returns:
         any|any[]: a single or an array of random generated control parameters
     """
-    def random_control(self, amount=100):
+    def random_control(self, amount=1):
         result = []
         for _ in range(amount):
             result.append(self._problem.random_control())
