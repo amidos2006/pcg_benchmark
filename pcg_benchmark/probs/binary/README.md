@@ -15,24 +15,31 @@ The problem has 3 variants:
 ## Content Structure
 The content is a 2D binary array of **height x width** where 1 is empty and 0 is solid. Here is an example of a content
 ```
-11111111111111
-00000000000111
-11111111110111
-11100001110111
-11101111110111
-11100000000111
-11111110111111
-00001110111111
-01111110111011
-01111110111000
-01101110111111
-01100000000111
-01111111110111
-01111111111111
+[
+    [1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+    [0,0,0,0,0,0,0,0,0,0,0,1,1,1],
+    [1,1,1,1,1,1,1,1,1,1,0,1,1,1],
+    [1,1,1,0,0,0,0,1,1,1,0,1,1,1],
+    [1,1,1,0,1,1,1,1,1,1,0,1,1,1],
+    [1,1,1,0,0,0,0,0,0,0,0,1,1,1],
+    [1,1,1,1,1,1,1,0,1,1,1,1,1,1],
+    [0,0,0,0,1,1,1,0,1,1,1,1,1,1],
+    [0,1,1,1,1,1,1,0,1,1,1,0,1,1],
+    [0,1,1,1,1,1,1,0,1,1,1,0,0,0],
+    [0,1,1,0,1,1,1,0,1,1,1,1,1,1],
+    [0,1,1,0,0,0,0,0,0,0,0,1,1,1],
+    [0,1,1,1,1,1,1,1,1,1,0,1,1,1],
+    [0,1,1,1,1,1,1,1,1,1,1,1,1,1]
+]
 ```
 
 ## Control Parameter
-
+This is the control parameter of the problem. The control parameter is dictionary with one parameter called `path(int)` where it indicates how long the shortest longest path have to be to pass controlability criteria. Here is an example of the control parameter for 14x14:
+```json
+{
+    "path": 50
+}
+```
 
 ## Adding a new Variant
 If you want to add new variants for this framework, you can add it to [`__init__.py`](https://github.com/amidos2006/pcg_benchmark/blob/main/pcg_benchmark/probs/binary/__init__.py) file. To add new variant please try to follow the following name structure `binary-{variant}-{version}` where `{version}` if first time make sure it is `v0`. The following parameter can be changed to create the variant:
@@ -42,9 +49,12 @@ If you want to add new variants for this framework, you can add it to [`__init__
 - `path(float)`: the target path length percentage this value is multiplied by (width+height) (optional=1.0)
 
 ## Quality Measurement
-
+To pass the quality criteria, you need to pass two of criteria
+- have a fully connected map that consists of one region
+- have a longest shortest path length that is more than the target `path` which is 28 for `binary-v0`
 
 ## Diversity Measurement
-
+To pass the diversity criteria, you need the input levels have at least 40% difference on the hamming distance measuring criteria.
 
 ## Controlability Measurement
+To pass the controlability criteria, you need the path length (the longest shortest path) close to the control parameter `path` value.
