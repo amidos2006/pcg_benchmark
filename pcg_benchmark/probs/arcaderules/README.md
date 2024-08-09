@@ -1,7 +1,7 @@
 <p align="center">
-	<img height="300px" src="../../../images/arcaderules/1.png"/>
-    <img height="300px" src="../../../images/arcaderules/2.png"/>
-    <img height="300px" src="../../../images/arcaderules/3.png"/>
+	<img height="200px" src="../../../images/arcaderules/1.png"/>
+    <img height="200px" src="../../../images/arcaderules/2.png"/>
+    <img height="200px" src="../../../images/arcaderules/3.png"/>
 </p>
 <h1 align="center">
 Arcade Rules Problem
