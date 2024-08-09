@@ -1,5 +1,5 @@
 <p align="center">
-	<img height="300px" src="../../../images/talakat/zelda.png"/>
+	<img height="300px" src="../../../images/zelda/example.png"/>
 </p>
 <h1 align="center">
 Zelda Problem
