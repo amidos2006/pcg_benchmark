@@ -1,7 +1,5 @@
 <p align="center">
-	<img height="200px" src="../../../images/binary/1.png"/>
-    <img height="200px" src="../../../images/binary/2.png"/>
-    <img height="200px" src="../../../images/binary/3.png"/>
+	<img height="300px" src="../../../images/binary/example.png"/>
 </p>
 <h1 align="center">
 Binary Problem
