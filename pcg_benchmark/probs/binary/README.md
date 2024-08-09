@@ -13,7 +13,7 @@ The problem has 3 variants:
 - `binary-large-v0`: generate a maze of size 28x28 (excluding borders) with minimum path length of 56 (28+28)
 
 ## Content Structure
-The content is a 2D binary array of **height x width** where 1 is empty and 0 is solid. Here is an example of a content
+The content is a 2D binary array of **height x width** where 1 is **empty** and 0 is **solid**. Here is an example of a content
 ```
 [
     [1,1,1,1,1,1,1,1,1,1,1,1,1,1],
