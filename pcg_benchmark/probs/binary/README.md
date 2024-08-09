@@ -14,7 +14,7 @@ The problem has 3 variants:
 
 ## Content Structure
 The content is a 2D binary array of **height x width** where 1 is **empty** and 0 is **solid**. Here is an example of a content
-```
+```python
 [
     [1,1,1,1,1,1,1,1,1,1,1,1,1,1],
     [0,0,0,0,0,0,0,0,0,0,0,1,1,1],
