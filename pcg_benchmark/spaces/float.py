@@ -34,7 +34,7 @@ class FloatSpace(Space):
     Get the allowed range of the float space
 
     Returns:
-        dict[string,float]: a dictionary with "min" and "max" float values where "max" value is never reached
+        dict[str,float]: a dictionary with "min" and "max" float values where "max" value is never reached
     """
     def range(self):
         return {"min": self._min_value, "max": self._max_value}

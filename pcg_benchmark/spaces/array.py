@@ -1,6 +1,16 @@
 from pcg_benchmark.spaces.generic import GenericSpace
 from pcg_benchmark.spaces.space import Space
 
+"""
+Return a multidimension array of the internal space in the same shape as dims
+
+Parameters:
+    dims(int[]): the shape of the array space
+    value(Space): the internal space of the array space
+
+Returns:
+    any[]: a multidimension array of the internal space in the same shape as dims
+"""
 def _generateGenericSpace(dims, value):
     result = []
     new_dims = dims[1:]
@@ -11,9 +21,18 @@ def _generateGenericSpace(dims, value):
             result.append(value)
     return result
 
-def _getInternalSpace(value):
+"""
+Get the internal value range of an ArraySpace
+
+Parameters:
+    value(Space): a Space subclass that you need to get its internal space range
+
+Returns:
+    dict[str,any]: a range dictionary of the internal space
+"""
+def _getInternalSpaceRange(value):
     if hasattr(value, "__len__"):
-        return _getInternalSpace(value[0])
+        return _getInternalSpaceRange(value[0])
     return value.range()
 
 """
@@ -25,7 +44,7 @@ class ArraySpace(GenericSpace):
     The constructor of the Array space. 
 
     Parameters:
-        dimensions(int[]|tuple(int)): is an array or tuple that define the shape of the array.
+        dimensions(int[]): is an array or tuple that define the shape of the array.
         value(any): a space that is used to sample every unit of the array
     """
     def __init__(self, dimensions, value):
@@ -43,4 +62,4 @@ class ArraySpace(GenericSpace):
         any: the range of the internal space
     """
     def range(self):
-        return _getInternalSpace(self._value)
+        return _getInternalSpaceRange(self._value)

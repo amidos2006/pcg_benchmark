@@ -1,0 +1,116 @@
+# Arcade Rules Problem
+Arcade Rules Problem based on the simple framework introduced by Togelius in 2008 in "An Experiment in Automatic Game Design". The goal is to generate new games and test them on a fixed layout or the one provided by the control parameter.
+
+The problem has 3 variants:
+- **arcade-v0:** generate a group of rules and test them on a 7x7 level excluding the borders
+- **arcade-wide-v0:** generate a group of rules and test them on 15x7 level excluding the borders
+- **arcade-large-v0** generate a group of rules and test them on 15x15 level excluding the borders
+
+## Content Structure
+The content is a dictionary that has all the information about the current evolved game. Here is an example of the content that can be evaluated by the system:
+```json
+{
+    "seed": 124578,
+    "x": 3,
+    "y": 3,
+    "red": 1,
+    "yellow": 0,
+    "green": 7,
+    "redStart": {
+        "num": 4,
+        "x": [2, 4, 1, 5],
+        "y": [3, 3, 1, 5]
+    },
+    "yellowStart": {
+        "num": 4,
+        "x": [1, 5, 3, 3],
+        "y": [5, 1, 0, 6]
+    },
+    "greenStart": {
+        "num": 4,
+        "x": [3, 3, 0, 6],
+        "y": [2, 4, 6, 0]
+    },
+    "player-red": {
+        "action": 1,
+        "score": 0
+    },
+    "player-yellow": {
+        "action": 2,
+        "score": 1
+    },
+    "player-green": {
+        "action": 2,
+        "score": 3
+    },
+    "red-red": {
+        "action": 0,
+        "score": 0
+    },
+    "red-yellow": {
+        "action": 2,
+        "score": 0
+    },
+    "red-green": {
+        "action": 2,
+        "score": 0
+    },
+    "green-green": {
+        "action": 0,
+        "score": 0
+    },
+    "green-yellow": {
+        "action": 0,
+        "score": 0
+    },
+    "yellow-yellow": {
+        "action": 0,
+        "score": 0
+    },
+    "win": 3
+}
+```
+As seen in the example, the dictionary has to have the following fields:
+- **x(int):** the player starting x location
+- **y(int):** the player starting y location
+- **seed(int):** the game seed for enemies with random movement and AI evaluation
+- **win(int):** the win condition 
+  - *0:* when time reach max time which is 40
+  - *1:* when the player's score >= 5
+  - *2:* when the player's score >= 10
+  - *3:* when the player's score >= 20
+- **red(int)|green(int)|yellow(int):** the behavior for each colored object 
+  - *0:* the object is still
+  - *1:* the object change states like spikes every 5 steps
+  - *2:* random walking and changing direction every 5 steps
+  - *3:* random walking and changing direction every 10 steps
+  - *4:* walking back and forth horizontally
+  - *5:* walking back and forth vertically
+  - *6:* chase the player character (always move one tile closer)
+  - *7:* flee from the player character (always move one tile further away)
+- **redStart(dict[str,any])|greenStart(dict[str,any])|yellowStart(dict[str,any]):** this control the starting location and number of objects. 
+  - **num:** the number of objects of that color (this is can be [0, 1, 2, 3, 4])
+  - **x:** the x location of the object of that color (this is an array of length 4)
+  - **y:** the y location of the object of that color (this is an array of length 4)
+- **player-red(dict[str,int])|player-green(dict[str,int])|player-yellow(dict[str,int])|red-red(dict[str,int])|red-green(dict[str,int])|red-yellow(dict[str,int])|green-green(dict[str,int])|green-yellow(dict[str,int])|yellow-yellow(dict[str,int]):** this is the collision interaction between different objects
+  - **action:** this is what happens when the two objects collides
+    - *0:* nothing happens
+    - *1:* kill the first object
+    - *2:* kill the second object 
+    - *3:* kill both objects
+  - **score:** the score change of the player
+    - *0:* no change
+    - *1:* add 1 score point
+    - *2:* add 2 score points
+    - *3:* add 4 score points
+
+## Control Parameter
+This is the control parameter of the problem
+Control Parameter Space(int[][]):
+    a 2D layout of a level
+
+## Quality Measurement
+
+## Diversity Measurement
+
+## Controlability Measurement

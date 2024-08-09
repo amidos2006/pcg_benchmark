@@ -9,7 +9,7 @@ class DictionarySpace(GenericSpace):
     The constructor of the Dictionary space. 
 
     Parameters:
-        dictionary(dict[string,any]): is a dictionary of strings with spaces for each key.
+        dictionary(dict[str,any]): is a dictionary of strings with spaces for each key.
     """
     def __init__(self, dictionary):
         for key in dictionary:

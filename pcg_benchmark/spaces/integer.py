@@ -39,7 +39,7 @@ class IntegerSpace(Space):
     Get the allowed range of the integer space
 
     Returns:
-        dict[string,int]: a dictionary with "min" and "max" integer values where "max" value is excluded
+        dict[str,int]: a dictionary with "min" and "max" integer values where "max" value is excluded
     """
     def range(self):
         return {"min": self._min_value, "max": self._max_value}

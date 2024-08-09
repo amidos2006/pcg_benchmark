@@ -23,7 +23,7 @@ class Space:
     Get the allowed range of the space
 
     Returns:
-        dict[string,any]: the range of the values in space where "min" is the minimum 
+        dict[str,any]: the range of the values in space where "min" is the minimum 
         allowed value, "max" is the maximum allowed value without inclusion
     """
     def range(self):

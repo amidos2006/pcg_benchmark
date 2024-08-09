@@ -6,6 +6,18 @@ from PIL import Image, ImageDraw
 import math
 import numpy as np
 
+"""
+Generate a 2D histogram of all the locations that has been visited by the objects
+
+Parameters:
+    objects(dict[str,any][]): the objects in the space. Each object should have "x" and "y"
+    to be placed correctly in the histogram
+    width(int): the size of the histogram map without padding
+    height(int): the size of the histogram map without padding
+
+Returns:
+    int[][]: a 2D histogram for all the visited locations by the objects
+"""
 def _getMap(objects, width, height):
     layout = np.zeros((height, width))
     for obj in objects:
@@ -13,7 +25,24 @@ def _getMap(objects, width, height):
             layout[obj["y"]-1][obj["x"]-1] += 1
     return layout
 
+"""
+Arcade Rules Problem based on the simple framework introduced by Togelius in 2008 in
+An Experiment in Automatic Game Design. The goal is to generate new games and test them 
+on a fixed layout or the one provided by the control parameter.
+"""
 class ArcadeRulesProblem(Problem):
+    """
+    constructor for the arcade rules problem
+
+    Parameters:
+        width(int): the width of the level that need to be tested against for the rule set
+        height(int): the height of the level that need to be tested against for the rule set
+        diversity(float): the diversity percentage that if passes it it is 1 (optional=0.4) 
+        safety(float): the safety percentage that the do nothing agent need to not die until (optional=0.15) 
+        minToDeath(float): the minimum percentage that random and agent need to lose in (optional=0.4)
+        minToWin(float): the minimum percentage of steps needed for the flatmcts agent to take 
+        before winning (optional=0.75) 
+    """
     def __init__(self, **kwargs):
         Problem.__init__(self, **kwargs)
 
@@ -29,9 +58,9 @@ class ArcadeRulesProblem(Problem):
             self._layout[int(0.5 * self._height)][self._width - x - 1] = 0
         
         self._diversity = kwargs.get("diversity", 0.25)
-        self._s_target = kwargs.get("safety", 5)
-        self._d_target = kwargs.get("minToDeath", 15)
-        self._target = kwargs.get("minToWin", 30)
+        self._s_target = kwargs.get("safety", 0.15)
+        self._d_target = kwargs.get("minToDeath", 0.4)
+        self._target = kwargs.get("minToWin", 0.75)
 
         temp = {
             "x": IntegerSpace(self._width),
@@ -51,11 +80,17 @@ class ArcadeRulesProblem(Problem):
                     "red-yellow", "green-green", "green-yellow", "yellow-yellow"]:
             temp[key] = DictionarySpace({
                 "action": IntegerSpace(4),
-                "score": IntegerSpace(3)
+                "score": IntegerSpace(4)
             })
         self._content_space = DictionarySpace(temp)
         self._control_space = ArraySpace((self._height, self._width), IntegerSpace(2))
 
+    """
+    generate a fully connected map to test the rules against
+
+    Returns:
+        int[][]: the fully connected layout of a level
+    """
     def random_control(self):
         lvl = np.array(super().random_control())
         while(get_number_regions(lvl, [1]) != 1):
@@ -98,6 +133,10 @@ class ArcadeRulesProblem(Problem):
                         lvl[lvl.shape[0]-1-y][lvl.shape[1]-1-x] = quarters[1][y][x]
         return lvl
     
+    """
+    Returns:
+        dict[str,any]: information about the 
+    """
     def info(self, content):
         player = 0
         if self._layout[content["y"]][content["x"]] == 1:
@@ -130,6 +169,16 @@ class ArcadeRulesProblem(Problem):
             "max_time": maxTime
         }
     
+    """
+    Measure the quality of the content provided its information
+
+    Parameters:
+        into(dict[str,any]): the information of the content need to be measured for quality. Use info function
+        to get the info for any content
+
+    Returns:
+        float: a value between 0 and 1 where 1 is passing the quality criteria
+    """
     def quality(self, info):
         player = 0.0
         stats = 0.0
@@ -137,13 +186,15 @@ class ArcadeRulesProblem(Problem):
             player = 1.0
             canLose = int(info["do_nothing"][-1][0].isLose() or info["random"][-1][0].isLose() or info["flat_mcts"][-1][0].isLose())
             canWin = int(info["do_nothing"][-1][0].isWin() or info["random"][-1][0].isWin() or info["flat_mcts"][-1][0].isWin())
-            safety = get_range_reward(len(info["do_nothing"]), 0, self._s_target, info["max_time"])
+            safety = get_range_reward(len(info["do_nothing"]), 0, self._s_target * info["max_time"], info["max_time"])
             stats = (player + canLose + canWin + safety) / 4.0
         
         death = 0.0
         if stats >= 1:
-            donothing_death = get_range_reward(len(info["do_nothing"]), 0, self._s_target, self._d_target, info["max_time"])
-            random_death = get_range_reward(len(info["random"]), 0, 0, self._d_target, info["max_time"])
+            donothing_death = get_range_reward(len(info["do_nothing"]), 0, self._s_target * info["max_time"],\
+                info["max_time"])
+            random_death = get_range_reward(len(info["random"]), 0, 0, self._d_target * info["max_time"],\
+                info["max_time"])
             death = (donothing_death + random_death) / 2.0
 
         winValue = 0.0
@@ -153,10 +204,12 @@ class ArcadeRulesProblem(Problem):
             winRandom = int(info["random"][-1][0].isWin())
             winNothing = int(info["do_nothing"][-1][0].isWin())
             winValue = get_range_reward(winMCTS - winRandom - winNothing, -2, 2)
-            challenge = get_range_reward(len(info["flat_mcts"]), 0, self._target, info["max_time"])
+            challenge = get_range_reward(len(info["flat_mcts"]), 0, self._target * info["max_time"], info["max_time"])
         
         return (stats + winValue + challenge + death) / 4.0
     
+    """
+    """
     def diversity(self, info1, info2):
         reds_1 = np.zeros((self._height, self._width))
         greens_1 = np.zeros((self._height, self._width))
@@ -187,6 +240,8 @@ class ArcadeRulesProblem(Problem):
         
         return get_range_reward((obj_div + play_div) / 2.0, 0, self._diversity * self._width * self._height, self._width, self._height)
     
+    """
+    """
     def controlability(self, info, control):
         player = 0
         if control[info["player"]["y"]][info["player"]["x"]] == 1:
@@ -201,10 +256,21 @@ class ArcadeRulesProblem(Problem):
             return 1.0
         return (value / total + player) / 2.0
 
+    """
+    Render the content and retrun it in form of PIL.Image. Since the content is rules, it is Image
+    of written rules.
+
+    Parameters:
+        content(any): the content that needs to be rendered
+
+    Returns:
+        Image: the rules written in english language on an image and returned
+    """
     def render(self, content):
         behaviors = ["still", "flicker", "randomShort", "randomLong", "wanderHorz", "wanderVert", "chase", "flee"]
         win = ["time", "score5", "score10", "score20"]
         action = ["none", "killFirst", "killSecond", "killBoth"]
+        score = [0, 1, 2, 4]
 
         img = Image.new("RGBA", (300, 230), (71,45,60,255))
         draw = ImageDraw.Draw(img)
@@ -228,7 +294,7 @@ class ArcadeRulesProblem(Problem):
         x = 16
         for key in ["player-red", "player-green", "player-yellow", "red-red", "red-green",\
                     "red-yellow", "green-green", "green-yellow", "yellow-yellow"]:
-            draw.text((x,y), f"{key}: {action[content[key]['action']]} - {content[key]['score']}", fill=(191,121,88,255))
+            draw.text((x,y), f"{key}: {action[content[key]['action']]} - {score[content[key]['score']]}", fill=(191,121,88,255))
             y += 12
         y += 8
         x = 8

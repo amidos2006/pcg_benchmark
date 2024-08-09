@@ -1,5 +1,12 @@
 from pcg_benchmark.spaces.space import Space
 
+"""
+Seed all the random number generators in all the spaces inside each other
+
+Parameter:
+    input(Space): a space subclass that need to be seeded
+    seed(int): the seed for the random number generator
+"""
 def _recursiveSeed(input, seed):
     if not hasattr(input, "__len__"):
         if issubclass(type(input), Space):
@@ -11,6 +18,15 @@ def _recursiveSeed(input, seed):
             else:
                 _recursiveSeed(v, seed)
 
+"""
+Sample a value from space recursively
+
+Parameters:
+    input(Space): a space subclass need to be sampled
+
+Returns:
+    any: a sampled content from the input space
+"""
 def _recursiveSample(input):
     if not hasattr(input, "__len__"):
         if issubclass(type(input), Space):
@@ -27,6 +43,15 @@ def _recursiveSample(input):
         result.append(_recursiveSample(v))
     return result
 
+"""
+Get the range of a space recursively
+
+Parameters:
+    input(Space): a space subclass need to get its range
+
+Returns:
+    dict[str,any]: a dictionary of the range values needed from the input space
+"""
 def _recursiveRange(input):
     if not hasattr(input, "__len__"):
         if issubclass(type(input), Space):
@@ -43,6 +68,16 @@ def _recursiveRange(input):
         result.append(_recursiveRange(v))
     return result
 
+"""
+Check recursively if the sampled value is from a specific space
+
+Parameters:
+    input(Space): a space subclass used to check if the value is sampled from
+    value(any): a value that need to checked if it was from input space
+
+Returns:
+    bool: True if the value is sampled from the input space and False otherwise
+"""
 def _recursiveIsSampled(input, value):
     try:
         if not hasattr(input, "__len__"):

@@ -1,5 +1,15 @@
 import numpy as np
 
+"""
+Get all the locations of a specific tile value in the 2D array
+
+Parameters:
+    map (int[][]): is a numpy 2D array that need to be searched
+    tile_values (int[]): is an array of all the possible values that need to be discovered in the input map
+
+Returns:
+    [int,int][]: an array of (x,y) location in the input array that is equal to the values in tile_values
+"""
 def _get_certain_tiles(map, tile_values):
     tiles=[]
     for y in range(map.shape[0]):
@@ -8,6 +18,19 @@ def _get_certain_tiles(map, tile_values):
                 tiles.append((x,y))
     return tiles
 
+"""
+Run Dijkstra Algorithm and return the map and the location that are visited
+
+Parameters:
+    x(int): the x position of the starting point of the dijkstra algorithm
+    y(int): the y position of the starting point of the dijkstra algorithm
+    map(int[][]): the input 2D map that need to be tested for dijkstra
+    passable_values(int[]): the values that are considered passable
+
+Returns:
+    int[][]: the dijkstra map where the value is the distance towards x, y location
+    int[][]: a binary 2D array where 1 means visited by Dijkstra algorithm and 0 means not
+"""
 def _run_dikjstra(x, y, map, passable_values):
     dikjstra_map = np.full((map.shape[0], map.shape[1]),-1)
     visited_map = np.zeros((map.shape[0], map.shape[1]))
@@ -25,6 +48,17 @@ def _run_dikjstra(x, y, map, passable_values):
             queue.append((nx, ny, cd + 1))
     return dikjstra_map, visited_map
 
+"""
+Get an array of positions that leads to the starting of Dijkstra
+
+Parameters:
+    dijkstra(int[][]): the dijkstra map that need to be tested
+    sx(int): the x position to get path from
+    sy(int): the y position to get path from
+
+Returns:
+    [int,int][]: an array of all the positions that lead from starting position to (sx,sy)
+"""
 def _get_path(dikjsta, sx, sy):
     path = []
     cx,cy = sx,sy
@@ -45,6 +79,20 @@ def _get_path(dikjsta, sx, sy):
     path.reverse()
     return path
 
+"""
+Get the number of tiles that the flood fill algorithm fill
+
+Parameters:
+    x(int): the x position for the flood fill algorithm
+    y(int): the y position for the flood fill algorithm
+    color_map(int[][]): the color map where the test happen on map and is added to this variable
+    map(int[][]): the maze that need to be flood filled (it doesn't change)
+    color_index(int): the color that is used to color the region
+    passable_Values(int[]): the tiles that are considered the same when are near each other
+
+Returns:
+    int: number of tiles for the flood fill
+"""
 def _flood_fill(x, y, color_map, map, color_index, passable_values):
     num_tiles = 0
     queue = [(x, y)]
@@ -61,6 +109,16 @@ def _flood_fill(x, y, color_map, map, color_index, passable_values):
             queue.append((nx, ny))
     return num_tiles
 
+"""
+Calculate the number of regions in the map that have the same values in the tile_values
+
+Parameters:
+    maze(int[][]):  the maze that need to be checked for regions
+    tile_values(int[]): the values that need to be checked making regions
+
+Returns:
+    Number of seperate regions in the maze that have the same values using 1 size Von Neumann neighborhood
+"""
 def get_number_regions(maze, tile_values):
     empty_tiles = _get_certain_tiles(maze, tile_values)
     region_index=0
@@ -73,6 +131,17 @@ def get_number_regions(maze, tile_values):
             continue
     return region_index
 
+"""
+Get the longest shortest path in a maze. This is calculated by first calculating the Dijstra for all the tiles values.
+Then Picking the highest value in the map and run Dijkstra again and get the maximum value
+
+Parameters:
+    maze(int[][]): the maze that need to be tested for the longest shortest path
+    tile_values(int[]): the values that are passable in the maze
+
+Returns:
+    int: the longest shortest distance in a maze
+"""
 def get_longest_path(maze, tile_values):
     empty_tiles = _get_certain_tiles(maze, tile_values)
     final_visited_map = np.zeros((maze.shape[0], maze.shape[1]))
@@ -89,6 +158,18 @@ def get_longest_path(maze, tile_values):
             final_value = max_value
     return final_value
 
+"""
+Get the distance between two points in a maze
+
+Parameters:
+    maze(int[][]): the maze that need to be tested for distance
+    start_tile([int,int]): the starting x,y position for the distance metric
+    end_tile([int,int]): the ending x,y positon for the distance metric
+    passable_tiles(int[]): the passable tiles in the maze
+
+Returns:
+    int: the distance between the starting tile and ending tile in the maze
+"""
 def get_distance_length(maze, start_tile, end_tile, passable_tiles):
     start_tiles = _get_certain_tiles(maze, [start_tile])
     end_tiles = _get_certain_tiles(maze, [end_tile])
@@ -96,9 +177,21 @@ def get_distance_length(maze, start_tile, end_tile, passable_tiles):
         return -1
     (sx,sy) = start_tiles[0]
     (ex,ey) = end_tiles[0]
-    dikjstra_map, visited_map = _run_dikjstra(sx, sy, maze, passable_tiles)
+    dikjstra_map, _ = _run_dikjstra(sx, sy, maze, passable_tiles)
     return dikjstra_map[ey][ex]
 
+"""
+Get a path between two position as (x,y) locations
+
+Parameters:
+    maze(int[][]): the maze that need to check for path in it
+    start_tile([int,int]): x,y for the starting tile for path finding
+    end_tile([int,int]): x,y for the ending tile for path finding
+    passable_tiles(int[]): the passable tiles in the maze
+
+Returns:
+    [int,int][]: an array of x,y corridnates that connected between start_tile and end_tile
+"""
 def get_path(maze, start_tile, end_tile, passable_tiles):
     maze = np.array(maze)
     start_tiles = _get_certain_tiles(maze, [start_tile])
@@ -107,9 +200,18 @@ def get_path(maze, start_tile, end_tile, passable_tiles):
         return []
     (sx,sy) = start_tiles[0]
     (ex,ey) = end_tiles[0]
-    dikjstra_map, visited_map = _run_dikjstra(sx, sy, maze, passable_tiles)
+    dikjstra_map, _ = _run_dikjstra(sx, sy, maze, passable_tiles)
     return _get_path(dikjstra_map, ex, ey)
 
+"""
+Calculate horizontal symmetric tiles
+
+Parameters:
+    maze(int[][]): the maze that need to be tested for symmetry
+
+Returns:
+    int: get the number of tiles that are symmetric horizontally
+"""
 def get_horz_symmetry(maze):
     symmetry = 0
     for i in range(maze.shape[0]):
@@ -118,6 +220,15 @@ def get_horz_symmetry(maze):
                 symmetry += 1
     return symmetry
 
+"""
+Get the input map modified using all the rotations and flipping
+
+Parameters:
+    map(int[][]): the input map that need to be transformed
+
+Returns:
+    int[][][]: all the possible transformed maps (rotate,flipping)
+"""
 def get_all_transforms(map):
     map = np.array(map)
     results = []
@@ -140,9 +251,29 @@ def get_all_transforms(map):
                 results.append(newMap)
     return results
 
+"""
+Get number of tiles in a maze that are equal to tile_values
+
+Parameters:
+    maze(int[][]): the 2d maze that need to be tested
+    tile_values(int[]): the values that needs to be counted in the maze
+
+Returns:
+    int: return the number of tiles in the map of these values
+"""
 def get_num_tiles(maze, tile_values):
     return len(_get_certain_tiles(maze, tile_values))
 
+"""
+Get a histogram of horizontally connected region lengths
+
+Parameters:
+    maze(int[][]): the maze that need to be tested
+    tile_values(int[]): the values that create groups
+
+Returns:
+    int[]: a histogram of length for the horizontal groups of the same value
+"""
 def get_horz_histogram(maze, tile_values):
     histogram = np.zeros(maze.shape[1])
     for i in range(maze.shape[0]):
@@ -156,6 +287,16 @@ def get_horz_histogram(maze, tile_values):
                     histogram[j - start_index] += 1
     return histogram
 
+"""
+Get a histogram of vertically connected region lengths
+
+Parameters:
+    maze(int[][]): the maze that need to be tested
+    tile_values(int[]): the values that create groups
+
+Returns:
+    int[]: a histogram of length for the vertical groups of the same value
+"""
 def get_vert_histogram(maze, tile_values):
     histogram = np.zeros(maze.shape[0])
     for j in range(maze.shape[1]):
@@ -169,9 +310,34 @@ def get_vert_histogram(maze, tile_values):
                     histogram[i - start_index] += 1
     return histogram
 
+"""
+Get a bin number for a float value between 0 and 1
+
+Parameters:
+    value(float): a float value that needs to be discretized between 0 and bins
+    bins(int): number of bins that are possible
+
+Returns:
+    int: a value between 0 and bins that reflect which discrete value works
+"""
 def discretize(value, bins):
     return int(bins * np.clip(value,0,1)-0.00000001)
 
+"""
+Reshape the reward value to be between 0 and 1 based on a trapizoid
+
+Parameters:
+    value(float): the value that need to be reshaped between 0 and 1
+    min_value(float): the minimum value where the reward is 0 at it
+    plat_low(float): the minimum value where the reward become 1
+    plat_high(float): the maximum value where the rewards stays 1 at. Optional parameter where not provided 
+    equal to plat_low
+    max_value(float): the maximum value where the rewrad is back at 0. Optional parameter where not provided
+    it will be equal to plat_high
+
+Returns:
+    float: a value between 0 and 1 based on where it falls in the trapizoid reward scheme
+"""
 def get_range_reward(value, min_value, plat_low, plat_high = None, max_value = None):
     if max_value == None:
         max_value = plat_high
@@ -187,5 +353,16 @@ def get_range_reward(value, min_value, plat_low, plat_high = None, max_value = N
     if value > plat_high:
         return np.clip((max_value - value) / (max_value - plat_high + 0.00000001), 0.0, 1.0)
 
+"""
+Normalize a value between low and high
+
+Parameters:
+    value(float): the value need to be normalized
+    low(float): the lowest value for the normalization
+    high(float): the highest value for the normalization
+
+Returns:
+    float: the normalized value between 0 and 1
+"""
 def get_normalized_value(value, low, high):
     return (value - low) / (high - low + 0.00000000000001)

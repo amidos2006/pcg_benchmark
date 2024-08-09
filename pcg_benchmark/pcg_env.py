@@ -21,7 +21,7 @@ def _recursiveDiversity(structureContent):
 class PCGEnv:
     """
     Parameters:
-        name(string): the string name that defines the current problem
+        name(str): the string name that defines the current problem
         problem(Problem): a subclass of Problem that need to be solved
     """
     def __init__(self, name, problem):
@@ -37,16 +37,10 @@ class PCGEnv:
     def seed(self, seed):
         self._problem.seed(seed)
 
-    """
-    Modify the parameters for the current problem
-
-    Parameters:
-        kwargs(any): depends on the problem parameters, you can modify them here
-    """
-    def parameters(self, **kwargs):
-        if kwargs.get("seed", None) != None:
-            self.seed(kwargs.get("seed"))
-        self._problem.parameters(**kwargs)
+    # def parameters(self, **kwargs):
+    #     if kwargs.get("seed", None) != None:
+    #         self.seed(kwargs.get("seed"))
+    #     self._problem.parameters(**kwargs)
 
     """
     Generate a group of random content for the current problem
@@ -138,8 +132,9 @@ class PCGEnv:
         contents(any|any[]): a single or an array of contents or infos that need to be evaluated for quality
 
     Returns:
-        float,float[],any[]: percentage of passed content, an array of the quality of each content between 0 and 1, 
-        an array of the info of all the contents that can be cached to speed all the calculations
+        float: percentage of passed content
+        float[]: an array of the quality of each content between 0 and 1
+        any[]: an array of the info of all the contents that can be cached to speed all the calculations
     """
     def quality(self, contents):
         is_array = hasattr(contents, "__len__") and not isinstance(contents, dict)
@@ -171,8 +166,9 @@ class PCGEnv:
         contents(any|any[]): a single or an array of contents or infos that need to be evaluated for diversity
 
     Returns:
-        float,float[],any[]: percentage of passed content, an array of the diversity values for each content 
-        between 0 and 1, an array of the info of all the contents that can be cached to speed all the calculations
+        float: percentage of passed content
+        float[]: an array of the diversity values for each content between 0 and 1
+        any[]: an array of the info of all the contents that can be cached to speed all the calculations
     """
     def diversity(self, contents):
         is_array = hasattr(contents, "__len__") and not isinstance(contents, dict)
@@ -228,8 +224,9 @@ class PCGEnv:
         controls(any|any[]): a single or an array of controls that is used to evaluate the control of the contents
 
     Returns:
-        float,float[],any[]: percentage of passed content, an array of the controlability values for each content 
-        between 0 and 1, an array of the info of all the contents that can be cached to speed all the calculations
+        float: percentage of passed content, 
+        float[]: an array of the controlability values for each content between 0 and 1
+        any[]: an array of the info of all the contents that can be cached to speed all the calculations
     """
     def controlability(self, contents, controls):
         is_array = hasattr(contents, "__len__") and not isinstance(contents, dict)
@@ -265,10 +262,11 @@ class PCGEnv:
         controls(any|any[]): a single or an array of controls that is used to evaluate the control of the contents
 
     Returns:
-        float,float,float,dict[string,float[]],any[]: percentage of quality passed content, 
-        percentage of diversity passed content, percentage of controlability passed content, 
-        a dictionary of float arrays that contains the details for quality, diversity, and controlability, 
-        an array of the info of all the contents that can be cached to speed all the calculations
+        float: percentage of quality passed content
+        float: percentage of diversity passed content
+        float: percentage of controlability passed content 
+        dict[str,float[]]: a dictionary of float arrays that contains the details for quality, diversity, and controlability 
+        any[]: an array of the info of all the contents that can be cached to speed all the calculations
     """
     def evaluate(self, contents, controls):
         infos = self.info(contents)

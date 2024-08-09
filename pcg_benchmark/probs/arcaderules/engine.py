@@ -261,7 +261,9 @@ class Engine:
             if self._content[index]["action"] == 3:
                 obj1["alive"] = False
                 obj2["alive"] = False
-            return self._content[index]["score"] 
+            if self._content[index]["score"] == 3:
+                return 4
+            return self._content[index]["score"]
         return 0
     
     def checkWin(self, score, time):
