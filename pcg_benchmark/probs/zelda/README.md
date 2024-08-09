@@ -1,3 +1,6 @@
+<p align="center">
+	<img height="300px" src="../../../images/talakat/zelda.png"/>
+</p>
 <h1 align="center">
 Zelda Problem
 </h1>

@@ -1,3 +1,6 @@
+<p align="center">
+	<img height="300px" src="../../../images/smb/example.png"/>
+</p>
 <h1 align="center">
 Super Mario Bros Problem
 </h1>

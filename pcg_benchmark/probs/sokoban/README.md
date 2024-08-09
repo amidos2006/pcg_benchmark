@@ -1,3 +1,6 @@
+<p align="center">
+	<img height="300px" src="../../../images/sokoban/example.png"/>
+</p>
 <h1 align="center">
 Sokoban Problem
 </h1>

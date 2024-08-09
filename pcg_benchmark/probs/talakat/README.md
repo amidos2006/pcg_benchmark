@@ -1,3 +1,6 @@
+<p align="center">
+	<img height="300px" src="../../../images/talakat/example.gif"/>
+</p>
 <h1 align="center">
 Talakat Problem
 </h1>

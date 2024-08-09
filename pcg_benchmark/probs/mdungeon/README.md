@@ -1,3 +1,6 @@
+<p align="center">
+	<img height="300px" src="../../../images/mdungeon/example.png"/>
+</p>
 <h1 align="center">
 MiniDungeon Problem
 </h1>

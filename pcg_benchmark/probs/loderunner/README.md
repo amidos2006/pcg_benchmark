@@ -1,3 +1,6 @@
+<p align="center">
+	<img height="300px" src="../../../images/loderunner/example.png"/>
+</p>
 <h1 align="center">
 Lode Runner Problem
 </h1>
