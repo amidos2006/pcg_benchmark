@@ -1,5 +1,5 @@
 <p align="center">
-	<img height="150px" src="../../../images/elimination/example.png"/>
+	<img height="50px" src="../../../images/elimination/example.png"/>
 </p>
 <h1 align="center">
 Elimination Problem
