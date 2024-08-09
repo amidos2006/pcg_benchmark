@@ -105,12 +105,47 @@ As seen in the example, the dictionary has to have the following fields:
     - *3:* add 4 score points
 
 ## Control Parameter
-This is the control parameter of the problem
-Control Parameter Space(int[][]):
-    a 2D layout of a level
+This is the control parameter of the problem. The control parameter is just a 2D array of the layout of solid and empty tiles that the game should function in correctly and be playable. An example is shown down here for 7x7 level problem where 0 is solid and 1 is empty
+```
+1100000
+1111111
+0000011
+1111111
+1100000
+1111111
+0000011
+```
 
 ## Quality Measurement
+To pass the quality criteria, you need to pass multitude of criteria
+- all objects including the player has to be able to be placed on the layout and not on solid tile
+- the game can be won
+- the game can be lost
+- the player should not die in first few steps if they did nothing
+- the do nothing and random agent should lose and never win
+- the best agent should be able to win the game
+- winning the game should take multiple steps and not few ones so the game is challenging
+
+For the quality metric, it is tested against a fixed level that contains 4 lines
+- one in the top 25% of the level centered and 50% of the level length
+- one in the bottom 25% of the level centered and 50% of the level length
+- one on the left with 25% length at the center of the level
+- one on the right with 25% length at the center of the level
+Here is an example on the 7x7 level where 0 is solid and 1 is empty
+```
+1111111
+1100011
+1111111
+0011100
+1111111
+1100011
+1111111
+```
 
 ## Diversity Measurement
+To pass the diversity criteria, you need to pass two main criteria
+- red, green, and yellow objects moving locations should be different between games
+- player moving histogram should be different between games
 
 ## Controlability Measurement
+To pass the controlability criteria, you need to make sure all the objects can be laid correctly without problems

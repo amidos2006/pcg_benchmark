@@ -134,8 +134,17 @@ class ArcadeRulesProblem(Problem):
         return lvl
     
     """
+    get stats and information about the content and return it
+
+    Parameters:
+        content(dict[str,any]): the content that needs to be tested
+
     Returns:
-        dict[str,any]: information about the 
+        dict[str,any]: information about the content that needs to test quality, diversity, controlability
+        "player" x,y location - "red" x,y locations - "green" x,y locations - "yellow" x,y locations -
+        "do_nothing" an array of state, action pairs for the do nothing agent - "random" an array of 
+        state, action pairs for the random agent - "flat_mcts" an array of state, action pairs for the
+        flatmcts agent - "max_time" the maximum time that the game can reach before ending
     """
     def info(self, content):
         player = 0
@@ -209,6 +218,14 @@ class ArcadeRulesProblem(Problem):
         return (stats + winValue + challenge + death) / 4.0
     
     """
+    Measure the diversity between two contents using their infos
+
+    Parameters:
+        info1(dict[str,any]): the first content info
+        info2(dict[str,any]): the second content info
+
+    Returns:
+        float: a value between 0 and 1 where 1 means these two content passed the criteria
     """
     def diversity(self, info1, info2):
         reds_1 = np.zeros((self._height, self._width))
@@ -241,6 +258,14 @@ class ArcadeRulesProblem(Problem):
         return get_range_reward((obj_div + play_div) / 2.0, 0, self._diversity * self._width * self._height, self._width, self._height)
     
     """
+    Calculate the controlability on a content with respect to a control parameter
+
+    Parameters:
+        info(dict[str,any]): 
+        control(int[][]):
+
+    Returns:
+        float: a value between 0 and 1 where 1 means that the content followed the control
     """
     def controlability(self, info, control):
         player = 0
