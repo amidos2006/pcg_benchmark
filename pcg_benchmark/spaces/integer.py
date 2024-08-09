@@ -55,8 +55,6 @@ class IntegerSpace(Space):
     """
     def isSampled(self, value):
         try:
-            if not value.is_integer():
-                return False
             value = int(value)
             return value >= self._min_value and value < self._max_value
         except:
