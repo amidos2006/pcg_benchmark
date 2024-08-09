@@ -1,4 +1,6 @@
-# Arcade Rules Problem
+<h1 align="center">
+Arcade Rules Problem
+</h1>
 Arcade Rules Problem based on the simple framework introduced by Togelius in 2008 in "An Experiment in Automatic Game Design". The goal is to generate new games and test them on a fixed layout or the one provided by the control parameter.
 
 The problem has 3 variants:
