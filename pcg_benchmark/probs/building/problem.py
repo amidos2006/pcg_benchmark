@@ -65,10 +65,10 @@ class BuildingProblem(Problem):
         self._width = kwargs.get("width")
         self._length = kwargs.get("length")
         self._height = kwargs.get("height")
-
+        self._target = kwargs.get("blocks", self._width * self._length * self._height / 9)
+        self._min_height = kwargs.get("minHeight", 0.5)
         self._diversity = kwargs.get("diversity", 0.4)
 
-        self._target = int(self._width * self._length * self._height / 9)
         self._cerror = max(1, int(0.05 * self._target))
 
         self._content_space = ArraySpace((self._target), DictionarySpace({
@@ -117,7 +117,7 @@ class BuildingProblem(Problem):
         target = get_range_reward(info["blocks"], 0, self._target)
         min_height = 0
         if target >= 1:
-            min_height = get_range_reward(min(info["heights"]), 0, 0.5 * self._height, self._height)
+            min_height = get_range_reward(min(info["heights"]), 0, self._min_height * self._height, self._height)
         return (target + min_height) / 2
     
     def diversity(self, info1, info2):
@@ -125,7 +125,7 @@ class BuildingProblem(Problem):
         diversity += abs(info1["lvl_1x3"] - info2["lvl_1x3"]).sum()
         diversity += abs(info1["lvl_3x1"] - info2["lvl_3x1"]).sum()
         diversity += abs(info1["lvl_3x3"] - info2["lvl_3x3"]).sum()
-        return get_range_reward(diversity / 4, 0, self._diversity * self._width * self._length * self._height,\
+        return get_range_reward(diversity, 0, self._diversity * self._width * self._length * self._height,\
             self._width * self._length * self._height)
 
     def controlability(self, info, control):
@@ -146,12 +146,12 @@ class BuildingProblem(Problem):
         ]
         mask = Image.open(os.path.dirname(__file__) + "/images/1x1.png").convert('RGBA')
         lvl, _, _ = _simulate(content, self._width, self._length, self._height)
-        image = Image.new("RGBA", (int((self._width + self._length)*scale_x / 2), int((self._height+ self._length+ self._width+1)*scale_y/2)), (0,0,0,255))
-        shift_x, shift_y = (self._length-1)*scale_x/2, (self._height-1)*scale_y/2
+        image = Image.new("RGBA", (int((self._width + self._length)*scale_x / 2), int((2*self._height+ self._length+ self._width+1)*scale_y/2)), (0,0,0,255))
+        shift_x, shift_y = (self._length-1)*scale_x/2, (self._height-1)*scale_y
         for x in range(self._width):
             for y in range(self._length):
                 for z in range(self._height):
-                    sx, sy = int((x-y)*scale_x/2+shift_x), int((x+y-z)*scale_y/2+shift_y)
+                    sx, sy = int((x-y)*scale_x/2+shift_x), int((x+y-2*z)*scale_y/2+shift_y)
                     if lvl[z][y][x] > 0:
                         graphics[lvl[z][y][x]-1].putalpha(255 - int(100 * y/self._length))
                         image.paste(graphics[lvl[z][y][x]-1], (sx, sy, sx+16, sy+16), mask)

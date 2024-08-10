@@ -5,7 +5,7 @@
 Arcade Rules Problem
 </h1>
 
-Arcade Rules Problem based on the simple framework introduced by Togelius in 2008 in "An Experiment in Automatic Game Design". The goal is to generate new games and test them on a fixed layout or the one provided by the control parameter.
+Arcade Rules Problem based on the simple framework introduced by Togelius in 2008 in ["An Experiment in Automatic Game Design"](http://julian.togelius.com/Togelius2008An.pdf). The goal is to generate new games and test them on a fixed layout or the one provided by the control parameter.
 
 The problem has 3 variants:
 - `arcade-v0`: generate a group of rules and test them on a 7x7 level excluding the borders
@@ -14,7 +14,7 @@ The problem has 3 variants:
 
 ## Content Structure
 The content is a dictionary that has all the information about the current evolved game. Here is an example of the content that can be evaluated by the system:
-```json
+```python
 {
     "seed": 124578,
     "x": 3,
@@ -112,24 +112,26 @@ As seen in the example, the dictionary has to have the following fields:
 
 ## Control Parameter
 This is the control parameter of the problem. The control parameter is just a 2D array of the layout of solid and empty tiles that the game should function in correctly and be playable. An example is shown down here for 7x7 level problem where 0 is solid and 1 is empty
-```
-1100000
-1111111
-0000011
-1111111
-1100000
-1111111
-0000011
+```python
+[
+    [1,1,0,0,0,0,0],
+    [1,1,1,1,1,1,1],
+    [0,0,0,0,0,1,1],
+    [1,1,1,1,1,1,1],
+    [1,1,0,0,0,0,0],
+    [1,1,1,1,1,1,1],
+    [0,0,0,0,0,1,1]
+]
 ```
 
 ## Adding a new Variant
 If you want to add new variants for this framework, you can add it to [`__init__.py`](https://github.com/amidos2006/pcg_benchmark/blob/main/pcg_benchmark/probs/arcaderules/__init__.py) file. To add new variant please try to follow the following name structure `arcade-{variant}-{version}` where `{version}` if first time make sure it is `v0`. The following parameter can be changed to create the variant:
 - `width(int)`: the width of the level that need to be tested against for the rule set
 - `height(int)`: the height of the level that need to be tested against for the rule set
-- `diversity(float)`: the diversity percentage that if passes it it is 1 (optional=0.4) 
 - `safety(float)`: the safety percentage that the do nothing agent need to not die until (optional=0.15) 
 - `minToDeath(float)`: the minimum percentage that random and agent need to lose in (optional=0.4)
 - `minToWin(float)`: the minimum percentage of steps needed for the flatmcts agent to take before winning (optional=0.75) 
+- `diversity(float)`: the diversity percentage that if passes it it is 1 (optional=0.4) 
 
 ## Quality Measurement
 To pass the quality criteria, you need to pass multitude of criteria
@@ -147,14 +149,16 @@ For the quality metric, it is tested against a fixed level that contains 4 lines
 - one on the left with 25% length at the center of the level
 - one on the right with 25% length at the center of the level
 Here is an example on the 7x7 level where 0 is solid and 1 is empty
-```
-1111111
-1100011
-1111111
-0011100
-1111111
-1100011
-1111111
+```python
+[
+    [1,1,1,1,1,1,1],
+    [1,1,0,0,0,1,1],
+    [1,1,1,1,1,1,1],
+    [0,0,1,1,1,0,0],
+    [1,1,1,1,1,1,1],
+    [1,1,0,0,0,1,1],
+    [1,1,1,1,1,1,1]
+]
 ```
 
 ## Diversity Measurement

@@ -10,8 +10,9 @@ class BinaryProblem(Problem):
         Problem.__init__(self, **kwargs)
         self._width = kwargs.get("width")
         self._height = kwargs.get("height")
+        self._target = kwargs.get("path", self._width + self._height)
         self._diversity = kwargs.get("diversity", 0.4)
-        self._target = int(kwargs.get("path", 1.0) * (self._width + self._height))
+
         self._cerror = max(int(self._target * 0.25), 1)
         self._content_space = ArraySpace((self._height, self._width), IntegerSpace(2))
         self._control_space = DictionarySpace({"path": IntegerSpace(self._target + self._cerror, int(self._width * self._height / 2))})

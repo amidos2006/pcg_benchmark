@@ -181,11 +181,16 @@ class Engine:
         self._content = content
         self._maxTime = maxTime
         self._layout = np.pad(np.array(layout), 1)
+        needDijkstra = False
+        for key in ["red", "green", "yellow"]:
+            if (self._content[key] == 6 or self._content[key] == 7) and self._content[f"{key}Start"]["num"] > 0:
+                needDijkstra = True
         self._dikjstra = {}
-        for y in range(self._layout.shape[0]):
-            for x in range(self._layout.shape[1]):
-                if self._layout[y][x] == 1:
-                    self._dikjstra[f"{x},{y}"] = _run_dikjstra(x, y, self._layout, [1])[0]
+        if needDijkstra:
+            for y in range(self._layout.shape[0]):
+                for x in range(self._layout.shape[1]):
+                    if self._layout[y][x] == 1:
+                        self._dikjstra[f"{x},{y}"] = _run_dikjstra(x, y, self._layout, [1])[0]
     
     def initialize(self):
         self._random = np.random.default_rng(self._content["seed"])

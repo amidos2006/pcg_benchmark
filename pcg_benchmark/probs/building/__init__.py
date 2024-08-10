@@ -1,8 +1,8 @@
 from pcg_benchmark.probs.building.problem import BuildingProblem
 
 PROBLEMS = {
-    "building-v0": (BuildingProblem, {"width": 6, "length": 6, "height": 12}),
-    "building-large-v0": (BuildingProblem, {"width": 12, "length": 12, "height": 12}),
-    "building-tall-v0": (BuildingProblem, {"width": 6, "length": 6, "height": 24}),
-    "building-huge-v0": (BuildingProblem, {"width": 12, "length": 12, "height": 24}),
+    "building-v0": (BuildingProblem, {"width": 7, "length": 7, "height": 12, "blocks": 40}),
+    "building-large-v0": (BuildingProblem, {"width": 11, "length": 11, "height": 12, "blocks": 180}),
+    "building-tall-v0": (BuildingProblem, {"width": 7, "length": 7, "height": 24, "blocks": 80}),
+    "building-huge-v0": (BuildingProblem, {"width": 11, "length": 11, "height": 24, "blocks": 360}),
 }

@@ -48,6 +48,10 @@ class ArcadeRulesProblem(Problem):
 
         self._width = kwargs.get("width")
         self._height = kwargs.get("height")
+        self._diversity = kwargs.get("diversity", 0.25)
+        self._s_target = kwargs.get("safety", 0.15)
+        self._d_target = kwargs.get("minToDeath", 0.4)
+        self._target = kwargs.get("minToWin", 0.75)
 
         self._layout = np.ones((self._height, self._width))
         for x in range(math.ceil(0.25 * self._width), math.floor(self._width - 0.25 * self._width)):
@@ -56,11 +60,6 @@ class ArcadeRulesProblem(Problem):
         for x in range(0, math.floor(0.3 * self._width)):
             self._layout[int(0.5 * self._height)][x] = 0
             self._layout[int(0.5 * self._height)][self._width - x - 1] = 0
-        
-        self._diversity = kwargs.get("diversity", 0.25)
-        self._s_target = kwargs.get("safety", 0.15)
-        self._d_target = kwargs.get("minToDeath", 0.4)
-        self._target = kwargs.get("minToWin", 0.75)
 
         temp = {
             "x": IntegerSpace(self._width),
