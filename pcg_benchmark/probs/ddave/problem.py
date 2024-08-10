@@ -51,10 +51,10 @@ class DangerDaveProblem(Problem):
 
         self._content_space = ArraySpace((self._height, self._width), IntegerSpace(7))
         self._control_space = DictionarySpace({
-            "sx": IntegerSpace(1, self._width + 1), 
-            "sy": IntegerSpace(int(self._height / 2) + 2, self._height + 1),
-            "ex": IntegerSpace(1, self._width + 1),
-            "ey": IntegerSpace(1, int(self._height/2)),
+            "sx": IntegerSpace(self._width), 
+            "sy": IntegerSpace(int(self._height / 2) + 2, self._height),
+            "ex": IntegerSpace(self._width),
+            "ey": IntegerSpace(int(self._height/2)),
             "diamonds": IntegerSpace(0, min(self._width, self._height))
         })
 

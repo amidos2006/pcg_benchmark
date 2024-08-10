@@ -4,6 +4,7 @@
 <h1 align="center">
 Building Problem
 </h1>
+
 The building problem is inspired by Jiang et al. work ["Learning Controllable 3D Level Generators"](https://arxiv.org/abs/2206.13623). The goal is to create a building in a 3D space using 4 different type of lego blocks (1x1, 1x3, 3x1, 3x3). All the lego block should be able to be used and the minimum height of the building should be more than a percentage of the maximum height of the 3D area.
 
 The problem has 4 variants:
@@ -13,7 +14,7 @@ The problem has 4 variants:
 - `building-huge-v0`: generate a 3d building with max size of 11x11x24 using 360 blocks with min percentage height of 50% (12).
 
 ## Content Structure
-The content is an array of objects that represents falling Tetris blocks. Each object has `x(int)`, `y(int)`, and `type(int)`. Here is an example using 12 blocks only in the 7x7x12 space
+The content is an array of objects that represents falling Tetris **blocks**. Each object has `x(int)`, `y(int)`, and `type(int)`. Here is an example using 12 blocks only in the 7x7x12 space
 ```python
 [
     {
