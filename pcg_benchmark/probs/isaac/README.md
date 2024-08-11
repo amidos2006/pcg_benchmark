@@ -25,7 +25,7 @@ The content is json object of multiple values that represent the dungeon layout 
 ```
 To explain more about the content here are the main attributes:
 - `layout(int[])`: is a 1D array of length equal to the full size of the map (`width`x`height`) where it is a flatten array of that map. If the value is `0` it means that there is no room, otherwise it can have a value between 1 to 15 which represents the connections to the surrounding rooms as the following:
-    - *1:* <img src="images/room_1.png/>
+    - *1:* <img src="./images/room_1.png/>
     - *2:* <img src="images/room_2.png/>
     - *3:* <img src="images/room_3.png/>
     - *4:* <img src="images/room_4.png/>
