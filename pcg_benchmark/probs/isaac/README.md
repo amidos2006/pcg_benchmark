@@ -1,8 +1,3 @@
-<style>
-    img {
-        image-rendering: pixelated;
-    }
-</style>
 <p align="center">
 	<img height="300px" src="../../../images/isaac/example.png"/>
 </p>
