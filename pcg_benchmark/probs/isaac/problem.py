@@ -74,11 +74,11 @@ class IsaacProblem(Problem):
 
         dead_end = 0
         for v in [0x1, 0x2, 0x4, 0x8]:
-            if content["layout"][content["boss"]] & v:
+            if content["layout"][content["boss"]] == v:
                 dead_end += 1
-            if content["layout"][content["treasure"]] & v:
+            if content["layout"][content["treasure"]] == v:
                 dead_end += 1
-            if content["layout"][content["shop"]] & v:
+            if content["layout"][content["shop"]] == v:
                 dead_end += 1
 
         return {

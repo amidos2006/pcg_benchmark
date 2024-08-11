@@ -65,3 +65,15 @@ To pass the diversity criteria, you need the solution heatmap between the two le
 
 ## Controlability Measurement
 To pass the controlability criteria, you need the starting and ending location of the player at certain locations and the number of reachable diamonds equal to the control parameter values.
+
+## Content Info
+This is all the info that you can get about any content using the `info` function:
+- `players(int)`: number of player tiles in the map 
+- `exits(int)`: number of exit tiles in the map 
+- `diamonds(int)`: number of diamond tiles in the map
+- `keys(int)`: number of key tiles in the map
+- `player_locations((int,int)[])`: a tuple array of the all the x,y locations of all the player tiles on the map
+- `exit_locations((int,int)[])`: a tuple array of the all the x,y locations of all the exit tiles on the map
+- `diamond_reachable(float[])`: an array of values where each value tells you how close the player is to collect a specific diamond (0 means they have collected that diamond), 
+- `heuristic(float)`: a value that tells you how close the player to winning (0 if the player won the game), 
+- `solution(dict[str,int][])`: an array of the actions needed to solve the level if this is possible

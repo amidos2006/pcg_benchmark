@@ -169,3 +169,10 @@ To pass the diversity criteria, you need to pass two main criteria
 ## Controlability Measurement
 To pass the controlability criteria, you need to make sure all the objects can be laid correctly without problems.
 
+## Content Info
+This is all the info that you can get about any content using the `info` function:
+- `x(int)`: the player x location
+- `y(int)`: the player y location
+- `red(dict[str,int][])` | `green(dict[str,int][])` | `yellow(dict[str,int][])`: an array of the available object locations based on color. The objects of the array is a simple dictionary of `x` and `y` keys. 
+- `do_nothing((State,dict[str,int])[])` | `random((State,dict[str,int])[])` | `flat_mcts((State,dict[str,int])[])`: the playtrace of a specific agent (`DoNothing`, `Random`, or `FlatMCTS`). The playtrace is a 1D array of tuple where the first one is the state and the second one is the action where the last action is always `None` because the game has ended.
+- `max_time(int)`: the max time the game is allowed to run (set to 40 steps)

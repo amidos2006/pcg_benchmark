@@ -55,7 +55,11 @@ The content is an array of objects that represents falling Tetris **blocks**. Ea
     }
 ]
 ```
-if the `x` or `y` of dropping is bigger or smaller than `width` or `height` then they get adjusted to be in the same sized area.
+if the `x` or `y` of dropping is bigger or smaller than `width` or `height` then they get adjusted to be in the same sized area. There is 4 types of blocks:
+- *0:* 1x1 block
+- *1:* 1x3 block
+- *2:* 3x1 block
+- *3:* 3x3 block
 
 ## Control Parameter
 The control parameter provides the number of different blocks that can be used to build the building. It is like building a building with limited lego pieces. Here is an example for total of 40 blocks
@@ -87,3 +91,10 @@ To pass the diversity criteria, you need the input levels have at least 40% diff
 
 ## Controlability Measurement
 To pass the controlability criteria, you need the blocks used in the content to be equal to the control parameter values.
+
+## Content Info
+This is all the info that you can get about any content using the `info` function:
+- `blocks(int)`: the amount of blocks that were able to be placed in the space
+- `heights(int[])`: an integer array of the different height values of the different location on the map
+- `lvl_1x1(int[][][])`|`lvl_1x3(int[][][])`|`lvl_3x1(int[][][])`|`lvl_3x3(int[][][])`: a 3D array that showcase each block type in space without the others
+- `1x1(int)`|`1x3(int)`|`3x1(int)`|`3x3(int)`: the number of different block types used in the problem

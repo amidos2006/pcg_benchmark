@@ -13,7 +13,7 @@ The problem has 3 variants:
 - `elimination-hard-v0`: generate a sequence of 10 letters for the game elimination with 0% to 40% short words and 0% to 30% long words.
 
 ## Content Structure
-The content is a 1D array of integers where the number is which letter in the alphabet. For example, this is an example with 8 letters which are "LKISDETS"
+The content is a 1D array of integers where the number is which letter in the alphabet (0 is **A** and 25 is **Z**). For example, this is an example with 8 letters which are "LKISDETS"
 ```python
 [ 11, 10, 8, 18, 3, 4, 19, 18 ]
 ```
@@ -48,3 +48,7 @@ To pass the diversity criteria, you need the sequence distance ratio between two
 
 ## Controlability Measurement
 To pass the controlability criteria, you need to make sure that none of the words have a sequence of letters follow each other that is more than the control parameter criteria.
+
+## Content Info
+This is all the info that you can get about any content using the `info` function:
+- `word_3((str,int,bool)[])`|`word_4((str,int,bool)[])`|....|`word_n((str,int,bool)[])`: a list of tuple that consists of 3 values: the word, the longest sequence of that word exists in the letters provided, and if the word is common or not. The value after `word_` is the number of letters this word is consisting of.

@@ -58,3 +58,9 @@ To pass the diversity criteria, you need the input levels have at least 40% diff
 
 ## Controlability Measurement
 To pass the controlability criteria, you need the path length (the longest shortest path) close to the control parameter `path` value.
+
+## Content Info
+This is all the info that you can get about any content using the `info` function:
+- `path(int)`: the value longest shortest path in the maze 
+- `regions(int)`: the number of connected empty regions in the maze
+- `flat(int[])`: the maze as a flat 1D binary array

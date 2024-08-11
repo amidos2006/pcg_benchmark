@@ -28,6 +28,8 @@ To understand how to add new problems to the framework, please check the main [R
 
 ## Running Generators
 
+## Environment Functions
+
 ## Contributing
 Bug reports and pull requests are welcome on GitHub at [https://github.com/amidos2006/pcg_benchmark/](https://github.com/amidos2006/pcg_benchmark/).
 

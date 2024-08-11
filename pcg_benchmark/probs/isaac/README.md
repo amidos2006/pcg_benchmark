@@ -69,3 +69,13 @@ To pass the diversity criteria, you need to have a dungeon layout different from
 
 ## Controlability Measurement
 To pass the controlability criteria, you need to make sure that the number of rooms is equal to the control parameter `map_size`.
+
+## Content Info
+This is all the info that you can get about any content using the `info` function:
+- `map_size`: number of rooms in the map
+- `num_regions`: number of regions of the dungeon if all the rooms were fully connected rooms (value 15)
+- `connect_regions`: number of regions of the dungeon
+- `loose_connections(int)`: number of room connections that are not connected to any room
+- `locations(int)`: number of special rooms (`boss`, `treasure`, `shop`, `start`) that are in unique room in the dungeon 
+- `flat(int[])`: flat version of the converting the dungeon layout to 2d binary maze.
+- `dead_end(int)`: number of dead end rooms that have a special room (`boss`, `treasure`, `shop`)
