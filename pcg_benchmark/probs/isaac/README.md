@@ -26,20 +26,20 @@ The content is json object of multiple values that represent the dungeon layout 
 To explain more about the content here are the main attributes:
 - `layout(int[])`: is a 1D array of length equal to the full size of the map (`width`x`height`) where it is a flatten array of that map. If the value is `0` it means that there is no room, otherwise it can have a value between 1 to 15 which represents the connections to the surrounding rooms as the following:
     - *1:* <img width="24px" src="images/room_1.png"/>
-    - *2:* <img src="images/room_2.png"/>
-    - *3:* <img src="images/room_3.png"/>
-    - *4:* <img src="images/room_4.png"/>
-    - *5:* <img src="images/room_5.png"/>
-    - *6:* <img src="images/room_6.png"/>
-    - *7:* <img src="images/room_7.png"/>
-    - *8:* <img src="images/room_8.png"/>
-    - *9:* <img src="images/room_9.png"/>
-    - *10:* <img src="images/room_10.png"/>
-    - *11:* <img src="images/room_11.png"/>
-    - *12:* <img src="images/room_12.png"/>
-    - *13:* <img src="images/room_13.png"/>
-    - *14:* <img src="images/room_14.png"/>
-    - *15:* <img src="images/room_15.png"/>
+    - *2:* <img width="24px" src="images/room_2.png"/>
+    - *3:* <img width="24px" src="images/room_3.png"/>
+    - *4:* <img width="24px" src="images/room_4.png"/>
+    - *5:* <img width="24px" src="images/room_5.png"/>
+    - *6:* <img width="24px" src="images/room_6.png"/>
+    - *7:* <img width="24px" src="images/room_7.png"/>
+    - *8:* <img width="24px" src="images/room_8.png"/>
+    - *9:* <img width="24px" src="images/room_9.png"/>
+    - *10:* <img width="24px" src="images/room_10.png"/>
+    - *11:* <img width="24px" src="images/room_11.png"/>
+    - *12:* <img width="24px" src="images/room_12.png"/>
+    - *13:* <img width="24px" src="images/room_13.png"/>
+    - *14:* <img width="24px" src="images/room_14.png"/>
+    - *15:* <img width="24px" src="images/room_15.png"/>
 - `start(int)`|`boss(int)`|`shop(int)`|`treasure(int)`: is an index between 0 and map area (`width`x`height`) that represent the index of which room in the 1D layout array.
 
 ## Control Parameter
