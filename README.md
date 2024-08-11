@@ -14,8 +14,10 @@ PCG Benchmark
 
 ## Problems
 The framework supports multitude of problems that can be found at [https://github.com/amidos2006/pcg_benchmark/tree/main/pcg_benchmark/probs](https://github.com/amidos2006/pcg_benchmark/tree/main/pcg_benchmark/probs). To understand more about each problem go to any of their folders and check the README files. Here a list of the current 12 problems:
-- [Arcade Rules](https://github.com/amidos2006/pcg_benchmark/blob/main/pcg_benchmark/probs/arcaderules/README.md): create a small rule set for a simple arcade game (`arcade-v0`)
-- [Binary](https://github.com/amidos2006/pcg_benchmark/blob/main/pcg_benchmark/probs/binary/README.md): create a simple 2D fully connected maze (`binary-v0`)
+| Name | Description | Environment |
+| ---- | ----------- | ----------- |
+| [Arcade Rules](https://github.com/amidos2006/pcg_benchmark/blob/main/pcg_benchmark/probs/arcaderules/README.md) | create a small rule set for a simple arcade game | `arcade-v0` |
+| [Binary](https://github.com/amidos2006/pcg_benchmark/blob/main/pcg_benchmark/probs/binary/README.md) | create a simple 2D fully connected maze | `binary-v0` |
 - [Building](https://github.com/amidos2006/pcg_benchmark/blob/main/pcg_benchmark/probs/building/README.md): create an isometric building of using different falling cubes (`building-v0`)
 - [Dangerous Dave](https://github.com/amidos2006/pcg_benchmark/blob/main/pcg_benchmark/probs/ddave/README.md): create a playable dangeroud dave level (`ddave-v0`)
 - [Elimination](https://github.com/amidos2006/pcg_benchmark/blob/main/pcg_benchmark/probs/elimination/README.md): create a playable elimination word game level (`elimination-v0`)
