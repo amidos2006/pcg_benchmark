@@ -47,4 +47,4 @@ To pass the quality criteria, you need to pass multiple of criteria
 To pass the diversity criteria, you need the sequence distance ratio between two content more than the diversity parameter.
 
 ## Controlability Measurement
-To pass the controlability criteria, you need to make sure than none of the words have a sequence of letters follow each other that is more than the control parameter criteria.
+To pass the controlability criteria, you need to make sure that none of the words have a sequence of letters follow each other that is more than the control parameter criteria.

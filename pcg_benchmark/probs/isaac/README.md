@@ -58,9 +58,14 @@ If you want to add new variants for this framework, you can add it to [`__init__
 - `diversity(float)`: the diversity percentage that if you pass it, the diversity value is equal to 1 (optional=0.6)
 
 ## Quality Measurement
-
+To pass the quality criteria, you need to pass multiple of criteria
+- The rooms need to be close to each other where there is no isolate rooms far away from the others
+- The connections should create a fully connected dungeon
+- All the special rooms `start`, `boss`, `shop`, and `treasure` need to exist in a different unique room in the dungeon.
+- No more loose connections which means all connections have to lead to a room and not to an empty area.
 
 ## Diversity Measurement
-
+To pass the diversity criteria, you need to have a dungeon layout different from each other either based on number of rooms or connection or both.
 
 ## Controlability Measurement
+To pass the controlability criteria, you need to make sure that the number of rooms is equal to the control parameter `map_size`.
