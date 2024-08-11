@@ -24,10 +24,11 @@ class EliminationProblem(Problem):
     def __init__(self, **kwargs):
         Problem.__init__(self, **kwargs)
 
+        self._letters = kwargs.get("letters")
         self._short_percentage = kwargs.get("short_percentage")
         self._long_percentage = kwargs.get("long_percentage")
-        self._diversity = kwargs.get("diversity", 0.6)
         self._offset = kwargs.get("offset", 0.2)
+        self._diversity = kwargs.get("diversity", 0.6)
 
         f = open(os.path.dirname(__file__) + "/dictionary.txt")
         lines = f.readlines()
@@ -50,31 +51,28 @@ class EliminationProblem(Problem):
             self._common_words[word] = frequency
         f.close()
 
-        self._content_space = ArraySpace((8,), IntegerSpace(26))
-        self._control_space = DictionarySpace({"sequence": IntegerSpace(3, 6)})
+        self._content_space = ArraySpace((self._letters,), IntegerSpace(26))
+        self._control_space = DictionarySpace({"sequence": IntegerSpace(2, self._letters)})
 
     def info(self, content):
         letters = []
         for c in content:
             letters.append(chr(97 + c))
         all_words = _getWords(letters, self._dictionary)
-        words_3 = []
-        words_4 = []
-        words_5 = []
-        words_6 = []
-        words_7 = []
-        words_8 = []
-        final_words = [words_3, words_4, words_5, words_6, words_7, words_8]
+        final_words = []
+        for _ in range(self._letters - 2):
+            final_words.append([])
         for w,seq in all_words:
             is_common = 0
             if w in self._common_words:
                 is_common = 1
             final_words[len(w) - 3].append((w, seq, is_common))
-        return {
-            "words_3": words_3, "words_4": words_4, "words_5": words_5, 
-            "words_6": words_6, "words_7": words_7, "words_8": words_8,
+        result = {
             "total": len(all_words), "word": "".join(letters)
         }
+        for i in range(self._letters - 2):
+            result[f"world_{i+3}"] = final_words[i]
+        return result
     
     def quality(self, info):
         short_word_common = 0
@@ -90,8 +88,9 @@ class EliminationProblem(Problem):
                 long_word_common += w[2]
                 tlong_word_common += 1
         tunallowed_words = 0
-        for i in range(7,9):
-            tunallowed_words += 1
+        for i in range(7,self._letters):
+            if len(info[f"words_{i}"]) > 0:
+                tunallowed_words += 1
         constraints = get_range_reward(tshort_word_common, 0, 1, info["total"]) +\
                         get_range_reward(tlong_word_common, 0, 1, info["total"]) +\
                         get_range_reward(tunallowed_words, 0, 0, 0, info["total"])

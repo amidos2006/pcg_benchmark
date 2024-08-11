@@ -5,24 +5,46 @@
 Elimination Problem
 </h1>
 
+This is the generation problem for the game [Elimination](http://akhalifa.com/elimination/), you can read about the original generator in ["Elimination from Design to Analysis"](https://arxiv.org/abs/1905.06379). The problem is to generate a sequence of letter that can create at least one short word (3, 4 in length), one long word (5, 6 in length) and nothing longer. Each variant have more additional constraints to make either an easy, normal, or hard level based on how many short and longer words.
+
 The problem has 3 variants:
-- 
--
--
+- `elimination-v0`: generate a sequence of 8 letters for the game elimination with 30% to 70% of words are short and 10% to 50% are long words
+- `elimination-easy-v0`: generate a sequence of 6 letters for the game elimination with 60% to 100% short words and 30% to 70% long words.
+- `elimination-hard-v0`: generate a sequence of 10 letters for the game elimination with 0% to 40% short words and 0% to 30% long words.
 
 ## Content Structure
-
+The content is a 1D array of integers where the number is which letter in the alphabet. For example, this is an example with 8 letters which are "LKISDETS"
+```python
+[ 11, 10, 8, 18, 3, 4, 19, 18 ]
+```
 
 ## Control Parameter
-
+The control parameter is one parameter on how much of a word have letters after each other and not more. Here is an example where 4 letters has to come after each other to form a word. For example `APPLXE` where it has `APPL` as a sequence from the word `APPLE` after each other. You can't have anything more than 4.
+```python
+{
+    "sequence": 4
+}
+```
+The value of sequence is between 2 and letters.
 
 ## Adding a new Variant
-
+If you want to add new variants for this framework, you can add it to [`__init__.py`](https://github.com/amidos2006/pcg_benchmark/blob/main/pcg_benchmark/probs/elimination/__init__.py) file. To add new variant please try to follow the following name structure `elimination-{variant}-{version}` where `{version}` if first time make sure it is `v0`. The following parameter can be changed to create the variant:
+- `letters(int)`: the number of letters for the problem
+- `short_percentage(float)`: the percentage of short words (3, 4 letter words) that can be constructed from the sequence of letters
+- `long_percentage(float)`: the percentage of short words (5, 6 letter words) that can be constructed from the sequence of letters
+- `offset(float)`: the size of the short and long percentage. For example if the offset is 0.1 and short percentage is 0.6 then the range is [0.5, 0.7] (optional=0.2)
+- `diversity(float)`: the diversity percentage that if you pass it, the diversity value is equal to 1 (optional=0.6)
 
 ## Quality Measurement
-
+To pass the quality criteria, you need to pass multiple of criteria
+- the letters can construct at least one short word (3, 4 letter word)
+- the letters can construct at least one long word (5, 6 letter word)
+- the letters can't construct any longer words (7, 8, 9, 10 letter word)
+- the common short words percentage should be in the short percentage range [short_percentage-offset, short_percentage+offset]
+- the common long words percentage should be in the long percentage range [long_percentage-offset, long_percentage+offset]
 
 ## Diversity Measurement
-
+To pass the diversity criteria, you need the sequence distance ratio between two content more than the diversity parameter.
 
 ## Controlability Measurement
+To pass the controlability criteria, you need to make sure than none of the words have a sequence of letters follow each other that is more than the control parameter criteria.

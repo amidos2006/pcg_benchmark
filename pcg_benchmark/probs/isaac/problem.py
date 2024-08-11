@@ -12,9 +12,9 @@ class IsaacProblem(Problem):
         self._width = kwargs.get("width")
         self._height = kwargs.get("height")
 
+        self._target = kwargs.get("map_size", 6)
         self._diversity = kwargs.get("diversity", 0.6)
 
-        self._target = 6
         self._cerror = 0.2 * self._width * self._height
 
         self._content_space = DictionarySpace({

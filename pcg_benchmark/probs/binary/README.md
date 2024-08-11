@@ -46,7 +46,7 @@ If you want to add new variants for this framework, you can add it to [`__init__
 - `width(int)`: the width of the maze
 - `height(int)`: the height of the maze
 - `path(float)`: the target path length (optional=width+height)
-- `diversity(float)`: the diversity percentage that if passes it it is 1 (optional=0.4) 
+- `diversity(float)`: the diversity percentage that if you pass it, the diversity value is equal to 1 (optional=0.4) 
 
 ## Quality Measurement
 To pass the quality criteria, you need to pass two of criteria

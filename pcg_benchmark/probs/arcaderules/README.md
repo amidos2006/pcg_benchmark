@@ -131,7 +131,7 @@ If you want to add new variants for this framework, you can add it to [`__init__
 - `safety(float)`: the safety percentage that the do nothing agent need to not die until (optional=0.15) 
 - `minToDeath(float)`: the minimum percentage that random and agent need to lose in (optional=0.4)
 - `minToWin(float)`: the minimum percentage of steps needed for the flatmcts agent to take before winning (optional=0.75) 
-- `diversity(float)`: the diversity percentage that if passes it it is 1 (optional=0.4) 
+- `diversity(float)`: the diversity percentage that if you pass it, the diversity value is equal to 1 (optional=0.4) 
 
 ## Quality Measurement
 To pass the quality criteria, you need to pass multitude of criteria

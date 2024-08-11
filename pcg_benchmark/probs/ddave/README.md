@@ -52,7 +52,7 @@ If you want to add new variants for this framework, you can add it to [`__init__
 - `height(int)`: the height of the level
 - `jumps(int)`: the minimum number of jumps that has to be in the solution
 - `solver(int)`: the solver power for checking level solvability, the higher the better but also the slower (optional=5000)
-- `diversity(float)`: the diversity percentage that if passes it it is 1 (optional=0.4)
+- `diversity(float)`: the diversity percentage that if you pass it, the diversity value is equal to 1 (optional=0.4)
 
 ## Quality Measurement
 To pass the quality criteria, you need to pass multiple of criteria
