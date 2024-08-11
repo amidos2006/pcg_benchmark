@@ -15,8 +15,9 @@ class LodeRunnerProblem(Problem):
         self._gold = kwargs.get("gold")
         self._enemies = kwargs.get("enemies")
 
+        self._target = kwargs.get("exploration",  0.4)
         self._diversity = kwargs.get("diversity", 0.4)
-        self._target = 0.4
+        
         
         self._walking = np.zeros(self._width)
         self._hanging = np.zeros(self._width)

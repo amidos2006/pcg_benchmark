@@ -1,3 +1,6 @@
+<p align="center">
+  <img height="300px" src="images/logo.png"/>
+</p>
 <h1 align="center">
 PCG Benchmark
 </h1>
