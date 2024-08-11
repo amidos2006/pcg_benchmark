@@ -43,7 +43,7 @@ To explain more about the content here are the main attributes:
 - `start(int)`|`boss(int)`|`shop(int)`|`treasure(int)`: is an index between 0 and map area (`width`x`height`) that represent the index of which room in the 1D layout array.
 
 ## Control Parameter
-
+The control parameter is a simple one value which is the number of rooms used in the dungeon.
 ```python
 {
     "map_size": 40
