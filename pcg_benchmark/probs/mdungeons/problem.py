@@ -1,7 +1,7 @@
 from pcg_benchmark.probs import Problem
 from pcg_benchmark.spaces import ArraySpace, DictionarySpace, IntegerSpace
 from pcg_benchmark.probs.utils import get_number_regions, get_num_tiles, get_range_reward
-from pcg_benchmark.probs.mdungeon.engine import State,BFSAgent,AStarAgent
+from pcg_benchmark.probs.mdungeons.engine import State,BFSAgent,AStarAgent
 import numpy as np
 from PIL import Image
 from difflib import SequenceMatcher
