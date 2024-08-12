@@ -85,6 +85,58 @@ The framework supports multitude of problems that can be found at [https://githu
 To understand how to add new problems to the framework, please check the main [README.md](https://github.com/amidos2006/pcg_benchmark/blob/main/pcg_benchmark/probs/README.md) at the probs folder.
 
 ## Creating a Generator
+You can check the example generators in the [generators folder](https://github.com/amidos2006/pcg_benchmark/tree/main/generators) at the root of the project. It contains 3 different generators that were tested in the paper `GeneticAlgorithm`, `NoveltySearch`, and `ConstrainedNoveltySearch`. To create any generator other than these, you usually need a way to navigate the search space. 
+
+In Optimization algorithms, this can be through crossover or mutation. The spaces class have a global function that could help with moving in the representation space called [`swapContent`](https://github.com/amidos2006/pcg_benchmark/blob/main/pcg_benchmark/spaces/__init__.py#L51). The function takes two content and probability value to generate a new content that combine between both. If the probability is 50% then you have a uniform crossover function. For mutation or small change, the same function can be used for that. Make sure the second content is a new random content and the probability is low like 0.1 or 0.05. This will create a uniform mutation function. If you want to limit the number of swaps, you can set `maxSwaps` to any value above 0, and if you want to seed the random number generator, please set `seed` parameter to any value. Here is an example for both crossover function and mutation function.
+```python
+from pcg_benchmark.spaces import swapContent
+
+# uniform cross over
+def uniform_crossover(prob_env, content1, content2):
+  return swapContent(content1, content2, 0.5)
+
+# 5% uniform mutation by default
+def uniform_mutation(prob_env, content, percentage=0.05):
+  return swapContent(content, prob_env.random_content(), percentage)
+```
+
+The other needed function to create a generator beside sampling randomly, discovering a neighboring content is to evaluate the content from respect of `quality`, `diversity`, or `controlability`. We recommend for every content you generate the info data with it and use it instead of the content for all the calculations.
+```python
+def fitness(pcg_env, info):
+  return pcg_env.quality(info)
+```
+
+Here is a full example of simple mu+lambda ES algorithm with mu=lambda=50 to generate content for the `zelda-v0` problem for 100 generations.
+```python
+import pcg_benchmark
+from pcg_benchmark.spaces import swapContent
+
+# uniform mutation
+def uniform_mutation(prob_env, content, percentage=0.05):
+  return swapContent(content, prob_env.random_content(), percentage)
+
+# calculate the fitness based on individual (content, info)
+def fitness(pcg_env, individual):
+  return pcg_env.quality(individual[1])
+
+# create the problem environment for zelda
+pcg_env = pcg_benchmark.make("zelda-v0")
+# create a random starting population of 50 individuals (content, info)
+population = [(content, pcg_env.info(content)) for content in pcg_env.random_content(50)]
+
+# run for 100 generations
+for _ in range(100):
+  # create a new children from each indvidual in the population
+  new_content = [uniform_mutation(prob_env, content) for content, _ in population]
+  # create the new population of size mu+lambda (50+50)
+  new_population = population + [(content, pcg_env.info(content)) for content in new_content]
+  # kill the weakest 50 individuals
+  new_population.sort(key=lambda c: fitness(pcg_env, c), reverse=True)
+  population = new_population[:50]
+  # stop if the best indvidual solve the problem
+  if fitness(pcg_env, population[0]) >= 1:
+    break
+```
 
 ## Contributing
 Bug reports and pull requests are welcome on GitHub at [https://github.com/amidos2006/pcg_benchmark/](https://github.com/amidos2006/pcg_benchmark/).

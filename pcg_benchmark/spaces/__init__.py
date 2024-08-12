@@ -3,6 +3,8 @@ from pcg_benchmark.spaces.integer import IntegerSpace
 from pcg_benchmark.spaces.array import ArraySpace
 from pcg_benchmark.spaces.generic import GenericSpace
 from pcg_benchmark.spaces.dictionary import DictionarySpace
+import copy
+import numpy as np
 
 """
 Check if the two input content are equal
@@ -29,3 +31,33 @@ def isContentEqual(content1, content2):
         return True
     except:
         return False
+
+def _recursiveSwap(content1, content2, swapInfo):
+    if not hasattr(content1, "__len__"):
+        if swapInfo["maxSwaps"] != 0 and swapInfo["random"].random() < swapInfo["probability"]:
+            swapInfo["maxSwaps"] -= 1
+            return copy.deepcopy(content2)
+        return copy.deepcopy(content1)
+    if isinstance(content1, dict):
+        result = {}
+        for v in content1:
+            result[v] = _recursiveSwap(content1[v], content2[v], swapInfo)
+        return result
+    result = []
+    for c1,c2 in zip(content1, content2):
+        result.append(_recursiveSwap(c1, c2, swapInfo))
+    return result
+
+def contentSwap(content1, content2, swap_probability, maxSwaps=-1, seed = None):
+    if seed == None:
+        random = np.random.default_rng()
+    else:
+        random = np.random.default_rng(seed)
+    swapInfo = {
+        "maxSwaps": maxSwaps,
+        "probability": swap_probability,
+        "random": random
+    }
+    return _recursiveSwap(content1, content2, swapInfo)
+
+    
