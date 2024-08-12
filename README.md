@@ -48,10 +48,13 @@ import pcg_benchmark
 
 # create a problem environment for the zelda problem
 pcg_env = pcg_benchmark.make('zelda-v0')
+
 # generate 100 random content from the _content_space
 contents = pcg_env.random_content(100)
+
 # geberate 100 random control parameters from the _control_space
 controls = pcg_env.random_control(100)
+
 # evaluate contents and controls from quality, diversity, controlability metrics
 # quality is the percentage of the 100 levels that has passed the quality criteria
 # diversity is the percentage of the 100 levels that are different from each other
@@ -59,6 +62,7 @@ controls = pcg_env.random_control(100)
 # details is a dictionary with "quality", "diversity", and "controlability" keys that have float array of 100 numbers between 0 and 1 which represents how close to solve the problem
 # infos is an array of dictionaries that contain details about each content
 quality, diversity, controlability, details, infos = pcg_env.evaluate(contents, controls)
+
 # generate images for each content
 imgs = pcg_env.renders(contents)
 ```

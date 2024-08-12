@@ -1,5 +1,6 @@
 from pcg_benchmark.pcg_env import PCGEnv
 from pcg_benchmark.probs import PROBLEMS
+from difflib import SequenceMatcher
 
 """
 Register a new problem that is not part of the probs folder to the system
@@ -42,7 +43,15 @@ Returns:
 """
 def make(name):
     if not (name in PROBLEMS):
-        raise NotImplementedError(f'This problem ({name}) is not implemented')
+        prob_names = PROBLEMS.keys()
+        max_sim = 0
+        sim_name = ""
+        for n in prob_names:
+            sim = SequenceMatcher(None, n, name).ratio()
+            if sim > max_sim:
+                max_sim = sim
+                sim_name = n
+        raise NotImplementedError(f'This problem ({name}) is not implemented. Did you mean to write ({sim_name}) instead.')
     problemClass = PROBLEMS[name]
     problemArgs = {}
     if hasattr(PROBLEMS[name], "__len__"):
