@@ -8,6 +8,16 @@ PCG Benchmark
   <b>Current Framework Version: 0.1.0</b>
 </p>
 
+PCG Benchmark is a framework to test and compare different content generator over different problems. The framework follows same design methodolgy of [OpenAI Gym](https://github.com/openai/gym) which makes it easy to use, test, and expand for new problems.
+
+This repo contains the framework and some initial generators that are provided with the paper. To cite the framework or the paper use the following biblography
+```
+@inproceedings{khalifa20XXpcgbenchmark,
+  title={PCG Benchamrk},
+  author={Khalifa, Ahmed .....}
+}
+```
+
 ## Installation
 1. Clone this repo to your local machine.
 2. To install the package, run `pip install -e .` from inside the repo folder. (Don't worry it will install all the depencies automatically which is `numpy` and `PIL`).
@@ -74,8 +84,7 @@ The framework supports multitude of problems that can be found at [https://githu
 
 To understand how to add new problems to the framework, please check the main [README.md](https://github.com/amidos2006/pcg_benchmark/blob/main/pcg_benchmark/probs/README.md) at the probs folder.
 
-## Running Generators
-
+## Creating a Generator
 
 ## Contributing
 Bug reports and pull requests are welcome on GitHub at [https://github.com/amidos2006/pcg_benchmark/](https://github.com/amidos2006/pcg_benchmark/).
