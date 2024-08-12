@@ -68,9 +68,9 @@ class MiniDungeonProblem(Problem):
 
         self._content_space = ArraySpace((self._height, self._width), IntegerSpace(8))
         self._control_space = DictionarySpace({"col_treasures": IntegerSpace(self._width + self._height), 
-                                               "solution": IntegerSpace(2*self._enemies, self._width * self._height)})
+                                               "solution_length": IntegerSpace(2*self._enemies, int(self._width * self._height / 2))})
         self._cerror = {"col_treasures": max(0.2 * (self._width + self._height), 1), 
-                        "solution": max(0.5 * self._enemies, 1)}
+                        "solution_length": max(0.5 * self._enemies, 1)}
         
 
     def info(self, content):
@@ -89,6 +89,7 @@ class MiniDungeonProblem(Problem):
             "regions": regions, "players": players, "exits": exits,
             "heuristic": heuristic, "solution": solution, "content": content,
             "potions": potions, "treasures": treasures, "enemies": enemies,
+            "solution_length": len(solution),
         }
         for name in stats:
             result[name] = stats[name]
@@ -117,7 +118,7 @@ class MiniDungeonProblem(Problem):
         if info["heuristic"] == -1:
             return 0.0
         treasures = get_range_reward(info["col_treasures"], 0, control["col_treasures"] - self._cerror["col_treasures"], control["col_treasures"] + self._cerror["col_treasures"])
-        sol_length = get_range_reward(len(info["solution"]), 0, control["solution"] - self._cerror["solution"], control["solution"] + self._cerror["solution"])
+        sol_length = get_range_reward(info["solution_length"], 0, control["solution_length"] - self._cerror["solution_length"], control["solution_length"] + self._cerror["solution_length"])
         return (treasures + sol_length) / 2.0
     
     def render(self, content):

@@ -71,7 +71,7 @@ class EliminationProblem(Problem):
             "total": len(all_words), "word": "".join(letters)
         }
         for i in range(self._letters - 2):
-            result[f"world_{i+3}"] = final_words[i]
+            result[f"words_{i+3}"] = final_words[i]
         return result
     
     def quality(self, info):
@@ -111,7 +111,7 @@ class EliminationProblem(Problem):
     def controlability(self, info, control):
         unallowed_seq = 0
         total_seq = 0
-        for i in range(3, 9):
+        for i in range(3, self._letters):
             for w in info[f"words_{i}"]:
                 if w[1] == i:
                     if i > control["sequence"]:
