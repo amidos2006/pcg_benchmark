@@ -1,5 +1,5 @@
 <p align="center">
-	<img height="300px" src="../../../images/mdungeon/example.png"/>
+	<img height="300px" src="../../../images/mdungeons/example.png"/>
 </p>
 <h1 align="center">
 MiniDungeons Problem
@@ -13,7 +13,22 @@ The problem has 3 variants:
 - `mdungeons-large-v0`: generate a solvable 16x24 mini dungeon level with 16 enemies
 
 ## Content Structure
-
+```python
+[
+	[5, 0, 4, 0, 1, 7, 1, 3],
+	[6, 0, 4, 0, 1, 0, 0, 0],
+	[6, 0, 4, 0, 7, 5, 7, 1],
+	[1, 6, 1, 0, 6, 6, 6, 1],
+	[1, 0, 0, 0, 0, 0, 0, 1],
+	[1, 1, 6, 1, 1, 0, 0, 1],
+	[7, 0, 1, 0, 1, 0, 0, 1],
+	[4, 0, 1, 0, 1, 1, 1, 1],
+	[4, 0, 1, 0, 0, 0, 0, 0],
+	[4, 0, 6, 0, 4, 5, 5, 5],
+	[0, 0, 1, 0, 0, 0, 0, 1],
+	[2, 1, 1, 6, 1, 7, 1, 6],
+]
+```
 
 ## Control Parameter
 
