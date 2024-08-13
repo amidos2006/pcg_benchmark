@@ -5,6 +5,19 @@ import os
 import numpy as np
 from PIL import Image
 
+def _random_control(self):
+    target = self.range()["1x1"]["max"]
+    control = DictionarySpace.sample(self)
+    sum_all = 0
+    for k in control:
+        sum_all += control[k]
+    remaining = target
+    for k in control:
+        control[k] = int((control[k] / sum_all) * target)
+        remaining -= control[k]
+    control[self._random.choice(list(control.keys()))] += remaining
+    return control
+
 def _orient(lvl, width, length, height):
     shift_x,shift_y,shift_width,shift_height=width,length,0,0
     for z in range(height):
@@ -82,18 +95,7 @@ class BuildingProblem(Problem):
             "3x1": IntegerSpace(self._target),
             "3x3": IntegerSpace(self._target)
         })
-    
-    def random_control(self):
-        control = super().random_control()
-        sum_all = 0
-        for k in control:
-            sum_all += control[k]
-        remaining = self._target
-        for k in control:
-            control[k] = int((control[k] / sum_all) * self._target)
-            remaining -= control[k]
-        control[self._random.choice(list(control.keys()))] += remaining
-        return control
+        self._control_space.sample = _random_control.__get__(self._control_space, DictionarySpace)
         
     def info(self, content):
         lvl, heights, failing = _simulate(content, self._width, self._length, self._height)

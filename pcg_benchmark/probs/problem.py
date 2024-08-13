@@ -1,5 +1,4 @@
 import numpy as np
-from pcg_benchmark.spaces import isContentEqual
 
 """
 A parent class for all the problems in the benchmark
@@ -16,68 +15,6 @@ class Problem:
         self._random = np.random.default_rng()
         self._content_space = None
         self._control_space = None
-    
-    """
-    Seed the random generator for the current problem and all the spaces
-
-    Parameters:
-        seed(int): the seed for the random generator for all the spaces and the problem
-    """
-    def seed(self, seed):
-        self._random = np.random.default_rng(seed)
-        if(self._content_space == None):
-            raise AttributeError("self._content_space is not initialized")
-        self._content_space.seed(seed)
-        if(self._control_space == None):
-            raise AttributeError("self._control_space is not initialized")
-        self._control_space.seed(seed)
-
-    # def parameters(self, **kwargs):
-    #     return
-    
-    """
-    Sample a random content from the content_space
-
-    Returns:
-        any: a sampled content from the content_space
-    """
-    def random_content(self):
-        if(self._control_space == None):
-            raise AttributeError("self._content_space is not initialized")
-        return self._content_space.sample()
-    
-    """
-    Sample a random control parameter from the control_space
-
-    Returns:
-        any: a sampled control parameter from the control_space
-    """
-    def random_control(self):
-        if(self._control_space == None):
-            raise AttributeError("self._control_space is not initialized")
-        return self._control_space.sample()
-    
-    """
-    Get the range of the content space
-
-    Returns:
-        any: the range of the content space
-    """
-    def content_range(self):
-        if(self._control_space == None):
-            raise AttributeError("self._content_space is not initialized")
-        return self._content_space.range()
-    
-    """
-    Get the range of the control parameter space
-
-    Returns:
-        any: the range of the control parameter space
-    """
-    def control_range(self):
-        if(self._control_space == None):
-            raise AttributeError("self._control_space is not initialized")
-        return self._control_space.range()
     
     """
     Get all the needed information about the content to be able to evaluate it fast.

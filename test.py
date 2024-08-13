@@ -7,13 +7,13 @@ for name in pcg_benchmark.list():
     # create an environment for the input named problem
     env = pcg_benchmark.make(name)
     # generate random content that is legal from this problem. It can be used for a starting point for your generator
-    contents = env.random_content(100)
+    contents = [env.content_space.sample() for _ in range(100)]
     # the range of values that content can lies within. It can be used for mutation function for evolution
-    content_range = env.content_range()
+    content_range = env.content_space.range()
     # generate a random control parameters for this problem can be used to check if your generator can be controlled
-    controls = env.random_control(100)
+    controls = [env.control_space.sample() for _ in range(100)]
     # the range of values that the control parameter can have. It can be used to noramlize the control values
-    control_range = env.control_range()
+    control_range = env.control_space.range()
     # evaluate the current contents and controls with respect to each other and returns
     # q: percentage of content that passes the quality metric of the benchmark
     # d: percentage of content that passes the diversity metric of the benchmark

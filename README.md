@@ -41,7 +41,7 @@ pcg_env = pcg_benchmark.make('zelda-v0')
 
 The framework also provide two important functions `list` and `register`. The `list` function return all the problems that exists in the framework. `register` on the other hand is used to register a new problem with the framework. For more details on how to create a new problem, look into [the problems readme.md](https://github.com/amidos2006/pcg_benchmark/tree/main/pcg_benchmark/probs#adding-new-problems).
 
-The created problem environment provides multiple functions that can be used to test if a content passes the `quality`, `diversity`, and `controlability` criteria. All of these function can be called directly from one function called `evaluate`. The environment also provides function to get details about content called `info` and spaces similar to [OpenAI Gym Spaces](https://gymnasium.farama.org/api/spaces/). There is two spaces `_content_space` which defines the content search space (representation space of all the content) and `_control_space` defines parameters that can be used to control the generated content and their possible values. You can use directly `random_content` and `random_control` function to sample a random content and control parameter from the different spaces. You can also use `content_range` and `control_range` to find the minimum and maximum values for the contents and control parameters. Finally, you can render the content using `render` function. Here is an example of getting a random content 100 content and evaluating it then rendering it.
+The created problem environment provides multiple functions that can be used to test if a content passes the `quality`, `diversity`, and `controlability` criteria. All of these function can be called directly from one function called `evaluate`. The environment also provides function to get details about content called `info` and spaces similar to [OpenAI Gym Spaces](https://gymnasium.farama.org/api/spaces/). There is two spaces `content_space` which defines the content search space (representation space of all the content) and `control_space` defines parameters that can be used to control the generated content and their possible values. You can use directly `sample` function from the space to sample a random content and control parameter from the different spaces. You can also use `range` function from the space to find the minimum and maximum values for the contents and control parameters. Finally, you can render the content using `render` function. Here is an example of getting a random content 100 content and evaluating it then rendering it.
 
 ```python
 import pcg_benchmark
@@ -49,11 +49,11 @@ import pcg_benchmark
 # create a problem environment for the zelda problem
 pcg_env = pcg_benchmark.make('zelda-v0')
 
-# generate 100 random content from the _content_space
-contents = pcg_env.random_content(100)
+# generate 100 random content from the content_space
+contents = [pcg_env.content_space.sample() for _ in range(100)]
 
-# geberate 100 random control parameters from the _control_space
-controls = pcg_env.random_control(100)
+# geberate 100 random control parameters from the control_space
+controls = [pcg_env.control_space.sample() for _ in range(100)]
 
 # evaluate contents and controls from quality, diversity, controlability metrics
 # quality is the percentage of the 100 levels that has passed the quality criteria
@@ -67,7 +67,7 @@ quality, diversity, controlability, details, infos = pcg_env.evaluate(contents, 
 imgs = pcg_env.renders(contents)
 ```
 
-If you want to test only one thing like `quality`, `diversity`, or `controlability`. You can use the corresponding function with the same name. These function can take either 1 content, an array of content, 1 info dictionary, or an array of info dictionaries. `info` function is very useful as it generate all the useful information for the other functions. You can cache these values and use them instead of content so it doesn't need to do exhaustive calculations or simulations (It can be used for optimization).
+If you want to test only one thing like `quality`, `diversity`, or `controlability`. You can use the corresponding function with the same name. These function can take either 1 content, an array of content, 1 info dictionary, or an array of info dictionaries. `info` function is very useful as it generate all the useful information for the other functions. You can cache these values and use them instead of content so it doesn't need to do exhaustive calculations or simulations (It can be used for optimization). Finally, if you want to fix the random number generator used, please use `seed` function and provide a seed value to make sure that all the random number generators are set.
 
 ## Problems
 The framework supports multitude of problems that can be found at [https://github.com/amidos2006/pcg_benchmark/tree/main/pcg_benchmark/probs](https://github.com/amidos2006/pcg_benchmark/tree/main/pcg_benchmark/probs). To understand more about each problem go to any of their folders and check the README files. Here a list of the current 12 problems:
@@ -101,7 +101,7 @@ def uniform_crossover(prob_env, content1, content2):
 
 # 5% uniform mutation by default
 def uniform_mutation(prob_env, content, percentage=0.05):
-  return swapContent(content, prob_env.random_content(), percentage)
+  return swapContent(content, prob_env.content_space.sample(), percentage)
 ```
 
 The other needed function to create a generator beside sampling randomly, discovering a neighboring content is to evaluate the content from respect of `quality`, `diversity`, or `controlability`. We recommend for every content you generate the info data with it and use it instead of the content for all the calculations.
@@ -117,7 +117,7 @@ from pcg_benchmark.spaces import swapContent
 
 # uniform mutation
 def uniform_mutation(prob_env, content, percentage=0.05):
-  return swapContent(content, prob_env.random_content(), percentage)
+  return swapContent(content, prob_env.content_space.sample(), percentage)
 
 # calculate the fitness based on individual (content, info)
 def fitness(pcg_env, individual):
@@ -126,12 +126,13 @@ def fitness(pcg_env, individual):
 # create the problem environment for zelda
 pcg_env = pcg_benchmark.make("zelda-v0")
 # create a random starting population of 50 individuals (content, info)
-population = [(content, pcg_env.info(content)) for content in pcg_env.random_content(50)]
+content = [pcg_env.content_space.sample() for _ in range(50)]
+population = [(c, pcg_env.info(c)) for c in content]
 
 # run for 100 generations
 for _ in range(100):
   # create a new children from each indvidual in the population
-  new_content = [uniform_mutation(prob_env, content) for content, _ in population]
+  new_content = [uniform_mutation(prob_env, c) for c, _ in population]
   # create the new population of size mu+lambda (50+50)
   new_population = population + [(content, pcg_env.info(content)) for content in new_content]
   # kill the weakest 50 individuals

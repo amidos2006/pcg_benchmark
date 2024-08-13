@@ -7,6 +7,54 @@ import math
 import numpy as np
 
 """
+generate a fully connected map to test the rules against
+
+Returns:
+    int[][]: the fully connected layout of a level
+"""
+def _random_control(self):
+    lvl = np.array(ArraySpace.sample(self))
+    while(get_number_regions(lvl, [1]) != 1):
+        lvl = np.array(ArraySpace.sample(self))
+        symmetry = self._random.integers(2)
+        quarters = [np.ones((int(lvl.shape[0] / 2), int(lvl.shape[1] / 2))).astype(int)]
+        if symmetry > 0:
+            quarters.append(np.ones((int(lvl.shape[0] / 2), int(lvl.shape[1] / 2))).astype(int))
+        for q in quarters:
+            number = self._random.integers(int(min(q.shape[0]/2, q.shape[1]/2))) + 2
+            for _ in range(number):
+                dir = self._random.integers(2)
+                length = self._random.integers(max(q.shape[dir], 2)) + 1
+                x = self._random.integers(max(int(q.shape[1]/2), 2))
+                y = self._random.integers(max(int(q.shape[0]/2), 2))
+                for i in range(length):
+                    nx, ny = x + dir * i, y + (1-dir) * i
+                    if nx > q.shape[1]-1 or ny > q.shape[0]-1:
+                        break
+                    q[ny][nx] = 0
+        if len(quarters) == 1:
+            newQuarter = quarters[0].copy()
+            flip = self._random.integers(3)
+            if flip:
+                newQuarter = np.flip(newQuarter, axis=flip-1)
+            quarters.append(newQuarter)
+            
+        flip = self._random.integers(2)
+        for y in range(quarters[0].shape[0]):
+            for x in range(quarters[0].shape[1]):
+                lvl[y][x] = quarters[0][y][x]
+                if flip:
+                    lvl[lvl.shape[0]-1-y][lvl.shape[1]-1-x] = quarters[0][y][x]
+                else:
+                    lvl[y][lvl.shape[1]-1-x] = quarters[0][y][x]
+                lvl[lvl.shape[0]-1-y][x] = quarters[1][y][x]
+                if flip:
+                    lvl[y][lvl.shape[1]-1-x] = quarters[1][y][x]
+                else:
+                    lvl[lvl.shape[0]-1-y][lvl.shape[1]-1-x] = quarters[1][y][x]
+    return lvl
+
+"""
 Generate a 2D histogram of all the locations that has been visited by the objects
 
 Parameters:
@@ -83,54 +131,7 @@ class ArcadeRulesProblem(Problem):
             })
         self._content_space = DictionarySpace(temp)
         self._control_space = ArraySpace((self._height, self._width), IntegerSpace(2))
-
-    """
-    generate a fully connected map to test the rules against
-
-    Returns:
-        int[][]: the fully connected layout of a level
-    """
-    def random_control(self):
-        lvl = np.array(super().random_control())
-        while(get_number_regions(lvl, [1]) != 1):
-            lvl = np.array(super().random_control())
-            symmetry = self._random.integers(2)
-            quarters = [np.ones((int(self._height / 2), int(self._width / 2))).astype(int)]
-            if symmetry > 0:
-                quarters.append(np.ones((int(self._height / 2), int(self._width / 2))).astype(int))
-            for q in quarters:
-                number = self._random.integers(int(min(q.shape[0]/2, q.shape[1]/2))) + 2
-                for _ in range(number):
-                    dir = self._random.integers(2)
-                    length = self._random.integers(max(q.shape[dir], 2)) + 1
-                    x = self._random.integers(max(int(q.shape[1]/2), 2))
-                    y = self._random.integers(max(int(q.shape[0]/2), 2))
-                    for i in range(length):
-                        nx, ny = x + dir * i, y + (1-dir) * i
-                        if nx > q.shape[1]-1 or ny > q.shape[0]-1:
-                            break
-                        q[ny][nx] = 0
-            if len(quarters) == 1:
-                newQuarter = quarters[0].copy()
-                flip = self._random.integers(3)
-                if flip:
-                    newQuarter = np.flip(newQuarter, axis=flip-1)
-                quarters.append(newQuarter)
-                
-            flip = self._random.integers(2)
-            for y in range(quarters[0].shape[0]):
-                for x in range(quarters[0].shape[1]):
-                    lvl[y][x] = quarters[0][y][x]
-                    if flip:
-                        lvl[lvl.shape[0]-1-y][lvl.shape[1]-1-x] = quarters[0][y][x]
-                    else:
-                        lvl[y][lvl.shape[1]-1-x] = quarters[0][y][x]
-                    lvl[lvl.shape[0]-1-y][x] = quarters[1][y][x]
-                    if flip:
-                        lvl[y][lvl.shape[1]-1-x] = quarters[1][y][x]
-                    else:
-                        lvl[lvl.shape[0]-1-y][lvl.shape[1]-1-x] = quarters[1][y][x]
-        return lvl
+        self._control_space.sample = _random_control.__get__(self._control_space, ArraySpace)
     
     """
     get stats and information about the content and return it

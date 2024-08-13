@@ -17,6 +17,13 @@ def _recursiveDiversity(structureContent):
     _recursiveDiversity(structureContent[1:])
 
 """
+PCG Environment class. This class is the base class where the user is interacting with.
+Please don't construct this class by hand but instead use the make function from pcg_benchmark.
+For example, the following code creates the environment class for the zelda-v0 problem.
+
+import pcg_benchmark
+
+env = pcg_benchmark.make('zelda-v0')
 """
 class PCGEnv:
     """
@@ -29,70 +36,39 @@ class PCGEnv:
         self._problem = problem
 
     """
+    Content space property to check range or sample
+
+    Returns:
+        Space: the space of all the possible content
+    """
+    @property
+    def content_space(self):
+        return self._problem._content_space
+    
+    """
+    Control parameter space property to check range or sample
+
+    Returns:
+        Space: the space of all the possible control parameters
+    """
+    @property
+    def control_space(self):
+        return self._problem._control_space
+    
+    """
     Adjust the seed of the random number generator used by the problem spaces
 
     Parameters:
         seed(int): the seed for the random number generator used by the problem
     """
     def seed(self, seed):
-        self._problem.seed(seed)
-
-    # def parameters(self, **kwargs):
-    #     if kwargs.get("seed", None) != None:
-    #         self.seed(kwargs.get("seed"))
-    #     self._problem.parameters(**kwargs)
-
-    """
-    Generate a group of random content for the current problem
-
-    Parameters:
-        amount(int): the number of random generated content needed
-
-    Returns:
-        any|any[]: a single or an array of random generated content
-    """
-    def random_content(self, amount=1):
-        result = []
-        for _ in range(amount):
-            result.append(self._problem.random_content())
-        if amount == 1:
-            return result[0]
-        return result
-    
-    """
-    Generate a group of random control parameters for the current problem
-
-    Parameters:
-        amount(int): the number of random generated control parameters
-
-    Returns:
-        any|any[]: a single or an array of random generated control parameters
-    """
-    def random_control(self, amount=1):
-        result = []
-        for _ in range(amount):
-            result.append(self._problem.random_control())
-        if amount == 1:
-            return result[0]
-        return result
-    
-    """
-    Get the allowed range of the content
-
-    Returns:
-        any: the allowed range of the content
-    """
-    def content_range(self):
-        return self._problem.content_range()
-    
-    """
-    Get the allowed range of the control parameters
-
-    Returns:
-        any: the allowed range of the control parameters
-    """
-    def control_range(self):
-        return self._problem.control_range()
+        self._problem._random = np.random.default_rng(seed)
+        if(self.content_space == None):
+            raise AttributeError("self._content_space is not initialized")
+        self.content_space.seed(seed)
+        if(self.control_space == None):
+            raise AttributeError("self._control_space is not initialized")
+        self.control_space.seed(seed)
     
     """
     Calculate some basic information about the contents. These information can be used to speed quality,
