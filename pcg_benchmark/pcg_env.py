@@ -84,14 +84,17 @@ class PCGEnv:
         controlability calculations.
     """
     def info(self, contents):
-        is_array = hasattr(contents, "__len__") and not isinstance(contents, dict)
-        if is_array:
-            is_content = self._problem._content_space.isSampled(contents[0])
-        else:
-            is_content = self._problem._content_space.isSampled(contents)
+        is_array = False
+        is_content = self.content_space.isSampled(contents)
+        if is_content:
             contents = [contents]
+        else:
+            is_array = hasattr(contents, "__len__") and not isinstance(contents, dict)
+            if is_array:
+                is_content = self.content_space.isSampled(contents[0])
+            
         if not is_content:
-            raise ValueError(f"")
+            raise ValueError(f"wrong input for the function, the contents are not sampled from the content space.")
 
         info = []
         for c in contents:
@@ -113,12 +116,16 @@ class PCGEnv:
         any[]: an array of the info of all the contents that can be cached to speed all the calculations
     """
     def quality(self, contents):
-        is_array = hasattr(contents, "__len__") and not isinstance(contents, dict)
-        if is_array:
-            is_content = self._problem._content_space.isSampled(contents[0])
-        else:
-            is_content = self._problem._content_space.isSampled(contents)
+        is_array = False
+        is_content = self.content_space.isSampled(contents)
+        if is_content:
             contents = [contents]
+        else:
+            is_array = hasattr(contents, "__len__") and not isinstance(contents, dict)
+            if is_array:
+                is_content = self.content_space.isSampled(contents[0])
+            else:
+                contents = [contents]
         
         infos = []
         if is_content:
@@ -147,12 +154,16 @@ class PCGEnv:
         any[]: an array of the info of all the contents that can be cached to speed all the calculations
     """
     def diversity(self, contents):
-        is_array = hasattr(contents, "__len__") and not isinstance(contents, dict)
-        if is_array:
-            is_content = self._problem._content_space.isSampled(contents[0])
-        else:
-            is_content = self._problem._content_space.isSampled(contents)
+        is_array = False
+        is_content = self.content_space.isSampled(contents)
+        if is_content:
             contents = [contents]
+        else:
+            is_array = hasattr(contents, "__len__") and not isinstance(contents, dict)
+            if is_array:
+                is_content = self.content_space.isSampled(contents[0])
+            else:
+                contents = [contents]
 
         infos = []
         if is_content:
@@ -205,13 +216,18 @@ class PCGEnv:
         any[]: an array of the info of all the contents that can be cached to speed all the calculations
     """
     def controlability(self, contents, controls):
-        is_array = hasattr(contents, "__len__") and not isinstance(contents, dict)
-        if is_array:
-            is_content = self._problem._content_space.isSampled(contents[0])
-        else:
-            is_content = self._problem._content_space.isSampled(contents)
+        is_array = False
+        is_content = self.content_space.isSampled(contents)
+        if is_content:
             contents = [contents]
             controls = [controls]
+        else:
+            is_array = hasattr(contents, "__len__") and not isinstance(contents, dict)
+            if is_array:
+                is_content = self.content_space.isSampled(contents[0])
+            else:
+                contents = [contents]
+                controls = [controls]
 
         infos = []
         if is_content:
@@ -244,11 +260,13 @@ class PCGEnv:
         dict[str,float[]]: a dictionary of float arrays that contains the details for quality, diversity, and controlability 
         any[]: an array of the info of all the contents that can be cached to speed all the calculations
     """
-    def evaluate(self, contents, controls):
+    def evaluate(self, contents, controls=None):
         infos = self.info(contents)
         q_score, quality, _ = self.quality(infos)
         d_score, diversity, _ = self.diversity(infos)
-        ct_score, controlability, _ = self.controlability(infos, controls)
+        ct_score, controlability = 0, [0] * len(infos)
+        if controls is not None:
+            ct_score, controlability, _ = self.controlability(infos, controls)
 
         return q_score, d_score, ct_score, {
             "quality": quality, 
@@ -267,7 +285,7 @@ class PCGEnv:
     """
     def render(self, contents):
         single_input = False
-        if self._problem._content_space.isSampled(contents):
+        if self.content_space.isSampled(contents):
             contents = [contents]
             single_input = True
 

@@ -58,7 +58,7 @@ To pass the quality criteria, you need to pass multiple of criteria
 - The level has to be beatable by the A* agent
 
 ## Diversity Measurement
-To pass the diversity criteria, the distance between the locations that each player visit in both maps. If the maps are not playable they are considered not different.
+To pass the diversity criteria, the distance between the locations that each player visit in both maps. If the player can't move at all, the maps are considered not different.
 
 ## Controlability Measurement
 To pass the controlability criteria, you need to make sure that the number of collected treasures and the solution length is close to the controlability provided parameters.
