@@ -143,6 +143,9 @@ for _ in range(100):
     break
 ```
 
+## Examples of Generated Content
+
+
 ## Contributing
 Bug reports and pull requests are welcome on GitHub at [https://github.com/amidos2006/pcg_benchmark/](https://github.com/amidos2006/pcg_benchmark/).
 

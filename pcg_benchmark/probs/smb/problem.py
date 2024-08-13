@@ -53,10 +53,10 @@ class MarioProblem(Problem):
                     self._slices.append(s)
 
         self._width = kwargs.get("width")
-
-        self._diversity = 0.4
-        self._solver = 100 / (int(self._width < 30) + 1)
-        self._timer = math.ceil(self._width / 10)
+        self._noise = kwargs.get("noise", 0.11)
+        self._solver = kwargs.get("solver", 100 / (int(self._width < 30) + 1))
+        self._timer = kwargs.get("timer", math.ceil(self._width / 10))
+        self._diversity = kwargs.get("diversity", 0.4)
 
         self._content_space = ArraySpace((self._width,), IntegerSpace(len(self._slices)))
         self._control_space = DictionarySpace({"enemies": IntegerSpace(0, max(2, int(self._width / 7))), 
@@ -88,7 +88,7 @@ class MarioProblem(Problem):
                     test_tube = 0
         hnoise = _caulcute_hnoise(content, self._slices)
         
-        if tube_issue == 0 and hnoise <= 0.11:
+        if tube_issue == 0 and hnoise <= self._noise:
             result = runLevel(lvl, "heuristic", self._timer, self._solver)
             actions = []
             locations = []
@@ -128,7 +128,7 @@ class MarioProblem(Problem):
 
     def quality(self, info):
         tube = get_range_reward(info["tube"], 0, 0, 0, 10)
-        noise = get_range_reward(info["noise"], 0, 0, 0.11, 1)
+        noise = get_range_reward(info["noise"], 0, 0, self._noise, 1)
         return (tube + noise + 2 * info["complete"]) / 4.0
 
     def diversity(self, info1, info2):
