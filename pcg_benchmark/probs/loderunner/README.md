@@ -8,9 +8,9 @@ Lode Runner Problem
 This is a simple version of the classic game [Lode Runner](https://loderunnerwebgame.com/game/). Lode Runner is an arcade puzzle platformer where the player can't jump and they need to collect all the gold without being caught by the enemies. The player can move horizontal and climb ladders and dig through the floor. In this version, digging was discarded infavor for evaluation speed. The goal of this problem is to generate a playable lode runner level that have aesthetic similarity to the original levels of lode runner.
 
 The problem has 3 variants:
-- `loderunner-v0`: generate a full lode runner level of size 32x21 excluding the bottom solid floor where it has at least 6 golds and 3 enemies
-- `loderunner-gold-v0`: generate a full lode runner level of size 32x21 excluding the bottom solid floor where it has at least 18 golds and 3 enemies
-- `loderunner-enemies-v0`: generate a full lode runner level of size 32x21 excluding the bottom solid floor where it has at least 6 golds and 12 enemies
+- `loderunner-v0`: generate a full lode runner level of size 32x21 (excluding the bottom solid floor) where it has at least 6 golds and 3 enemies
+- `loderunner-gold-v0`: generate a full lode runner level of size 32x21 (excluding the bottom solid floor) where it has at least 18 golds and 3 enemies
+- `loderunner-enemies-v0`: generate a full lode runner level of size 32x21 (excluding the bottom solid floor) where it has at least 6 golds and 12 enemies
 
 ## Content Structure
 The content is just a 2D array of 21 rows by 32 columns where each cell have a value that represent a game tile. Here is an example of content:

@@ -95,12 +95,11 @@ class SokobanProblem(Problem):
         self._width = kwargs.get("width")
         self._height = kwargs.get("height")
         self._diff = kwargs.get("difficulty")
-        self._power = kwargs.get("solver")
-        
+        self._power = kwargs.get("solver", 5000)
         self._diversity = kwargs.get("diversity", 0.5)
 
         self._content_space = ArraySpace((self._width, self._height), IntegerSpace(5))
-        self._control_space = DictionarySpace({"crates": IntegerSpace(self._diff, max(self._width+1, self._height+1))})
+        self._control_space = DictionarySpace({"crates": IntegerSpace(1, max(self._width+1, self._height+1))})
 
     def info(self, content):
         content = np.array(content)
@@ -120,7 +119,7 @@ class SokobanProblem(Problem):
     def quality(self, info):
         player = get_range_reward(info["players"], 0, 1, 1,\
                                     self._width * self._height)
-        crates = get_range_reward(info["crates"], 0, self._diff, self._width * self._height)
+        crates = get_range_reward(info["crates"], 0, 1, self._width * self._height)
         crate_target = get_range_reward(abs(info["crates"] - info["targets"]), 0, 0, 0,\
                                     self._width * self._height)
         stats = (player + crates + crate_target) / 3.0
@@ -129,8 +128,8 @@ class SokobanProblem(Problem):
         if info["heuristic"] >= 0:
             heuristic = get_range_reward(info["heuristic"], 0, 0, 0,\
                                         (self._width + self._height) * info["crates"])
-            sol_length = get_range_reward(len(info["solution"]),\
-                                        self._width * self._height * self._diff,\
+            sol_length = get_range_reward(len(info["solution"]), 0,\
+                                        (self._width + self._height) * self._diff,\
                                         (self._width * self._height)**2)
             added = (heuristic + sol_length) / 2.0
 

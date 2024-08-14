@@ -8,9 +8,9 @@ Dangerous Dave Problem
 This is a small discrete version of the DOS game [Dangerous Dave](https://www.retrogames.cz/play_480-DOS.php) similar to the one implemented in the [PCGRL Framework](https://github.com/amidos2006/gym-pcgrl). Dangerous dave is a small platformer where you need to get a key avoid spikes and collect diamonds and get to exit. The goal is to create a playable Dangerous Dave level where the player can get reach key, door, and diamonds. Finally, the game solution should have a minimum number of jumps.
 
 The problem has 3 variants:
-- `ddave-v0`: generate a 11x7 level where the solution has minimum number of jumps equal to 2.
-- `ddave-complex-v0`: generate a 11x7 level where the solution has minim number of jumps equal to 6.
-- `ddave-large-v0`: generate a 17x11 level where the solution has minimum number of jumps equal to 10.
+- `ddave-v0`: generate a 11x7 level (without the borders) where the solution has minimum number of jumps equal to 2.
+- `ddave-complex-v0`: generate a 11x7 level (without the borders) where the solution has minim number of jumps equal to 6.
+- `ddave-large-v0`: generate a 17x11 level (without the borders) where the solution has minimum number of jumps equal to 10.
 
 ## Content Structure
 The content is a 2D array **height x width** of int of values between 0 and 6 that represents a dangeroud dave level. Here is an example of a level

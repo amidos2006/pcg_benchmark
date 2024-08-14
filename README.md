@@ -36,7 +36,7 @@ To construct a problem to solve, you need to import the framework `pcg_benchmark
 ```python
 import pcg_benchmark
 
-pcg_env = pcg_benchmark.make('zelda-v0')
+env = pcg_benchmark.make('zelda-v0')
 ```
 
 The framework also provide two important functions `list` and `register`. The `list` function return all the problems that exists in the framework. `register` on the other hand is used to register a new problem with the framework. For more details on how to create a new problem, look into [the problems readme.md](https://github.com/amidos2006/pcg_benchmark/tree/main/pcg_benchmark/probs#adding-new-problems).
@@ -47,13 +47,13 @@ The created problem environment provides multiple functions that can be used to 
 import pcg_benchmark
 
 # create a problem environment for the zelda problem
-pcg_env = pcg_benchmark.make('zelda-v0')
+env = pcg_benchmark.make('zelda-v0')
 
 # generate 100 random content from the content_space
-contents = [pcg_env.content_space.sample() for _ in range(100)]
+contents = [env.content_space.sample() for _ in range(100)]
 
 # geberate 100 random control parameters from the control_space
-controls = [pcg_env.control_space.sample() for _ in range(100)]
+controls = [env.control_space.sample() for _ in range(100)]
 
 # evaluate contents and controls from quality, diversity, controlability metrics
 # quality is the percentage of the 100 levels that has passed the quality criteria
@@ -61,10 +61,10 @@ controls = [pcg_env.control_space.sample() for _ in range(100)]
 # controlability is the percentage of the 100 levels that fits with the controls parameters
 # details is a dictionary with "quality", "diversity", and "controlability" keys that have float array of 100 numbers between 0 and 1 which represents how close to solve the problem
 # infos is an array of dictionaries that contain details about each content
-quality, diversity, controlability, details, infos = pcg_env.evaluate(contents, controls)
+quality, diversity, controlability, details, infos = env.evaluate(contents, controls)
 
 # generate images for each content
-imgs = pcg_env.renders(contents)
+imgs = env.renders(contents)
 ```
 
 If you want to test only one thing like `quality`, `diversity`, or `controlability`. You can use the corresponding function with the same name. These function can take either 1 content, an array of content, 1 info dictionary, or an array of info dictionaries. `info` function is very useful as it generate all the useful information for the other functions. You can cache these values and use them instead of content so it doesn't need to do exhaustive calculations or simulations (It can be used for optimization). Finally, if you want to fix the random number generator used, please use `seed` function and provide a seed value to make sure that all the random number generators are set.
@@ -106,8 +106,8 @@ def uniform_mutation(prob_env, content, percentage=0.05):
 
 The other needed function to create a generator beside sampling randomly, discovering a neighboring content is to evaluate the content from respect of `quality`, `diversity`, or `controlability`. We recommend for every content you generate the info data with it and use it instead of the content for all the calculations.
 ```python
-def fitness(pcg_env, info):
-  return pcg_env.quality(info)
+def fitness(env, info):
+  return env.quality(info)
 ```
 
 Here is a full example of simple mu+lambda ES algorithm with mu=lambda=50 to generate content for the `zelda-v0` problem for 100 generations.
@@ -120,26 +120,26 @@ def uniform_mutation(prob_env, content, percentage=0.05):
   return swapContent(content, prob_env.content_space.sample(), percentage)
 
 # calculate the fitness based on individual (content, info)
-def fitness(pcg_env, individual):
-  return pcg_env.quality(individual[1])
+def fitness(env, individual):
+  return env.quality(individual[1])
 
 # create the problem environment for zelda
-pcg_env = pcg_benchmark.make("zelda-v0")
+env = pcg_benchmark.make("zelda-v0")
 # create a random starting population of 50 individuals (content, info)
-content = [pcg_env.content_space.sample() for _ in range(50)]
-population = [(c, pcg_env.info(c)) for c in content]
+content = [env.content_space.sample() for _ in range(50)]
+population = [(c, env.info(c)) for c in content]
 
 # run for 100 generations
 for _ in range(100):
   # create a new children from each indvidual in the population
   new_content = [uniform_mutation(prob_env, c) for c, _ in population]
   # create the new population of size mu+lambda (50+50)
-  new_population = population + [(content, pcg_env.info(content)) for content in new_content]
+  new_population = population + [(content, env.info(content)) for content in new_content]
   # kill the weakest 50 individuals
-  new_population.sort(key=lambda c: fitness(pcg_env, c), reverse=True)
+  new_population.sort(key=lambda c: fitness(env, c), reverse=True)
   population = new_population[:50]
   # stop if the best indvidual solve the problem
-  if fitness(pcg_env, population[0]) >= 1:
+  if fitness(env, population[0]) >= 1:
     break
 ```
 
