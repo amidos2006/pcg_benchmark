@@ -99,9 +99,8 @@ class PCGEnv:
         info = []
         for c in contents:
             info.append(self._problem.info(c))
-        
         if not is_array:
-            info[0]
+            return info[0]
         return info
         
     """
@@ -264,7 +263,9 @@ class PCGEnv:
         infos = self.info(contents)
         q_score, quality, _ = self.quality(infos)
         d_score, diversity, _ = self.diversity(infos)
-        ct_score, controlability = 0, [0] * len(infos)
+        ct_score, controlability = 0.0, 0.0
+        if hasattr(infos, "__len__") and not isinstance(infos, dict):
+            controlability = [0.0] * len(infos)
         if controls is not None:
             ct_score, controlability, _ = self.controlability(infos, controls)
 

@@ -3,6 +3,26 @@ import numpy as np
 import math
 from pcg_benchmark.probs.utils import _run_dikjstra
 
+def getScript(content):
+    behaviors = ["still", "flicker", "randomShort", "randomLong", "wanderHorz", "wanderVert", "chase", "flee"]
+    win = ["time", "score5", "score10", "score20"]
+    action = ["none", "killFirst", "killSecond", "killBoth"]
+    score = [0, 1, 2, 4]
+
+    result = f"Start: {content['x']},{content['y']} - {content['seed']}\n"
+    result += "Behavior:\n"
+    for key in ["red", "yellow", "green"]:
+        locs = ""
+        for i in range(content[f"{key}Start"]["num"]):
+            locs += f"- {content[f'{key}Start']['x'][i]},{content[f'{key}Start']['y'][i]} "
+        result += f"  {key}: {behaviors[int(content[key])]} {locs}\n"
+    result += "Rules:\n"
+    for key in ["player-red", "player-green", "player-yellow", "red-red", "red-green",\
+                "red-yellow", "green-green", "green-yellow", "yellow-yellow"]:
+        result += f"  {key}: {action[int(content[key]['action'])]} - {score[int(content[key]['score'])]}\n"
+    result +=  f"Win: {win[int(content['win'])]}\n"
+    return result
+
 def runGame(engine, agent):
     result = []
     state = engine.initialize()

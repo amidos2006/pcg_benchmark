@@ -169,6 +169,18 @@ To pass the diversity criteria, you need to pass two main criteria
 ## Controlability Measurement
 To pass the controlability criteria, you need to make sure all the objects can be laid correctly without problems.
 
+## Render Function
+The render function just generate an image of the rules of the game, if you don't want that and you want the actual string, please use [`getScript`](https://github.com/amidos2006/pcg_benchmark/blob/main/pcg_benchmark/probs/arcaderules/engine.py#L6) function from `pcg_benchmark.probs.arcaderules.engine` using the following code:
+
+```python
+import pcg_benchmark
+from pcg_benchmark.probs.arcaderules.engine import getScript
+
+env = pcg_benchmark.make('arcade-v0')
+content = env.content_space.sample()
+script = getScript(content)
+```
+
 ## Content Info
 This is all the info that you can get about any content using the `info` function:
 - `x(int)`: the player x location

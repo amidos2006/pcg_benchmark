@@ -2,8 +2,9 @@ from pcg_benchmark.probs import Problem
 from pcg_benchmark.probs.utils import get_range_reward
 from pcg_benchmark.spaces import ArraySpace, IntegerSpace, FloatSpace, DictionarySpace
 from pcg_benchmark.probs.talakat.engine import parameters, generateTalakatScript, runPattern
-from pcg_benchmark.probs.talakat.engine.helper import ActionNumber, calculateBuckets, calculateEntropy
+from pcg_benchmark.probs.talakat.engine.helper import calculateBuckets, calculateEntropy
 import numpy as np
+import json
 from PIL import Image, ImageDraw
 import os
 
@@ -14,23 +15,27 @@ class TalakatProblem(Problem):
         self._height = kwargs.get("height")
         self._spawnerComplexity = kwargs.get("spawnerComplexity")
         self._maxHealth = kwargs.get("maxHealth")
+        self._pattern_sections = max(1, int(self._maxHealth / 30))
         
-        self._agentPrecision = kwargs.get("precision", 10)
         self._diversity = kwargs.get("diversity", 0.5)
         self._diversitySampling = kwargs.get("diversitySampling", 5)
         self._renderSampling = kwargs.get("renderSampling", 5)
+        self._min_bullets = kwargs.get("min_bullets", 20)
+        self._target = kwargs.get("coverage", 0.8)
 
         parameters["maxHealth"] = self._maxHealth
-        parameters["repeatingAction"] = self._agentPrecision
         parameters["width"] = self._width
         parameters["height"] = self._height
+        parameters["bucketsX"] = max(1, int(self._width / 20))
+        parameters["bucketsY"] = max(1, int(self._height / 20))
 
-        self._target = 0.25
-        self._cerror = 0.1
+        self._cerror = int(0.5 * self._min_bullets)
+        self._render_type = "bullets"
 
         self._content_space = ArraySpace((self._spawnerComplexity, 100), IntegerSpace(100))
         self._control_space = DictionarySpace({
-            "bullet_coverage": FloatSpace(self._target+self._cerror, 1-self._cerror)
+            "bullets": ArraySpace((self._pattern_sections), IntegerSpace(self._min_bullets+self._cerror, 
+                                                                         int(parameters["maxNumBullets"]/2)-self._cerror))
         })
     
     def info(self, content):
@@ -47,15 +52,18 @@ class TalakatProblem(Problem):
         result = runPattern(script)
         
         bullets = []
+        num_bullets = [0] * self._pattern_sections
         coverage = np.zeros(parameters["bucketsX"] * parameters["bucketsY"])
-        for world, _ in result:
+        for i, (world, _) in enumerate(result):
             temp = np.array(calculateBuckets(self._width, self._height, parameters["bucketsX"], parameters["bucketsY"], world.bullets))
             bullets.append(temp / max(1, temp.sum()))
             coverage += temp / max(1, temp.sum())
+            num_bullets[int(i/30)] += len(world.bullets)
 
         return {
             "script_connectivity": (len(connections) + 1) / self._spawnerComplexity,
             "percentage": len(result) / self._maxHealth,
+            "bullets": np.array(num_bullets) / 30,
             "bullet_coverage": calculateEntropy(coverage / self._maxHealth),
             "bullet_locations": bullets,
         }
@@ -63,9 +71,11 @@ class TalakatProblem(Problem):
     def quality(self, info):
         playable = info["percentage"]
         coverage = 0.0
+        min_bullets = 0.0
         if playable >= 1.0:
             coverage = get_range_reward(info["bullet_coverage"], 0, self._target, 1)
-        return (playable + coverage) / 2.0
+            min_bullets = get_range_reward(sum(info["bullets"])/len(info["bullets"]), 0, self._min_bullets, parameters["maxNumBullets"], 100 * parameters["maxNumBullets"])
+        return (playable + coverage + min_bullets) / 3.0
     
     def diversity(self, info1, info2):
         diversity = []
@@ -76,13 +86,31 @@ class TalakatProblem(Problem):
         return get_range_reward(np.array(diversity).max(), 0, self._diversity, 1)
     
     def controlability(self, info, control):
-        bulletCoverage = get_range_reward(info["bullet_coverage"], 0,\
-            control["bullet_coverage"] - self._cerror, control["bullet_coverage"] + self._cerror, 1)
-        return bulletCoverage
+        bulletCoverage = 0
+        for v,c in zip(info["bullets"], control["bullets"]):
+            bulletCoverage += get_range_reward(v, 0, c - self._cerror, c + self._cerror, parameters["maxNumBullets"])
+        return bulletCoverage / len(control["bullets"])
     
     def render(self, content):
+        script = generateTalakatScript(content)
+        if self._render_type == "script":
+            pretty_json = json.dumps(script, indent=2).split("\n")
+            img = Image.new("RGBA", (400, len(pretty_json) * 12 + 16), (71,45,60,255))
+            draw = ImageDraw.Draw(img)
+            y = 8
+            for l in pretty_json:
+                x = 8
+                for c in l:
+                    if c == " ":
+                        x += 8
+                    else:
+                        break
+                draw.text((x,y), l.strip(), fill=(207,198,184,255))
+                y+=12
+            return img
+
         bossGfx = Image.open(os.path.dirname(__file__) + "/images/boss.png").convert('RGBA')
-        result = runPattern(generateTalakatScript(content))
+        result = runPattern(script)
         images = []
         for i in range(0, len(result), self._renderSampling):
             img = Image.new("RGBA", (parameters["width"], parameters["height"]), (71,45,60,255))

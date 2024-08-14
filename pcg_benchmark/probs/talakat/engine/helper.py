@@ -20,8 +20,8 @@ def calculateBuckets(width, height, bucketsX, bucketsY, bullets):
     e = Point()
     for b in bullets:
         indeces = []
-        s.x = math.floor(round(2 * (b.x - b.radius) / bucketWidth)/2)
-        s.y = math.floor(round(2 * (b.y - b.radius) / bucketHeight)/2)
+        s.x = math.ceil(round(4 * (b.x - b.radius) / bucketWidth)/4)
+        s.y = math.ceil(round(4 * (b.y - b.radius) / bucketHeight)/4)
         if s.x < 0:
             s.x = 0
         if s.y < 0:
@@ -30,8 +30,8 @@ def calculateBuckets(width, height, bucketsX, bucketsY, bullets):
             s.x = bucketsX - 1
         if s.y >= bucketsY:
             s.y = bucketsY - 1
-        e.x = math.floor(round(2 * (b.x + b.radius) / bucketWidth)/2)
-        e.y = math.floor(round(2 * (b.y + b.radius) / bucketHeight)/2)
+        e.x = math.floor(round(4 * (b.x + b.radius) / bucketWidth)/4)
+        e.y = math.floor(round(4 * (b.y + b.radius) / bucketHeight)/4)
         if e.x < 0:
             e.x = 0
         if e.y < 0:
@@ -41,7 +41,7 @@ def calculateBuckets(width, height, bucketsX, bucketsY, bullets):
         if e.y >= bucketsY:
             e.y = bucketsY - 1
         for x in range(s.x, e.x + 1):
-            for y in range(s.y, e.y+1):
+            for y in range(s.y, e.y + 1):
                 index = y * bucketsX + x
                 if index not in indeces:
                     indeces.append(index)
