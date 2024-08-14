@@ -15,13 +15,13 @@ class ZeldaProblem(Problem):
         self._diversity = kwargs.get("diversity", 0.3)
         self._erange = max(int(self._enemies * 0.25), 1)
 
-        self._target = 2 * (self._width + self._height)
+        self._target = kwargs.get("sol_legnth", self._width + self._height)
         self._cerror = max(int(self._target / 2 * 0.25), 1)
 
         self._content_space = ArraySpace((self._height, self._width), IntegerSpace(6))
         self._control_space = DictionarySpace({
-            "player_key": IntegerSpace(int(self._target / 2 + self._cerror), int(self._width * self._height)),
-            "key_door": IntegerSpace(int(self._target / 2 + self._cerror), int(self._width * self._height))
+            "player_key": IntegerSpace(int(self._target / 2 + self._cerror), int(self._width * self._height / 4)),
+            "key_door": IntegerSpace(int(self._target / 2 + self._cerror), int(self._width * self._height / 4))
         })
 
     def info(self, content):
@@ -60,7 +60,7 @@ class ZeldaProblem(Problem):
             playable += 1.0
         playable /= 2.0
 
-        sol_length = get_range_reward(info["player_key"] + info["key_door"], self._target,\
+        sol_length = get_range_reward(info["player_key"] + info["key_door"], 0, self._target,\
                                        self._width * self._height)
         added = 0
         if player >= 1 and key >= 1 and door >= 1:
