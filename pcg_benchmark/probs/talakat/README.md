@@ -130,16 +130,28 @@ The control parameter is 1D int array about the distribution of the bullets thro
 ```
 
 ## Adding a new Variant
-
+If you want to add new variants for this framework, you can add it to [`__init__.py`](https://github.com/amidos2006/pcg_benchmark/blob/main/pcg_benchmark/probs/talakat/__init__.py) file. To add new variant please try to follow the following name structure `talakat-{variant}-{version}` where `{version}` if first time make sure it is `v0`. The following parameter can be changed to create the variant:
+- `width(int)`: the width of the level
+- `height(int)`: the height of the level
+- `spawnerComplexity(int)`: the number of spawners
+- `maxHealth(int)`: the number of frames of the bullet pattern
+- `min_bullets(int)`: the minimum number of bullets that need to be on average on screen all the time (optional=20)
+- `coverage(float)`: the entropy of the bullet distribution over all the frames
+- `empty(float)`: the percentage of empty space on screen when there is bullets
+- `diversity(float)`: the diversity percentage that if you pass it, the diversity value is equal to 1 (optional=0.5)
 
 ## Quality Measurement
-
+To pass the quality criteria, you need to pass multiple of criteria
+- The pattern should be able to be generated without slowing down
+- The pattern should have over all the frames equal distribution of bullets in all the areas
+- The pattern should have an average of minimum number of bullets on screen
+- The pattern should have a percentage of empty area when there is bullets on the screen so the player can protect themselves and stay away from bullets
 
 ## Diversity Measurement
-
+To pass the diversity criteria, the distance between the bullet coverage for the frames of both patterns is different from each other.
 
 ## Controlability Measurement
-
+To pass the controlability criteria, you need to make sure that the distribution of bullets over every 30 frames as close as possible to the controlability provided parameters.
 
 ## Render Function
 This problem is about generating bullet pattern so the render function return an animation (`PIL.GifImagePlugin.GifImageFile`) instead of normal static image (`PIL.Image`). To save this image, you can't just use `save` with no attributes instead you need to do the following. If you didn't add the extra parameters, it will only save the first frame of the animation.

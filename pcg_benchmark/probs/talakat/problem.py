@@ -20,8 +20,9 @@ class TalakatProblem(Problem):
         self._diversity = kwargs.get("diversity", 0.5)
         self._diversitySampling = kwargs.get("diversitySampling", 5)
         self._renderSampling = kwargs.get("renderSampling", 5)
+        self._empty_area = kwargs.get("empty", 0.2)
         self._min_bullets = kwargs.get("min_bullets", 20)
-        self._target = kwargs.get("coverage", 0.8)
+        self._target = kwargs.get("coverage", 0.9)
 
         parameters["maxHealth"] = self._maxHealth
         parameters["width"] = self._width
@@ -59,7 +60,6 @@ class TalakatProblem(Problem):
             bullets.append(temp / max(1, temp.sum()))
             coverage += temp / max(1, temp.sum())
             num_bullets[int(i/30)] += len(world.bullets)
-
         return {
             "script_connectivity": (len(connections) + 1) / self._spawnerComplexity,
             "percentage": len(result) / self._maxHealth,
@@ -72,10 +72,18 @@ class TalakatProblem(Problem):
         playable = info["percentage"]
         coverage = 0.0
         min_bullets = 0.0
+        empty = 0.0
         if playable >= 1.0:
             coverage = get_range_reward(info["bullet_coverage"], 0, self._target, 1)
             min_bullets = get_range_reward(sum(info["bullets"])/len(info["bullets"]), 0, self._min_bullets, parameters["maxNumBullets"], 100 * parameters["maxNumBullets"])
-        return (playable + coverage + min_bullets) / 3.0
+            total = 0
+            for locs in info["bullet_locations"]:
+                if sum(locs) == 0:
+                    continue
+                empty += (np.array(locs) == 0).sum() / (parameters["bucketsX"] * parameters["bucketsY"])
+                total += 1
+            empty = get_range_reward(empty/max(1, total), 0, self._empty_area, 1)
+        return (playable + coverage + min_bullets + empty) / 4.0
     
     def diversity(self, info1, info2):
         diversity = []
