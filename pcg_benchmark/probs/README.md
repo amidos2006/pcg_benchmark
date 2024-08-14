@@ -5,7 +5,24 @@
 PCG Benchmark Problems
 </h1>
 
+Problems are the main class for the framework, they contains the actual functions and spaces that the [PCGEnv class](https://github.com/amidos2006/pcg_benchmark/blob/main/pcg_benchmark/pcg_env.py) calls and uses. Every problem has the following:
+- `_content_space`: the content space where you can sample any content from the representation space
+- `_control_space`: the control space where you can sample any control parameter from the control paramter space
+- `info(content)`: do all the simulation and the calculation and return an object that contains all the information
+- `quality(info)`: takes an info object a return a number between 0 and 1 where 1 means it solved the problem
+- `diversity(info1,info2)`: takes two info objects from two content and return a value between 0 and 1 where 1 means these two content are different from each other
+- `controlability(info, control)`: takes an info object and a control parameter and return a value between 0 and 1 where 1 means that this content follow the control parameter correctly
+- `render(content)`: renders the content into an a `PIL.Image`
+
 ## List of All Problems
+This is a list of all the supported problems and variants in the framework, you can either use the problem name for the default version or one of the variant names if you want a different challenge. if you want to test against only the main versions only, you can [`list()`](https://github.com/amidos2006/pcg_benchmark/blob/main/pcg_benchmark/__init__.py#L28) all the problems from `pcg_benchmark` and filter by having one `-` for the main problem and two `-` for variants.
+
+```python
+import pcg_benchmark
+
+normal = [name for name in pcg_benchmark.list() if len(name.split('-')) == 2]
+variants = [name for name in pcg_benchmark.list() if len(name.split('-')) > 2]
+```
 
 | Name | Description | Problem Name | Variant Names |
 | ---- | ----------- | ------------ | ------------- |
@@ -22,6 +39,23 @@ PCG Benchmark Problems
 | [Talakat](https://github.com/amidos2006/pcg_benchmark/blob/main/pcg_benchmark/probs/talakat/README.md) | create a bullet pattern for bullet hell games | `talakat-v0` | `talakat-small-v0`, `talakat-long-v0` |
 | [Zelda](https://github.com/amidos2006/pcg_benchmark/blob/main/pcg_benchmark/probs/zelda/README.md) | create a simple playable arcade dungeon crawler game | `zelda-v0` | `zelda-enemies-v0`, `zelda-large-v0` |
 
-## Explaining Problem Class
-
 ## Adding New Problems
+The first step to create new problem is to create a class that inherit from the base [`Problem`](https://github.com/amidos2006/pcg_benchmark/blob/main/pcg_benchmark/probs/problem.py) class from `pcg_benchmark.probs`. The new class should implement the main functions that was explained at the beginning of the document. Here are there repeated again:
+- `info(content)`: do all the simulation and the calculation and return an object that contains all the information
+- `quality(info)`: takes an info object a return a number between 0 and 1 where 1 means it solved the problem
+- `diversity(info1,info2)`: takes two info objects from two content and return a value between 0 and 1 where 1 means these two content are different from each other
+- `controlability(info, control)`: takes an info object and a control parameter and return a value between 0 and 1 where 1 means that this content follow the control parameter correctly
+- `render(content)`: renders the content into an a `PIL.Image`
+
+The constructor of the class should take `**kwargs` where it can be any of the parameters for the problem needed. The constructor also should initialize the following two attributes using the [`pcg_benchmark.spaces`](https://github.com/amidos2006/pcg_benchmark/tree/main/pcg_benchmark/spaces):
+- `_content_space`: the content space where you can sample any content from the representation space
+- `_control_space`: the control space where you can sample any control parameter from the control paramter space
+
+Spaces are classes to create ranges where you can sample randomly from similar to [Spaces](https://www.gymlibrary.dev/api/spaces/) from [OpenAI Gym](https://github.com/openai/gym). They can be used to create a space of all the possible content or control parameters. There is two type of basic spaces:
+- [`IntegerSpace`](https://github.com/amidos2006/pcg_benchmark/blob/main/pcg_benchmark/spaces/integer.py): a space for integer numbers in a specific range
+- [`FloatSpace`](https://github.com/amidos2006/pcg_benchmark/blob/main/pcg_benchmark/spaces/float.py): a space for float numbers in a specific range
+
+A more complicated space might be used to have more complex search space. Here are the three complex spaces: 
+- [`ArraySpace`](https://github.com/amidos2006/pcg_benchmark/blob/main/pcg_benchmark/spaces/array.py): a space of any shape array with a space as the base value.
+- [`DictionarySpace`](https://github.com/amidos2006/pcg_benchmark/blob/main/pcg_benchmark/spaces/dictionary.py): a space that has keys and values where values can be anything, if it is a space then it can be sampled recursively.
+- [`GenericSpace`](https://github.com/amidos2006/pcg_benchmark/blob/main/pcg_benchmark/spaces/generic.py): a space of any thing. [`ArraySpace`](https://github.com/amidos2006/pcg_benchmark/blob/main/pcg_benchmark/spaces/array.py) and [`DictionarySpace`](https://github.com/amidos2006/pcg_benchmark/blob/main/pcg_benchmark/spaces/dictionary.py) are special case of this space. This class can sample if there is base classes inside or keep the same structure of everything else.
