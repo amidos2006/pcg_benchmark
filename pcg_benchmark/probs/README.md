@@ -1,3 +1,6 @@
+<p align="center">
+  <img height="300px" src="../../images/problems.png"/>
+</p>
 <h1 align="center">
 PCG Benchmark Problems
 </h1>
