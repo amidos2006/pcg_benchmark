@@ -64,7 +64,7 @@ controls = [env.control_space.sample() for _ in range(100)]
 quality, diversity, controlability, details, infos = env.evaluate(contents, controls)
 
 # generate images for each content
-imgs = env.renders(contents)
+imgs = env.render(contents)
 ```
 
 If you want to test only one thing like `quality`, `diversity`, or `controlability`. You can use the corresponding function with the same name. These function can take either 1 content, an array of content, 1 info dictionary, or an array of info dictionaries. `info` function is very useful as it generate all the useful information for the other functions. You can cache these values and use them instead of content so it doesn't need to do exhaustive calculations or simulations (It can be used for optimization). Finally, if you want to fix the random number generator used, please use `seed` function and provide a seed value to make sure that all the random number generators are set.
