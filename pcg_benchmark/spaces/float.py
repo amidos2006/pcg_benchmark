@@ -62,3 +62,25 @@ class FloatSpace(Space):
     """
     def sample(self):
         return self._random.random() * (self._max_value - self._min_value) + self._min_value
+    
+    """
+    Removes a value from the array and return that as float in the space range
+    
+    Parameters:
+        values(float[]): a group of values to restructure
+        copy(bool): copy the values array before modifying it
+
+    Returns:
+        int: a correctly bounded value in the float space
+    """
+    def restructure(self, values, copy=True):
+        if len(values) == 0:
+            raise ValueError("The input values is empty.")
+        if copy:
+            values = [] + values
+        value = float(values.pop(0))
+        if value < self._min_value:
+            value = self._min_value
+        if value > self._max_value:
+            value = self._max_value
+        return value

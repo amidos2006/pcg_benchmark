@@ -1,5 +1,18 @@
 import numpy as np
 
+def _recursiveFlat(input):
+    if not hasattr(input, "__len__"):
+        return [float(input)]
+    if isinstance(input, dict):
+        result = []
+        for v in input:
+            result = result + _recursiveFlat(input[v])
+        return result
+    result = []
+    for v in input:
+        result = result + _recursiveFlat(v)
+    return result
+
 """
 A parent class that coverns the content shape and range. It can be used to sample a random content.
 """
@@ -49,3 +62,25 @@ class Space:
     """
     def sample(self):
         raise NotImplementedError("Implement how to sample from the current space")
+    
+    """
+    Restructure the input values into the space structure
+
+    Parameters:
+        values(float[]): a group of values to restructure
+        copy(bool): copy the values array before modifying it
+
+    Returns:
+        any: a correctly structured object of the input values
+    """
+    def restructure(self, values, copy=True):
+        raise NotImplementedError("Implement how to structure 1D array to the current space")
+    
+    """
+    Special sampling function where it return the content as 1D array of floats
+
+    Returns:
+        float[]: a 1D array of floats that consists of everything
+    """
+    def sampleFlat(self):
+        return _recursiveFlat(self.sample())

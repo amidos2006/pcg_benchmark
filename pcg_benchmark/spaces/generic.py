@@ -96,6 +96,35 @@ def _recursiveIsSampled(input, value):
         return True
     except:
         return False
+    
+"""
+Restructure recursively the value into same shape of input
+
+Parameters:
+    input(Space): a space subclass used to use to restructure the input value
+    value(any): a value that need to be restructured into the shape of the input
+
+Returns:
+    any: a structured object in same vein of input but using values from the value parameter
+"""
+def _recursiveRestructure(input, value):
+    if not hasattr(input, "__len__"):
+        if issubclass(type(input), Space):
+            return input.restructure(value, False)
+        else:
+            if len(value) == 0:
+                raise ValueError("The input values is empty.")
+            value.pop(0)
+            return input
+    if isinstance(input, dict):
+        result = {}
+        for v in input:
+            result[v] = _recursiveRestructure(input[v], value)
+        return result
+    result = []
+    for i in range(len(input)):
+        result.append(_recursiveRestructure(input[i], value))
+    return result
 
 """
 This space return what is inside of it as it is and sample from it if it is space. 
@@ -154,3 +183,18 @@ class GenericSpace(Space):
     """
     def sample(self):
         return _recursiveSample(self._value)
+    
+    """
+    Removes values from the array and returns the value in the generic structure
+    
+    Parameters:
+        values(float[]): a group of values to restructure
+        copy(bool): copy the values array before modifying it
+
+    Returns:
+        any: a correctly bounded value in the generic space
+    """
+    def restructure(self, values, copy=True):
+        if copy:
+            values = [] + values
+        return _recursiveRestructure(self._value, values)
