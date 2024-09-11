@@ -48,3 +48,20 @@ def evaluateChromosomes(env, chromosomes):
         chromosomes[i]._diversity = details["diversity"][i]
         chromosomes[i]._controlability = details["controlability"][i]
         chromosomes[i]._info = info[i]
+
+def fitness_quality(chromosome):
+    return chromosome.fitness()
+
+def fitness_quality_control(chromosome):
+    result = chromosome.quality()
+    if chromosome.quality() >= 1:
+        result += chromosome.controlability()
+    return result / 2.0
+
+def fitness_quality_control_diversity(chromosome):
+    result = chromosome.quality()
+    if chromosome.quality() >= 1:
+        result += chromosome.controlability()
+    if chromosome.controlability() >= 1:
+        result += chromosome.diversity()
+    return result / 3.0

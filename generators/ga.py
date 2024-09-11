@@ -52,38 +52,3 @@ class GA:
             chromosomes.append(child)
         self._chromosomes = chromosomes
         self._evaluate()
-
-    def best(self):
-        return self._chromosomes[0]
-    
-    def content(self):
-        return [c._content for c in self._chromosomes]
-    
-    def control(self):
-        return [c._control for c in self._chromosomes]
-    
-    def quality(self):
-        return [c.quality() for c in self._chromosomes]
-    
-    def diversity(self):
-        return [c.diversity() for c in self._chromosomes]
-    
-    def controlability(self):
-        return [c.controlability() for c in self._chromosomes]
-
-def fitness_quality(chromosome):
-    return chromosome.fitness()
-
-def fitness_quality_control(chromosome):
-    result = chromosome.quality()
-    if chromosome.quality() >= 1:
-        result += chromosome.controlability()
-    return result / 2.0
-
-def fitness_quality_control_diversity(chromosome):
-    result = chromosome.quality()
-    if chromosome.quality() >= 1:
-        result += chromosome.controlability()
-    if chromosome.controlability() >= 1:
-        result += chromosome.diversity()
-    return result / 3.0
