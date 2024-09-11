@@ -1,47 +1,50 @@
 from pcg_benchmark.spaces import swapContent
 
 class Chromosome:
-    def __init__(self, env, mut_rate):
-        self._env = env
-        self._mut_rate = mut_rate
-
+    def __init__(self):
         self._content = None
-        self._target = None
-
-        self._info = None
-        self._fitness = None
-        self._diversity = None
         self._control = None
 
-    def random(self):
-        self._content = self._env.content_space.sample()
-        self._target = self._env.control_space.sample()
+        self._info = None
+        self._quality = None
+        self._diversity = None
+        self._controlability = None
+
+    def random(self, env):
+        self._content = env.content_space.sample()
+        self._control = env.control_space.sample()
 
     def crossover(self, chromosome):
-        child = Chromosome(self._env, self._mut_rate)
+        child = Chromosome()
         child._content = swapContent(self._content, chromosome._content, 0.5)
         return child
 
-    def mutation(self):
-        child = Chromosome(self._env, self._mut_rate)
-        child._content = swapContent(self._content, self._env.content_space.sample(), self._mut_rate)
+    def mutation(self, env, mut_rate):
+        child = Chromosome()
+        child._content = swapContent(self._content, env.content_space.sample(), mut_rate)
         return child
     
-    def fitness(self):
+    def quality(self):
         if self._info == None:
-            self._info = self._env.info(self._content)
-        return self._env.fitness(self._info)
+            raise ValueError("You need to compute all the values first")
+        return self._quality
     
-    def distance(self, chromosome):
+    def diversity(self):
         if self._info == None:
-            self._info = self._env.info(self._content)
-        if chromosome._info == None:
-            chromosome._info = chromosome._env.info(self._content)
-        return self._env.diversity([self._info, chromosome._info])
+            raise ValueError("You need to compute all the values first")
+        return self._diversity
+
+    def controlability(self):
+        if self._info == None:
+            raise ValueError("You need to compute all the values first")
+        return self._controlability
     
-    def control(self):
-        if self._info == None:
-            self._info = self._env.info(self._content)
-        if self._control == None:
-            return 0
-        return self._env.control(self._info, self._control)
+def evaluateChromosomes(env, chromosomes):
+    content = [c._content for c in chromosomes]
+    control = [c._control for c in chromosomes]
+    _, _, _, details, info = env.evaluate(content, control)
+    for i in range(len(chromosomes)):
+        chromosomes[i]._quality = details["quality"][i]
+        chromosomes[i]._diversity = details["diversity"][i]
+        chromosomes[i]._controlability = details["controlability"][i]
+        chromosomes[i]._info = info[i]
