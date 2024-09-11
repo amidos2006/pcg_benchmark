@@ -143,6 +143,8 @@ for _ in range(100):
     break
 ```
 
+Finally, if you want to evolve content assuming the content is always a flat float array. the [`Space`](https://github.com/amidos2006/pcg_benchmark/blob/main/pcg_benchmark/spaces/space.py#L19) class have two helpful functions towards that. The [`sampleFlat`](https://github.com/amidos2006/pcg_benchmark/blob/main/pcg_benchmark/spaces/space.py#L85) and [`restructure`](https://github.com/amidos2006/pcg_benchmark/blob/main/pcg_benchmark/spaces/space.py#L76). The `sampleFlat` will return a float array that represent the content instead of the structured shape, while `restructure` takes a float array and make it back to the content shape and fix any wrong values in it.
+
 ## Examples of Generated Content
 
 
