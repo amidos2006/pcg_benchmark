@@ -11,6 +11,7 @@ if __name__ == "__main__":
     parser.add_argument('-g', '--generator', type=str, default='random', help='what is the generator file name from generators folder (ga, es, random).')
     parser.add_argument('-f', '--fitness', type=str, default='quality', help='what is the fitness function (quality, quality_control, quality_control_diversity)')
     parser.add_argument('-s', '--steps', type=int, default=100, help='the number of generations to run that generator')
+    parser.add_argument('-e', '--early_stop', action="store_true", help="stop evolution when the max fitness is 1")
 
     args = parser.parse_args()
 
@@ -36,3 +37,5 @@ if __name__ == "__main__":
         fitness = [fitness_fn(c) for c in generator._chromosomes]
         print(f"  Generation {i}: {np.max(fitness):.2f}, {np.mean(fitness):.2f}, {np.std(fitness):.2f}")
         generator.save(f"{args.foldername}/gen_{i+1}")
+        if args.early_stop and np.max(fitness) >= 1:
+            break
