@@ -91,17 +91,17 @@ To understand how to add new problems to the framework, please check the main [R
 ## Creating a Generator
 You can check the example generators in the [generators folder](https://github.com/amidos2006/pcg_benchmark/tree/main/generators) at the root of the project. It contains 3 different generators that were tested in the paper `GeneticAlgorithm`, `NoveltySearch`, and `ConstrainedNoveltySearch`. To create any generator other than these, you usually need a way to navigate the search space. 
 
-In Optimization algorithms, this can be through crossover or mutation. The spaces class have a global function that could help with moving in the representation space called [`swapContent`](https://github.com/amidos2006/pcg_benchmark/blob/main/pcg_benchmark/spaces/__init__.py#L51). The function takes two content and probability value to generate a new content that combine between both. If the probability is 50% then you have a uniform crossover function. For mutation or small change, the same function can be used for that. Make sure the second content is a new random content and the probability is low like 0.1 or 0.05. This will create a uniform mutation function. If you want to limit the number of swaps, you can set `maxSwaps` to any value above 0, and if you want to seed the random number generator, please set `seed` parameter to any value. Here is an example for both crossover function and mutation function.
+In Optimization algorithms, this can be through crossover or mutation. The spaces class have a global function that could help with moving in the representation space called [`contentSwap`](https://github.com/amidos2006/pcg_benchmark/blob/main/pcg_benchmark/spaces/__init__.py#L51). The function takes two content and probability value to generate a new content that combine between both. If the probability is 50% then you have a uniform crossover function. For mutation or small change, the same function can be used for that. Make sure the second content is a new random content and the probability is low like 0.1 or 0.05. This will create a uniform mutation function. If you want to limit the number of swaps, you can set `maxSwaps` to any value above 0, and if you want to seed the random number generator, please set `seed` parameter to any value. Here is an example for both crossover function and mutation function.
 ```python
-from pcg_benchmark.spaces import swapContent
+from pcg_benchmark.spaces import contentSwap
 
 # uniform cross over
 def uniform_crossover(prob_env, content1, content2):
-  return swapContent(content1, content2, 0.5)
+  return contentSwap(content1, content2, 0.5)
 
 # 5% uniform mutation by default
 def uniform_mutation(prob_env, content, percentage=0.05):
-  return swapContent(content, prob_env.content_space.sample(), percentage)
+  return contentSwap(content, prob_env.content_space.sample(), percentage)
 ```
 
 The other needed function to create a generator beside sampling randomly, discovering a neighboring content is to evaluate the content from respect of `quality`, `diversity`, or `controlability`. We recommend for every content you generate the info data with it and use it instead of the content for all the calculations.
@@ -113,11 +113,11 @@ def fitness(env, info):
 Here is a full example of simple mu+lambda ES algorithm with mu=lambda=50 to generate content for the `zelda-v0` problem for 100 generations.
 ```python
 import pcg_benchmark
-from pcg_benchmark.spaces import swapContent
+from pcg_benchmark.spaces import contentSwap
 
 # uniform mutation
 def uniform_mutation(prob_env, content, percentage=0.05):
-  return swapContent(content, prob_env.content_space.sample(), percentage)
+  return contentSwap(content, prob_env.content_space.sample(), percentage)
 
 # calculate the fitness based on individual (content, info)
 def fitness(env, individual):

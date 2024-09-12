@@ -10,6 +10,7 @@ __pycache__/
 *.ipynb
 original/
 original/*
+outputs/
 slices.txt
 .DS_Store
 

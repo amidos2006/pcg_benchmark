@@ -1,4 +1,4 @@
-from pcg_benchmark.spaces import swapContent
+from pcg_benchmark.spaces import contentSwap
 import json
 import numpy as np
 
@@ -22,13 +22,13 @@ class Chromosome:
 
     def crossover(self, chromosome):
         child = Chromosome(self._random)
-        child._content = swapContent(self._content, chromosome._content, 0.5, -1, self._random)
+        child._content = contentSwap(self._content, chromosome._content, 0.5, -1, self._random)
         child._control = [self._control, chromosome._control][self._random.integers(2)]
         return child
 
     def mutation(self, env, mut_rate):
         child = Chromosome()
-        child._content = swapContent(self._content, env.content_space.sample(), mut_rate, -1, self._random)
+        child._content = contentSwap(self._content, env.content_space.sample(), mut_rate, -1, self._random)
         child._control = self._control
         return child
     
