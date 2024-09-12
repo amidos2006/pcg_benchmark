@@ -10,7 +10,7 @@ if __name__ == "__main__":
     parser.add_argument('-p', '--problem', type=str, default='binary-v0', help='what is the problem that you are trying to solve.')
     parser.add_argument('-g', '--generator', type=str, default='random', help='what is the generator file name from generators folder (ga, es, random).')
     parser.add_argument('-f', '--fitness', type=str, default='quality', help='what is the fitness function (quality, quality_control, quality_control_diversity)')
-    parser.add_argument('-s', '--steps', type=int, default=1000, help='the number of generations to run that generator')
+    parser.add_argument('-s', '--steps', type=int, default=100, help='the number of generations to run that generator')
 
     args = parser.parse_args()
 
