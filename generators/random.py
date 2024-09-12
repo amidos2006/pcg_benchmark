@@ -3,7 +3,7 @@ import numpy as np
 import os
 import shutil
 
-class RandomSearch:
+class Generator:
     def __init__(self, env, fitness_fn, pop_size=100):
         self._env = env
         self._fitness_fn = fitness_fn

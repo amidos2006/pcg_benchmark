@@ -3,7 +3,7 @@ import numpy as np
 import os
 import shutil
 
-class ES:
+class Generator:
     def __init__(self, env, fitness_fn, mu_size=100, lambda_size=100, mut_rate=0.05):
         self._env = env
         self._fitness_fn = fitness_fn

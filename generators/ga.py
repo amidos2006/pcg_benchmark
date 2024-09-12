@@ -4,7 +4,7 @@ import numpy as np
 import os
 import shutil
 
-class GA:
+class Generator:
     def __init__(self, env, fitness_fn, pop_size=100, tournment_size=7, cross_rate=0.5, mut_rate=0.05, elitism_perct=0.1):
         self._env = env
         self._fitness_fn = fitness_fn
@@ -31,7 +31,7 @@ class GA:
     def _evaluate(self):
         evaluateChromosomes(self._env, self._chromosomes)
         self._chromosomes.sort(key=lambda c: self._fitness_fn(c), reverse=True)
-    
+
     def reset(self, seed=None):
         self._chromosomes = []
         for _ in range(self._pop_size):
