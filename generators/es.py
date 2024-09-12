@@ -26,12 +26,12 @@ class Generator:
     def update(self):
         chromosomes = []
         for i in range(self._lambda_size):
-            index = self._random.integers()
-            chromosomes.append(self._chromosomes[index].mutate(self._mut_rate))
+            index = self._random.integers(self._lambda_size)
+            chromosomes.append(self._chromosomes[index].mutation(self._env, self._mut_rate))
         evaluateChromosomes(self._env, chromosomes)
         self._chromosomes = self._chromosomes + chromosomes
         self._chromosomes.sort(key=lambda c: self._fitness_fn(c), reverse=True)
-        self._chromosomes = self._chromosomes[:self._pop_size]
+        self._chromosomes = self._chromosomes[:self._mu_size]
 
     def save(self, folderpath):
         if os.path.exists(folderpath):

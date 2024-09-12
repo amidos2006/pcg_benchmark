@@ -24,7 +24,7 @@ class Generator:
         self._random.shuffle(tournment)
         chromosomes = []
         for i in range(size):
-            chromosomes.append(tournment[i])
+            chromosomes.append(self._chromosomes[tournment[i]])
         chromosomes.sort(key=lambda c: self._fitness_fn(c), reverse=True)
         return chromosomes[0]
     
@@ -50,7 +50,7 @@ class Generator:
             if self._random.random() < self._cross_rate:
                 parent = self._select()
                 child = child.crossover(parent)
-            child = child.mutate(self._env, self._mut_rate)
+            child = child.mutation(self._env, self._mut_rate)
             chromosomes.append(child)
         self._chromosomes = chromosomes
         self._evaluate()

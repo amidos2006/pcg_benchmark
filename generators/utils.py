@@ -2,6 +2,16 @@ from pcg_benchmark.spaces import contentSwap
 import json
 import numpy as np
 
+class NpEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, np.integer):
+            return int(obj)
+        if isinstance(obj, np.floating):
+            return float(obj)
+        if isinstance(obj, np.ndarray):
+            return obj.tolist()
+        return super(NpEncoder, self).default(obj)
+
 class Chromosome:
     def __init__(self, random=None):
         if random:
@@ -57,7 +67,7 @@ class Chromosome:
             "controlability": self._controlability
         }
         with open(filepath, 'w') as f:
-            f.write(json.dumps(savedObject))
+            f.write(json.dumps(savedObject, cls=NpEncoder))
     
     def load(self, filepath):
         with open(filepath, 'r') as f:
