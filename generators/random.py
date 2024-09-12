@@ -1,6 +1,7 @@
 from .utils import Chromosome, evaluateChromosomes
-import math
 import numpy as np
+import os
+import shutil
 
 class RandomSearch:
     def __init__(self, env, fitness_fn, pop_size=100):
@@ -13,7 +14,7 @@ class RandomSearch:
     def reset(self, seed=None):
         self._chromosomes = []
         for _ in range(self._pop_size):
-            self._chromosomes.append(Chromosome())
+            self._chromosomes.append(Chromosome(self._random))
             self._chromosomes[-1].random(self._env)
         if seed:
             self._random = np.random.default_rng(seed)
@@ -30,3 +31,18 @@ class RandomSearch:
         self._chromosomes = self._chromosomes + chromosomes
         self._chromosomes.sort(key=lambda c: self._fitness_fn(c), reverse=True)
         self._chromosomes = self._chromosomes[:self._pop_size]
+
+    def save(self, folderpath):
+        shutil.rmtree(folderpath)
+        os.makedirs(folderpath)
+        for i in range(len(self._chromosomes)):
+            self._chromosomes[i].save(os.path.join(folderpath, f"chromsome_{i}.json"))
+    
+    def load(self, folderpath):
+        files = [os.path.join(folderpath, fn) for fn in os.listdir(folderpath) if "chromosome" in fn]
+        self._chromosomes = []
+        for fn in files:
+            c = Chromosome(self._random)
+            c.load(fn)
+            self._chromosomes.append(c)
+        self._chromosomes.sort(key=lambda c: self._fitness_fn(c), reverse=True)

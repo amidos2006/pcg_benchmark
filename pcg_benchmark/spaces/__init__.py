@@ -51,6 +51,8 @@ def _recursiveSwap(content1, content2, swapInfo):
 def contentSwap(content1, content2, swap_probability, maxSwaps=-1, seed = None):
     if seed == None:
         random = np.random.default_rng()
+    elif isinstance(seed, np.random.Generator):
+        random = seed
     else:
         random = np.random.default_rng(seed)
     swapInfo = {
