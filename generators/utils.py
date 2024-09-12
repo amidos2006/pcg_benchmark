@@ -80,7 +80,7 @@ def evaluateChromosomes(env, chromosomes):
         chromosomes[i]._info = info[i]
 
 def fitness_quality(chromosome):
-    return chromosome.fitness()
+    return chromosome.quality()
 
 def fitness_quality_control(chromosome):
     result = chromosome.quality()

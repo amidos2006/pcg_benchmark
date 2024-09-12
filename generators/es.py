@@ -34,7 +34,8 @@ class Generator:
         self._chromosomes = self._chromosomes[:self._pop_size]
 
     def save(self, folderpath):
-        shutil.rmtree(folderpath)
+        if os.path.exists(folderpath):
+            shutil.rmtree(folderpath)
         os.makedirs(folderpath)
         for i in range(len(self._chromosomes)):
             self._chromosomes[i].save(os.path.join(folderpath, f"chromsome_{i}.json"))
