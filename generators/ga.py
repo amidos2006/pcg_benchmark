@@ -1,14 +1,12 @@
-from .utils import Chromosome, evaluateChromosomes
+import generators.utils as utils
 import math
-import numpy as np
 import os
 import shutil
 
-class Generator:
+class Generator(utils.Generator):
     def __init__(self, env, fitness_fn, pop_size=100, tournment_size=7, cross_rate=0.5, mut_rate=0.05, elitism_perct=0.1):
-        self._env = env
-        self._fitness_fn = fitness_fn
-        self._random = np.random.default_rng()
+        super().__init__(env, fitness_fn)
+
         self._pop_size = pop_size
         self._tournment_size = tournment_size
         self._cross_rate = cross_rate
@@ -29,16 +27,16 @@ class Generator:
         return chromosomes[0]
     
     def _evaluate(self):
-        evaluateChromosomes(self._env, self._chromosomes)
+        utils.evaluateChromosomes(self._env, self._chromosomes)
         self._chromosomes.sort(key=lambda c: self._fitness_fn(c), reverse=True)
 
     def reset(self, seed=None):
+        super().reset(seed)
+
         self._chromosomes = []
         for _ in range(self._pop_size):
-            self._chromosomes.append(Chromosome(self._random))
+            self._chromosomes.append(utils.Chromosome(self._random))
             self._chromosomes[-1].random(self._env)
-        if seed:
-            self._random = np.random.default_rng(seed)
         self._evaluate()
 
     def update(self):
@@ -66,7 +64,7 @@ class Generator:
         files = [os.path.join(folderpath, fn) for fn in os.listdir(folderpath) if "chromosome" in fn]
         self._chromosomes = []
         for fn in files:
-            c = Chromosome(self._random)
+            c = utils.Chromosome(self._random)
             c.load(fn)
             self._chromosomes.append(c)
         self._chromosomes.sort(key=lambda c: self._fitness_fn(c), reverse=True)

@@ -12,6 +12,25 @@ class NpEncoder(json.JSONEncoder):
             return obj.tolist()
         return super(NpEncoder, self).default(obj)
 
+class Generator:
+    def __init__(self, env, fitness_fn):
+        self._env = env
+        self._fitness_fn = fitness_fn
+        self._random = np.random.default_rng()
+
+    def reset(self, seed=None):
+        if seed:
+            self._random = np.random.default_rng(seed)
+
+    def update(self):
+        return NotImplementedError("The update function is not implemented, please make sure to implment it.")
+    
+    def save(self, folderpath):
+        raise NotImplementedError("The save function is not implemented, please make sure to implment it.")
+    
+    def load(self, folderpath):
+        return NotImplementedError("The load function is not implemented, please make sure to implment it.")
+
 class Chromosome:
     def __init__(self, random=None):
         if random:
