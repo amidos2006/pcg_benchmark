@@ -24,7 +24,7 @@ This repo contains the framework and some initial generators that are provided w
 3. If everything went fine, the PCG Benchmark is ready to be used. Check the [following section](https://github.com/amidos2006/pcg_benchmark#usage) on how to use it.
 
 
-## Usage
+## Using the Framework
 The PCG Benchmark follow the same design consideration of [OpenAI Gym](https://github.com/openai/gym) in its simplicty and easy of usage. The PCG Benchmark is just an interface for multitude of problems. Each problem has its own representation, control parameters, and functions to test quality, diversity, and controlability. To learn more about the problems check [the following problems section](https://github.com/amidos2006/pcg_benchmark#problems). Each problem has a problem name that can be used to construct the environment. The problem name usually following the following pattern.
 ```
 {problem_name}-{variant_name}-{version}
@@ -144,6 +144,24 @@ for _ in range(100):
 ```
 
 Finally, if you want to evolve content assuming the content is always a flat float array. the [`Space`](https://github.com/amidos2006/pcg_benchmark/blob/main/pcg_benchmark/spaces/space.py#L19) class have two helpful functions towards that. The [`sampleFlat`](https://github.com/amidos2006/pcg_benchmark/blob/main/pcg_benchmark/spaces/space.py#L85) and [`restructure`](https://github.com/amidos2006/pcg_benchmark/blob/main/pcg_benchmark/spaces/space.py#L76). The `sampleFlat` will return a float array that represent the content instead of the structured shape, while `restructure` takes a float array and make it back to the content shape and fix any wrong values in it.
+
+## Using The Generator Runner
+This section talks about using [`run.py`](https://github.com/amidos2006/pcg_benchmark/blob/main/run.py) to run one of the generators in the [`generators`](https://github.com/amidos2006/pcg_benchmark/tree/main/generators) folder. The `run.py` is designed to run interative generators and save the data between these iterations. The script takes a couple of parameters and then run the generator and save all the details of the run in folders on your hard-drive. The parameters are:
+- `outputfolder`: This is the only **mandatory** input for the script. It specify the folder that the outputs should be saved inside.
+- `--problem`|`-p`: The problem name that you want to run the generator against. Look at all the problem names in [Problems section](https://github.com/amidos2006/pcg_benchmark/?#problems) for that. The default value for this parameter is `binary-v0`
+- `--generator`|`-g`: The file name where the generator is saved in. Right now there is three files for three different generators. [`random`](https://github.com/amidos2006/pcg_benchmark/blob/main/generators/random.py) contains a Random Search algorithm, [`es`](https://github.com/amidos2006/pcg_benchmark/blob/main/generators/es.py) contains a Mu + Lambda evolution Strategy, and [`ga`](https://github.com/amidos2006/pcg_benchmark/blob/main/generators/ga.py) contains a Genetic algorithm. The default value for this parameter is `random`.
+- `--fitness`|`-f`: The fitness function name inside of [`generators.utils.py`](https://github.com/amidos2006/pcg_benchmark/blob/main/generators/utils.py), this function takes a [`Chromosome`](https://github.com/amidos2006/pcg_benchmark/blob/main/generators/utils.py#L34) and returns a value where higher means better and lower means worse. For easy of writing, the function also looks for functions that starts with `fitness_` followed by the name you provided. The framework comes with 3 different fitness functions. [`quality`|`fitness_quality`](https://github.com/amidos2006/pcg_benchmark/blob/main/generators/utils.py#L111) computes the quality metric for the content and return it as fitness. [`quality_control`|`fitness_quality_control`](https://github.com/amidos2006/pcg_benchmark/blob/main/generators/utils.py#L114) computes the quality metric then control if you passed the quality as cascaded fitness. [`quality_control_diversity`|`fitness_quality_control_diversity`](https://github.com/amidos2006/pcg_benchmark/blob/main/generators/utils.py#L120) computes the quality then control then diversity in cascaded manner as fitness, this fitness is not stable because diversity depend on the population and how diverse it is so the value of a chromosome from before that passes diversity might not pass it now.  The default value for this parameter is `quality`.
+- `--steps`|`-s`: The number of iterations to run the generator [`update`](https://github.com/amidos2006/pcg_benchmark/blob/main/generators/utils.py#L25) function for.
+- `--earlystop`|`-e`: If this exists in the command line, the generator will stop as soon as the best chromosome fitness is the maximum which is 1.0.
+
+Here is an example on running Genetic Algorithm to try to solve [`sokoban-v0`](https://github.com/amidos2006/pcg_benchmark/tree/main/pcg_benchmark/probs/sokoban) problem with a fitness that cares about quality and controlability and number of iterations of 1000. If at any time the algorithm found a solution, it will stop before reaching 1000 iterations.
+```console
+python run.py outputs -p sokoban-v0 -g ga -f quality_control -s 1000 -e
+```
+
+
+## Adding a Generator to The Generator Runner
+This section will talk if about how to integerate your generator to work with `run.py` (the generator runner). `run.py` is a script designed to run any generator that exists in the folder named generators. To add your new generator such that you can just use `run.py`, you need to make sure that your generator implements the `generators.utils.Generator` class. 
 
 ## Examples of Generated Content
 
