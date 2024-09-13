@@ -155,13 +155,26 @@ This section talks about using [`run.py`](https://github.com/amidos2006/pcg_benc
 - `--earlystop`|`-e`: If this exists in the command line, the generator will stop as soon as the best chromosome fitness is the maximum which is 1.0.
 
 Here is an example on running Genetic Algorithm to try to solve [`sokoban-v0`](https://github.com/amidos2006/pcg_benchmark/tree/main/pcg_benchmark/probs/sokoban) problem with a fitness that cares about quality and controlability and number of iterations of 1000. If at any time the algorithm found a solution, it will stop before reaching 1000 iterations.
-```console
+```
 python run.py outputs -p sokoban-v0 -g ga -f quality_control -s 1000 -e
 ```
 
+## Adding a new Generator to `run.py`
+This section will talk if about how to integerate your generator to work with `run.py` (the generator runner). To add your new generator such that you can just use `run.py`, you need to make sure that your generator implements the `generators.utils.Generator` class. This involves making sure the constructor only needs two inputs `env` and `fitness_fn`, where the `env` is the environment you are trying to solve and `fitness_fn` is the fitness function you want to use. You can use the same fitness functions defined in the [previous section](https://github.com/amidos2006/pcg_benchmark/?#using-the-generator-runner). Beside the constructor, you need to implement the following functions:
+- `reset(self,seed=None)`: this function initialize your generator to do a new run at any moment. Make sure to send the `seed` variable to the super class to set the random variable seed.
+- `update(self)`: this function update the current state of the generator to generate the next state. In evolution, it is the next generation. In cellular automata/NCA, it is the next update from its current state. In PCGRL, it is the next update of the map from its current state. In GANs, it could be just produce a new one and that is it.
+- `save(self, foldername)`: saves the state of the generator in a specific folder (`foldername`) so you can analyze the results and load it to continue later.
+- `load(self, foldername)`: loads the state of the generator from the specific folder (`foldername`) so you can continue the update or generation later.
 
-## Adding a Generator to The Generator Runner
-This section will talk if about how to integerate your generator to work with `run.py` (the generator runner). `run.py` is a script designed to run any generator that exists in the folder named generators. To add your new generator such that you can just use `run.py`, you need to make sure that your generator implements the `generators.utils.Generator` class. 
+You can always have access to the parent class variables:
+- `self._env`: access to the problem environment so you can call functions to evaluate the content
+- `self._fitness_fn`: the evaluation function that can evaluate a content with respect to your problem. `run.py` use it to print the progress of the generator over iterations.
+- `self._random`: a `numpy` random variable that can be used to sample random stuff.
+
+One last note if you decide to use any of the provided fitness function from the previous section, you need to make sure the object send to it has the following functions:
+- `quality(self)`: return a value between 0 and 1 where 1 means it has solved the problem from quality prespective
+- `controlability(self)`: return a value between 0 and 1 where 1 means it has solved the problem from controlability prespective. In our generators, we assign a control parameter to each chromosome to evaluate towards.
+- `diversity(self)`: return a value between 0 and 1 where 1 means it is very different from all the other chromosomes that are surrounding it. In our generators, we calculate the diversity between all the individuals in the population during evolution.
 
 ## Examples of Generated Content
 
