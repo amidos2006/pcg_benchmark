@@ -1,6 +1,11 @@
-from pcg_benchmark.spaces import contentSwap
+
+import generators.generator as base
+import os
+import shutil
 import json
 import numpy as np
+from pcg_benchmark.spaces import contentSwap
+import sys
 
 class NpEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -11,25 +16,6 @@ class NpEncoder(json.JSONEncoder):
         if isinstance(obj, np.ndarray):
             return obj.tolist()
         return super(NpEncoder, self).default(obj)
-
-class Generator:
-    def __init__(self, env, fitness_fn):
-        self._env = env
-        self._fitness_fn = fitness_fn
-        self._random = np.random.default_rng()
-
-    def reset(self, seed=None):
-        if seed:
-            self._random = np.random.default_rng(seed)
-
-    def update(self):
-        return NotImplementedError("The update function is not implemented, please make sure to implment it.")
-    
-    def save(self, folderpath):
-        raise NotImplementedError("The save function is not implemented, please make sure to implment it.")
-    
-    def load(self, folderpath):
-        return NotImplementedError("The load function is not implemented, please make sure to implment it.")
 
 class Chromosome:
     def __init__(self, random=None):
@@ -97,7 +83,41 @@ class Chromosome:
             self._quality = savedObject["quality"]
             self._diversity = savedObject["diversity"]
             self._controlability = savedObject["controlability"]
+
+class Generator(base.Generator):
+    def reset(self, **kwargs):
+        super().reset(**kwargs)
+
+        fn_name = kwargs.get('fitness', 'fitness_quality')
+        print(fn_name)
+        if hasattr(sys.modules[__name__], fn_name):
+            self._fitness_fn = getattr(sys.modules[__name__], fn_name)
+        elif hasattr(sys.modules[__name__], f"fitness_{fn_name}"):
+            self._fitness_fn = getattr(sys.modules[__name__], f"fitness_{fn_name}")
+        else:
+            raise ValueError(f"{fn_name} doesn't exits in generators.search.py file")
+
+        self._chromosomes = []
+
+    def best(self):
+        return self._fitness_fn(self._chromosomes[0])
+
+    def save(self, folderpath):
+        if os.path.exists(folderpath):
+            shutil.rmtree(folderpath)
+        os.makedirs(folderpath)
+        for i in range(len(self._chromosomes)):
+            self._chromosomes[i].save(os.path.join(folderpath, f"chromsome_{i}.json"))
     
+    def load(self, folderpath):
+        files = [os.path.join(folderpath, fn) for fn in os.listdir(folderpath) if "chromosome" in fn]
+        self._chromosomes = []
+        for fn in files:
+            c = base.Chromosome(self._random)
+            c.load(fn)
+            self._chromosomes.append(c)
+        self._chromosomes.sort(key=lambda c: self._fitness_fn(c), reverse=True)
+
 def evaluateChromosomes(env, chromosomes):
     content = [c._content for c in chromosomes]
     control = [c._control for c in chromosomes]

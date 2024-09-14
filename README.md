@@ -150,31 +150,41 @@ This section talks about using [`run.py`](https://github.com/amidos2006/pcg_benc
 - `outputfolder`: This is the only **mandatory** input for the script. It specify the folder that the outputs should be saved inside.
 - `--problem`|`-p`: The problem name that you want to run the generator against. Look at all the problem names in [Problems section](https://github.com/amidos2006/pcg_benchmark/?#problems) for that. The default value for this parameter is `binary-v0`
 - `--generator`|`-g`: The file name where the generator is saved in. Right now there is three files for three different generators. [`random`](https://github.com/amidos2006/pcg_benchmark/blob/main/generators/random.py) contains a Random Search algorithm, [`es`](https://github.com/amidos2006/pcg_benchmark/blob/main/generators/es.py) contains a Mu + Lambda evolution Strategy, and [`ga`](https://github.com/amidos2006/pcg_benchmark/blob/main/generators/ga.py) contains a Genetic algorithm. The default value for this parameter is `random`.
-- `--fitness`|`-f`: The fitness function name inside of [`generators.utils.py`](https://github.com/amidos2006/pcg_benchmark/blob/main/generators/utils.py), this function takes a [`Chromosome`](https://github.com/amidos2006/pcg_benchmark/blob/main/generators/utils.py#L34) and returns a value where higher means better and lower means worse. For easy of writing, the function also looks for functions that starts with `fitness_` followed by the name you provided. The framework comes with 3 different fitness functions. [`quality`|`fitness_quality`](https://github.com/amidos2006/pcg_benchmark/blob/main/generators/utils.py#L111) computes the quality metric for the content and return it as fitness. [`quality_control`|`fitness_quality_control`](https://github.com/amidos2006/pcg_benchmark/blob/main/generators/utils.py#L114) computes the quality metric then control if you passed the quality as cascaded fitness. [`quality_control_diversity`|`fitness_quality_control_diversity`](https://github.com/amidos2006/pcg_benchmark/blob/main/generators/utils.py#L120) computes the quality then control then diversity in cascaded manner as fitness, this fitness is not stable because diversity depend on the population and how diverse it is so the value of a chromosome from before that passes diversity might not pass it now.  The default value for this parameter is `quality`.
 - `--steps`|`-s`: The number of iterations to run the generator [`update`](https://github.com/amidos2006/pcg_benchmark/blob/main/generators/utils.py#L25) function for.
-- `--earlystop`|`-e`: If this exists in the command line, the generator will stop as soon as the best chromosome fitness is the maximum which is 1.0.
+- `--earlystop`|`-e`: If this exists in the command line, the generator will stop as soon as the best solution is the maximum which is 1.0.
+
+If you wanna set some of the algorithm hyper parameters for hte available algorithm such as the fitness function used in the search process. You can in the command line the parameter name in form of `fitness` or `--fitness` and then followed by the allowed values. For the fitness function we have 3 different ones: 
+- [`quality`|`fitness_quality`](https://github.com/amidos2006/pcg_benchmark/blob/main/generators/utils.py#L111) computes the quality metric for the content and return it as fitness. 
+- [`quality_control`|`fitness_quality_control`](https://github.com/amidos2006/pcg_benchmark/blob/main/generators/utils.py#L114) computes the quality metric then control if you passed the quality as cascaded fitness. 
+- [`quality_control_diversity`|`fitness_quality_control_diversity`](https://github.com/amidos2006/pcg_benchmark/blob/main/generators/utils.py#L120) computes the quality then control then diversity in cascaded manner as fitness, this fitness is not stable because diversity depend on the population and how diverse it is so the value of a chromosome from before that passes diversity might not pass it now.
+
+Every parameter has a default value for example the fitness default is `quality`.
 
 Here is an example on running Genetic Algorithm to try to solve [`sokoban-v0`](https://github.com/amidos2006/pcg_benchmark/tree/main/pcg_benchmark/probs/sokoban) problem with a fitness that cares about quality and controlability and number of iterations of 1000. If at any time the algorithm found a solution, it will stop before reaching 1000 iterations.
 ```
-python run.py outputs -p sokoban-v0 -g ga -f quality_control -s 1000 -e
+python run.py outputs -p sokoban-v0 -g ga -s 1000 -e --fitness quality_control
 ```
 
+Finally, before you start, looking in the reset function for every generator to know the names for its hyperparameters if you want to tune them to a specific value. For example, `ga` has `pop_size`|`--pop_size` parameter to set the size of population of the genetic algorithm.
+
 ## Adding a new Generator to `run.py`
-This section will talk if about how to integerate your generator to work with `run.py` (the generator runner). To add your new generator such that you can just use `run.py`, you need to make sure that your generator implements the `generators.utils.Generator` class. This involves making sure the constructor only needs two inputs `env` and `fitness_fn`, where the `env` is the environment you are trying to solve and `fitness_fn` is the fitness function you want to use. You can use the same fitness functions defined in the [previous section](https://github.com/amidos2006/pcg_benchmark/?#using-the-generator-runner). Beside the constructor, you need to implement the following functions:
-- `reset(self,seed=None)`: this function initialize your generator to do a new run at any moment. Make sure to send the `seed` variable to the super class to set the random variable seed.
+This section will talk if about how to integerate your generator to work with `run.py` (the generator runner). To add your new generator such that you can just use `run.py`, you need to make sure that your generator implements the `generators.utils.Generator` class. This involves making sure the constructor only needs one input `env`. Beside the constructor, you need to implement the following functions:
+- `reset(self, **kwargs)`: this function initialize your generator to do a new run at any moment. Each algorithm also have hyperparameters that are being set here using kwargs. For example, all the algorithms has `seed` to seed the random number generator.
 - `update(self)`: this function update the current state of the generator to generate the next state. In evolution, it is the next generation. In cellular automata/NCA, it is the next update from its current state. In PCGRL, it is the next update of the map from its current state. In GANs, it could be just produce a new one and that is it.
+- `best(self)`: this function return the evaluation of the solution so far where the value should be bounded between 0 and 1 where 1 means it solved the problem.
 - `save(self, foldername)`: saves the state of the generator in a specific folder (`foldername`) so you can analyze the results and load it to continue later.
 - `load(self, foldername)`: loads the state of the generator from the specific folder (`foldername`) so you can continue the update or generation later.
 
 You can always have access to the parent class variables:
 - `self._env`: access to the problem environment so you can call functions to evaluate the content
-- `self._fitness_fn`: the evaluation function that can evaluate a content with respect to your problem. `run.py` use it to print the progress of the generator over iterations.
 - `self._random`: a `numpy` random variable that can be used to sample random stuff.
 
-One last note if you decide to use any of the provided fitness function from the previous section, you need to make sure the object send to it has the following functions:
+One last note, if you decide to build a search algorithm you can build on top of `generators.search.Generator` which is the base class of all the search base one. It has definition for `Chromosome` class and the `Generator` base class has access to `self._chromosomes` and `self._fitness_fn` for the fitness function. The fitness function is set from the ones in the same file. These are the ones that are defined: 
 - `quality(self)`: return a value between 0 and 1 where 1 means it has solved the problem from quality prespective
 - `controlability(self)`: return a value between 0 and 1 where 1 means it has solved the problem from controlability prespective. In our generators, we assign a control parameter to each chromosome to evaluate towards.
 - `diversity(self)`: return a value between 0 and 1 where 1 means it is very different from all the other chromosomes that are surrounding it. In our generators, we calculate the diversity between all the individuals in the population during evolution.
+
+If you want to have your new fitness function just add it in the same module `generators.search` and the system will access it using the name when provided in the command line.
 
 ## Examples of Generated Content
 
