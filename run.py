@@ -11,7 +11,7 @@ def isFloat(number):
 
 def convert2Dic(commands):
     if len(commands) % 2 == 1:
-        raise ValueError("inputs have to be ")
+        raise ValueError("inputs have to be tuples example (--fitness quality).")
     result = {}
     for i in range(0, len(commands), 2):
         key = commands[i]
