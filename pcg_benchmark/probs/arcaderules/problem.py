@@ -193,8 +193,8 @@ class ArcadeRulesProblem(Problem):
         stats = 0.0
         if self._layout[info["player"]["y"]][info["player"]["x"]] == 1:
             player = 1.0
-            canLose = int(info["do_nothing"][-1][0].isLose() or info["random"][-1][0].isLose() or info["flat_mcts"][-1][0].isLose())
-            canWin = int(info["do_nothing"][-1][0].isWin() or info["random"][-1][0].isWin() or info["flat_mcts"][-1][0].isWin())
+            canLose = int(info["do_nothing"][-1][0]['isLose'] or info["random"][-1][0]['isLose'] or info["flat_mcts"][-1][0]['isLose'])
+            canWin = int(info["do_nothing"][-1][0]['isWin'] or info["random"][-1][0]['isWin'] or info["flat_mcts"][-1][0]['isWin'])
             safety = get_range_reward(len(info["do_nothing"]), 0, self._s_target * info["max_time"], info["max_time"])
             stats = (player + canLose + canWin + safety) / 4.0
         
@@ -209,9 +209,9 @@ class ArcadeRulesProblem(Problem):
         winValue = 0.0
         challenge = 0.0
         if death >= 1:
-            winMCTS = int(info["flat_mcts"][-1][0].isWin())
-            winRandom = int(info["random"][-1][0].isWin())
-            winNothing = int(info["do_nothing"][-1][0].isWin())
+            winMCTS = int(info["flat_mcts"][-1][0]['isWin'])
+            winRandom = int(info["random"][-1][0]['isWin'])
+            winNothing = int(info["do_nothing"][-1][0]['isWin'])
             winValue = get_range_reward(winMCTS - winRandom - winNothing, -2, 2)
             challenge = get_range_reward(len(info["flat_mcts"]), 0, self._target * info["max_time"], info["max_time"])
         
@@ -232,23 +232,23 @@ class ArcadeRulesProblem(Problem):
         greens_1 = np.zeros((self._height, self._width))
         yellows_1 = np.zeros((self._height, self._width))
         for s,_ in info1["do_nothing"] + info1["random"] + info1["flat_mcts"]:
-            reds_1 += _getMap(s._reds, self._width, self._height)
-            greens_1 += _getMap(s._greens, self._width, self._height)
-            yellows_1 += _getMap(s._yellows, self._width, self._height)
+            reds_1 += _getMap(s['_reds'], self._width, self._height)
+            greens_1 += _getMap(s['_greens'], self._width, self._height)
+            yellows_1 += _getMap(s['_yellows'], self._width, self._height)
         player_1 = np.zeros((self._height, self._width))
         for s,_ in info1["flat_mcts"]:
-            player_1[s._player["y"]-1][s._player["x"]-1] += 1
+            player_1[s['_player']["y"]-1][s['_player']["x"]-1] += 1
         
         reds_2 = np.zeros((self._height, self._width))
         greens_2 = np.zeros((self._height, self._width))
         yellows_2 = np.zeros((self._height, self._width))
         for s,_ in info2["do_nothing"] + info2["random"] + info2["flat_mcts"]:
-            reds_2 += _getMap(s._reds, self._width, self._height)
-            greens_2 += _getMap(s._greens, self._width, self._height)
-            yellows_2 += _getMap(s._yellows, self._width, self._height)
+            reds_2 += _getMap(s['_reds'], self._width, self._height)
+            greens_2 += _getMap(s['_greens'], self._width, self._height)
+            yellows_2 += _getMap(s['_yellows'], self._width, self._height)
         player_2 = np.zeros((self._height, self._width))
         for s,_ in info2["flat_mcts"]:
-            player_2[s._player["y"]-1][s._player["x"]-1] += 1
+            player_2[s['_player']["y"]-1][s['_player']["x"]-1] += 1
 
         obj_div = abs((reds_1 > 0).astype(int) - (reds_2 > 0).astype(int)).sum() +\
             abs((greens_1 > 0).astype(int) - (greens_2 > 0).astype(int)).sum() +\

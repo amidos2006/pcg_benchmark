@@ -30,8 +30,8 @@ def runGame(engine, agent):
         tempState = state.clone()
         action = agent.action(tempState)
         state.update(action["x"], action["y"])
-        result.append((tempState, action))
-    result.append((state, None))
+        result.append((tempState.to_serializable(), action))
+    result.append((state.to_serializable(), None))
     return result
 
 class DoNothingAgent:
@@ -195,6 +195,16 @@ class State:
         for obj in self._yellows:
             result += f"-{Pieces.YELLOW}:{obj['x']},{obj['y']},{obj['state']},{obj['value']},{obj['alive']}"
         return result
+    
+    def to_serializable(self):
+        return {
+            '_player': self._player,
+            '_reds': self._reds,
+            '_yellows': self._yellows,
+            '_greens': self._greens,
+            'isWin': self.isWin(),
+            'isLose': self.isLose(),
+        }
 
 class Engine:
     def __init__(self, content, layout, maxTime=40):
