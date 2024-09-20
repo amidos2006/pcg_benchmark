@@ -26,7 +26,7 @@ def convert2Dic(commands):
     return result
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Running a Generato from the list of generators.')
+    parser = argparse.ArgumentParser(description='Running a Generato from the list of generators. You can adjust any hyperparameter of any algorithm based on their extra inputs. For example, GA/ES/Random can set the fitness function by --fitness followed by name of the function in the search.py file.')
     parser.add_argument('outputfolder', type=str, help='the folder to save the search')
     parser.add_argument('-p', '--problem', type=str, default='binary-v0', help='what is the problem that you are trying to solve (`binary-v0`, `zelda-v0`, `sokoban-v0`, ...).')
     parser.add_argument('-g', '--generator', type=str, default='random', help='what is the generator file name from generators folder (`ga`, `es`, `random`, ...).')
