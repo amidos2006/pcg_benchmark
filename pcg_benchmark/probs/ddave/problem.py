@@ -10,7 +10,6 @@ def _run_game(content, solver_power, target = None):
     lvl = np.pad(content, 1)
     gameCharacters="# @H$V*"
     lvlString = ""
-    lvlString = ""
     for i in range(lvl.shape[0]):
         for j in range(lvl.shape[1]):
             lvlString += gameCharacters[int(lvl[i][j])]
