@@ -47,6 +47,16 @@ class Node:
             actions.insert(0,current.action)
             current = current.parent
         return actions
+    
+    def getLocations(self):
+        locations = []
+        current = self
+        while(current.parent != None):
+            locations.insert(0,{"x": current.state.player["x"], 
+                                "y": current.state.player["y"], 
+                                "action": current.action})
+            current = current.parent
+        return locations
 
     def __str__(self):
         return str(self.depth) + "," + str(self.state.getHeuristic()) + "\n" + str(self.state)
@@ -70,7 +80,7 @@ class BFSAgent(Agent):
             if current.checkLose():
                 continue
             if current.checkWin():
-                return current.getActions(), current, iterations
+                return current.getLocations(), current, iterations
             if current.getKey() not in visisted:
                 if bestNode == None or current.getHeuristic() < bestNode.getHeuristic():
                     bestNode = current
@@ -78,7 +88,7 @@ class BFSAgent(Agent):
                     bestNode = current
                 visisted.add(current.getKey())
                 queue.extend(current.getChildren())
-        return bestNode.getActions(), bestNode, iterations
+        return bestNode.getLocations(), bestNode, iterations
 
 class DFSAgent(Agent):
     def getSolution(self, state, maxIterations=-1):
@@ -92,7 +102,7 @@ class DFSAgent(Agent):
             if current.checkLose():
                 continue
             if current.checkWin():
-                return current.getActions(), current, iterations
+                return current.getLocations(), current, iterations
             if current.getKey() not in visisted:
                 if bestNode == None or current.getHeuristic() < bestNode.getHeuristic():
                     bestNode = current
@@ -100,7 +110,7 @@ class DFSAgent(Agent):
                     bestNode = current
                 visisted.add(current.getKey())
                 queue.extend(current.getChildren())
-        return bestNode.getActions(), bestNode, iterations
+        return bestNode.getLocations(), bestNode, iterations
 
 class AStarAgent(Agent):
     def getSolution(self, state, balance=1, maxIterations=-1):
@@ -116,7 +126,7 @@ class AStarAgent(Agent):
             if current.checkLose():
                 continue
             if current.checkWin():
-                return current.getActions(), current, iterations
+                return current.getLocations(), current, iterations
             if current.getKey() not in visisted:
                 if bestNode == None or current.getHeuristic() < bestNode.getHeuristic():
                     bestNode = current
@@ -126,7 +136,7 @@ class AStarAgent(Agent):
                 children = current.getChildren()
                 for c in children:
                     queue.put(c)
-        return bestNode.getActions(), bestNode, iterations
+        return bestNode.getLocations(), bestNode, iterations
 
 class State:
     def __init__(self):

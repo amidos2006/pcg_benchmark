@@ -26,13 +26,13 @@ def _run_game(content, solver_power, target = None):
     sol,solState,_ = aStarAgent.getSolution(state, 1, solver_power)
     if solState.checkWin():
         return 0, sol, solState.getGameStatus()
-    sol,solState,iters = aStarAgent.getSolution(state, 0.5, solver_power)
+    sol,solState,_ = aStarAgent.getSolution(state, 0.5, solver_power)
     if solState.checkWin():
         return 0, sol, solState.getGameStatus()
-    sol,solState,iters = aStarAgent.getSolution(state, 0, solver_power)
+    sol,solState,_ = aStarAgent.getSolution(state, 0, solver_power)
     if solState.checkWin():
         return 0, sol, solState.getGameStatus()
-    sol,solState,iters = bfsAgent.getSolution(state, solver_power)
+    sol,solState,_ = bfsAgent.getSolution(state, solver_power)
     if solState.checkWin():
         return 0, sol, solState.getGameStatus()
 
@@ -102,11 +102,11 @@ class DangerDaveProblem(Problem):
     def diversity(self, info1, info2):
         path1 = np.zeros((self._height, self._width))
         for a in info1["solution"]:
-            cx,cy = info1["player_locations"][0][0] + a["x"], info1["player_locations"][0][1] + a["y"]
+            cx,cy = a["x"], a["y"]
             path1[cy][cx] += 1
         path2 = np.zeros((self._height, self._width))
         for a in info2["solution"]:
-            cx,cy = info2["player_locations"][0][0] + a["x"], info2["player_locations"][0][1] + a["y"]
+            cx,cy = a["x"], a["y"]
             path2[cy][cx] += 1
         path1_f = np.flip(path1, axis=1)
         diff = min(abs(path1 - path2).sum(), abs(path1_f - path2).sum())
