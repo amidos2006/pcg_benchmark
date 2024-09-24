@@ -71,6 +71,8 @@ class DangerDaveProblem(Problem):
             for d in diamonds:
                 dh, _, _ = _run_game(content, self._solver, {"x": d[0]+1, "y": d[1]+1})
                 diamondHeuristic.append(dh)
+            for a in solution:
+                a["x"], a["y"] = a["x"] - 1, a["y"] - 1
         result =  {
             "players": players, "exits": exits, "diamonds": len(diamonds), "keys": keys,
             "player_locations": player_locations, "exit_locations": exit_locations,
@@ -102,12 +104,10 @@ class DangerDaveProblem(Problem):
     def diversity(self, info1, info2):
         path1 = np.zeros((self._height, self._width))
         for a in info1["solution"]:
-            cx,cy = a["x"]-1, a["y"]-1
-            path1[cy][cx] += 1
+            path1[a["y"]][a["x"]] += 1
         path2 = np.zeros((self._height, self._width))
         for a in info2["solution"]:
-            cx,cy = a["x"]-1, a["y"]-1
-            path2[cy][cx] += 1
+            path2[a["y"]][a["x"]] += 1
         path1_f = np.flip(path1, axis=1)
         diff = min(abs(path1 - path2).sum(), abs(path1_f - path2).sum())
         return get_range_reward(diff, 0, self._diversity * (self._width + self._height), self._width * self._height)
