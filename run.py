@@ -33,7 +33,6 @@ if __name__ == "__main__":
     parser.add_argument('-s', '--steps', type=int, default=100, help='the number of iterations to run that generator')
     parser.add_argument('-e', '--early_stop', action="store_true", help="stop generation when the best function is 1")
 
-    # args = parser.parse_args()
     args, additional = parser.parse_known_args()
     add_args = convert2Dic(additional)
 

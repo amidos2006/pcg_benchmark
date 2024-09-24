@@ -16,7 +16,7 @@ class Generator(search.Generator):
     def update(self):
         chromosomes = []
         while len(chromosomes) < self._pop_size:
-            child = search.Chromosome()
+            child = search.Chromosome(self._random)
             child.random(self._env)
             chromosomes.append(child)
         search.evaluateChromosomes(self._env, chromosomes)

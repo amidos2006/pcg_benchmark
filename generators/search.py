@@ -44,7 +44,7 @@ class Chromosome:
         return child
 
     def mutation(self, env, mut_rate):
-        child = Chromosome()
+        child = Chromosome(self._random)
         child._content = contentSwap(self._content, env.content_space.sample(), mut_rate, -1, self._random)
         child._control = self._control
         return child
@@ -91,7 +91,6 @@ class Generator(base.Generator):
         super().reset(**kwargs)
 
         fn_name = kwargs.get('fitness', 'fitness_quality')
-        print(fn_name)
         if hasattr(sys.modules[__name__], fn_name):
             self._fitness_fn = getattr(sys.modules[__name__], fn_name)
         elif hasattr(sys.modules[__name__], f"fitness_{fn_name}"):
