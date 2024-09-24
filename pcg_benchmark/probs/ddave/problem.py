@@ -15,7 +15,6 @@ def _run_game(content, solver_power, target = None):
             lvlString += gameCharacters[int(lvl[i][j])]
             if j == lvl.shape[1]-1:
                 lvlString += "\n"
-        lvlString += "\n"
     state = State()
     state.stringInitialize(lvlString.split("\n"))
     state.target = target

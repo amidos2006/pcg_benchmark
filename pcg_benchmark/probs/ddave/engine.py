@@ -49,11 +49,11 @@ class Node:
         return actions
     
     def getLocations(self):
-        locations = []
+        locations = [{"x": self.state.player["x"], "y": self.state.player["y"], "action": {"x": 0, "y": 0}}]
         current = self
         while(current.parent != None):
-            locations.insert(0,{"x": current.state.player["x"], 
-                                "y": current.state.player["y"], 
+            locations.insert(0,{"x": current.parent.state.player["x"], 
+                                "y": current.parent.state.player["y"], 
                                 "action": current.action})
             current = current.parent
         return locations
