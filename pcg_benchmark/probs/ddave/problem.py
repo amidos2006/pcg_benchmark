@@ -102,11 +102,11 @@ class DangerDaveProblem(Problem):
     def diversity(self, info1, info2):
         path1 = np.zeros((self._height, self._width))
         for a in info1["solution"]:
-            cx,cy = a["x"], a["y"]
+            cx,cy = a["x"]-1, a["y"]-1
             path1[cy][cx] += 1
         path2 = np.zeros((self._height, self._width))
         for a in info2["solution"]:
-            cx,cy = a["x"], a["y"]
+            cx,cy = a["x"]-1, a["y"]-1
             path2[cy][cx] += 1
         path1_f = np.flip(path1, axis=1)
         diff = min(abs(path1 - path2).sum(), abs(path1_f - path2).sum())
