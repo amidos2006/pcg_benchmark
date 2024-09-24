@@ -38,6 +38,8 @@ if __name__ == "__main__":
     add_args = convert2Dic(additional)
 
     env = pcg_benchmark.make(args.problem)
+    if "seed" in add_args:
+        env.seed(add_args["seed"])
 
     module = import_module(f"generators.{args.generator}")
     if not hasattr(module, "Generator"):
