@@ -13,7 +13,7 @@ The problem has 3 variants:
 - `ddave-large-v0`: generate a 17x11 level (without the borders) where the solution has minimum number of jumps equal to 10.
 
 ## Content Structure
-The content is a 2D array **height x width** of int of values between 0 and 6 that represents a dangeroud dave level. Here is an example of a level
+The content is a 2D array **height x width** of int of values between 0 and 6 that represents a Dangerous Dave level. Here is an example of a level
 ```python
 [
     [1,1,6,6,6,1,1,4,1,1,5],
@@ -25,7 +25,7 @@ The content is a 2D array **height x width** of int of values between 0 and 6 th
     [2,1,1,1,1,1,1,0,3,1,1],
 ]
 ```
-Different values has different meaning
+Different values have different meaning
 - *0:* solid tile
 - *1:* empty tile
 - *2:* player tile
