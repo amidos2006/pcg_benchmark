@@ -92,7 +92,7 @@ class IsaacProblem(Problem):
         }
     
     def quality(self, info):
-        map_size = get_range_reward(info["map_size"], 0, self._target, self._width * self._height)
+        map_size = get_range_reward(info["map_size"], 0, self._target, self._target, self._width * self._height)
         regions = 0
         if map_size >= 1:
             regions += get_range_reward(info["num_regions"], 0, 1, 1, self._width * self._height)
@@ -101,8 +101,6 @@ class IsaacProblem(Problem):
         functional = 0
         if regions >= 1:
             functional += get_range_reward(info["locations"], 0, 4)
-            functional += get_range_reward(info["locations"], 0, 3, 3, 12)
-        functional /= 2.0
         loose_connections = 0
         if functional >= 1:
             loose_connections = get_range_reward(info["loose_connections"], 0, 0, 0, self._width * self._height)
