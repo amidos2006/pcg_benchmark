@@ -92,7 +92,7 @@ class IsaacProblem(Problem):
         }
     
     def quality(self, info):
-        map_size = get_range_reward(info["map_size"], 0, self._target, self._target, self._width * self._height)
+        map_size = get_range_reward(info["map_size"], 0, self._target, self._width * self._height)
         regions = 0
         if map_size >= 1:
             regions += get_range_reward(info["num_regions"], 0, 1, 1, self._width * self._height)
