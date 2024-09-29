@@ -21,8 +21,11 @@ def _sol2str(content, sol):
     state = State()
     state.stringInitialize(lvlString.split("\n"))
     crateMoves = []
+    cloneSol = []
     for a in sol:
         crateMoves.append(state.update(a["x"], a["y"]))
+        cloneSol.append({"x": a["x"], "y": a["y"]})
+    sol = cloneSol
     if abs(sol[0]["x"]) == 0:
         for a in sol:
             temp = a["x"]
