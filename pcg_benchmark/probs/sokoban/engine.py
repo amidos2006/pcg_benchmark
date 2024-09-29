@@ -20,7 +20,7 @@ class Node:
                 continue
             if crateMove and childState.checkDeadlock():
                 continue
-            children.append(Node(childState, self, d))
+            children.append(Node(childState, self, {"x": d["x"], "y": d["y"]}))
         return children
 
     def getKey(self):
