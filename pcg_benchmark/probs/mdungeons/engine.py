@@ -16,7 +16,7 @@ class Node:
         for d in directions:
             childState = self.state.clone()
             childState.update(d["x"], d["y"])
-            children.append(Node(childState, self, d))
+            children.append(Node(childState, self, {"x": d["x"], "y": d["y"]}))
         return children
 
     def getKey(self):
