@@ -102,7 +102,7 @@ class EliminationProblem(Problem):
             added += get_range_reward(long_word_common / tlong_word_common, 0, max(0, self._long_percentage - self._offset), \
                                       min(1, self._long_percentage + self._offset), 1)
         added /= 2.0
-        return constraints + added / 2.0
+        return (constraints + added) / 2.0
     
     def diversity(self, info1, info2):
         ratio = SequenceMatcher(None, info1["word"], info2["word"]).ratio()
