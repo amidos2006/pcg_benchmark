@@ -52,20 +52,19 @@ class ZeldaProblem(Problem):
         enemies = get_range_reward(info["enemies"], 0, self._enemies - self._erange, \
                                    self._enemies + self._erange, self._width * self._height)
         stats = (player + key + door + enemies) / 4.0
-        
-        playable = 0
-        if info["player_key"] > 0:
-            playable += 1.0
-        if info["key_door"] > 0:
-            playable += 1.0
-        playable /= 2.0
 
-        sol_length = get_range_reward(info["player_key"] + info["key_door"], 0, self._target,\
-                                       self._width * self._height)
         added = 0
         if player >= 1 and key >= 1 and door >= 1:
+            playable = 0
+            if info["player_key"] > 0:
+                playable += 1.0
+            if info["key_door"] > 0:
+                playable += 1.0
+            playable /= 2.0
             added += playable
             if playable == 1:
+                sol_length = get_range_reward(info["player_key"] + info["key_door"], 0, self._target,\
+                                       self._width * self._height)
                 added += sol_length
         return (regions + stats + added) / 4.0
 
