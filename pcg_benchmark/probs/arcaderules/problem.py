@@ -195,15 +195,17 @@ class ArcadeRulesProblem(Problem):
             player = 1.0
             canLose = int(info["do_nothing"][-1][0]['isLose'] or info["random"][-1][0]['isLose'] or info["flat_mcts"][-1][0]['isLose'])
             canWin = int(info["do_nothing"][-1][0]['isWin'] or info["random"][-1][0]['isWin'] or info["flat_mcts"][-1][0]['isWin'])
-            safety = get_range_reward(len(info["do_nothing"]), 0, self._s_target * info["max_time"], info["max_time"])
-            stats = (player + canLose + canWin + safety) / 4.0
-        
+            survial = canWin
+            if survial == 0:
+                survial = get_range_reward(len(info["flat_mcts"]), 0, info["max_time"]+2)
+            safety = get_range_reward(len(info["do_nothing"]), 0, self._s_target * info["max_time"], info["max_time"]+1)
+            stats = (player + canLose + canWin + survial + safety) / 5.0
         death = 0.0
         if stats >= 1:
             donothing_death = get_range_reward(len(info["do_nothing"]), 0, self._s_target * info["max_time"],\
-                info["max_time"])
+                info["max_time"]+1)
             random_death = get_range_reward(len(info["random"]), 0, 0, self._d_target * info["max_time"],\
-                info["max_time"])
+                info["max_time"]+1)
             death = (donothing_death + random_death) / 2.0
 
         winValue = 0.0
@@ -213,7 +215,7 @@ class ArcadeRulesProblem(Problem):
             winRandom = int(info["random"][-1][0]['isWin'])
             winNothing = int(info["do_nothing"][-1][0]['isWin'])
             winValue = get_range_reward(winMCTS - winRandom - winNothing, -2, 2)
-            challenge = get_range_reward(len(info["flat_mcts"]), 0, self._target * info["max_time"], info["max_time"])
+            challenge = get_range_reward(len(info["flat_mcts"]), 0, self._target * info["max_time"], info["max_time"]+1)
         
         return (stats + winValue + challenge + death) / 4.0
     
