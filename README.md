@@ -161,7 +161,7 @@ If you wanna set some of the algorithm hyper parameters for hte available algori
 Every parameter has a default value for example the fitness default is `quality`.
 
 Here is an example on running Genetic Algorithm to try to solve [`sokoban-v0`](https://github.com/amidos2006/pcg_benchmark/tree/main/pcg_benchmark/probs/sokoban) problem with a fitness that cares about quality and controlability and number of iterations of 1000. If at any time the algorithm found a solution, it will stop before reaching 1000 iterations.
-```
+```bash
 python run.py outputs -p sokoban-v0 -g ga -s 1000 -e --fitness quality_control
 ```
 
@@ -188,6 +188,13 @@ If you want to have your new fitness function just add it in the same module `ge
 
 ## Examples of Generated Content
 
+## Processing results
+You can quickly run and then evaluate your results, plotting the relevant graphs using `run_experiments.bat` and `data_processing.py`, provided in this repo but not included in the library itself.
+These are ready-made scripts, but you can run the experiments in any other way you want. Once experiments are over, you can process the results via
+```bash
+python data_processing.py run_pipeline --root_dir="./results" --output_dir='./plots'
+```
+You can also just execute single steps of the pipeline (`process_environment`, `process_all_envs`, `aggregate_envs_statistics`, `aggregate_over_runs`, and `plot`) by changing `run_pipeline` with the corresponding function (and using the corresponding parameters).
 
 ## Contributing
 Bug reports and pull requests are welcome on GitHub at [https://github.com/amidos2006/pcg_benchmark/](https://github.com/amidos2006/pcg_benchmark/).
