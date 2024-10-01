@@ -101,9 +101,9 @@ class LodeRunnerProblem(Problem):
         }
     
     def quality(self, info):
-        player = get_range_reward(info["player"], 0, 1, 1, self._width * self._height / 10)
-        gold = get_range_reward(info["gold"], 0, self._gold, self._width * self._height)
-        enemy = get_range_reward(info["enemy"], 0, self._enemies, self._width * self._height)
+        player = get_range_reward(info["player"], 0, 1, 1, self._width * self._height)
+        gold = get_range_reward(info["gold"], 0, self._gold, 2 * self._gold, self._width * self._height)
+        enemy = get_range_reward(info["enemy"], 0, self._enemies, 2 * self._enemies, self._width * self._height)
         stats = (player + gold + enemy) / 3.0
 
         exploration = 0
@@ -120,10 +120,9 @@ class LodeRunnerProblem(Problem):
 
         decoration = 0
         if play_stats >= 1:
-            decoration = 0.3 * (info["walking"] + info["hanging"] + info["climbing"]) +\
-                0.1 * js_dist(info["falling"], self._falling)
-            decoration = get_range_reward(decoration, 0, 0, self._target, 1)
-        
+            decoration = 0.9 * (info["walking"] + info["hanging"] + info["climbing"]) + 0.1 * info["falling"]
+            decoration = get_range_reward(decoration, 0, self._target, 1)
+
         return 0.9 * (stats + exploration + play_stats) / 3 + 0.1 * decoration
     
     def diversity(self, info1, info2):
