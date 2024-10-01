@@ -62,13 +62,22 @@ def _simulate(content, width, length, height):
                 z -= 1
         z = max(0, z)
         if z < height:
-            heights.append(z)
             for y in range(sy,ey):
                 for x in range(sx,ex):
                     result[z][y][x] = t + 1
         else:
             failed += 1 
-
+    for y in range(length):
+        for x in range(width):
+            found = False
+            for z in range(height-1, -1, -1):
+                if found:
+                    if result[z][y][x] == 0:
+                        found = False
+                else:
+                    if result[z][y][x] > 0:
+                        heights.append(z+1)
+                        found = True
     return result, heights, failed
 
 class BuildingProblem(Problem):
@@ -79,7 +88,7 @@ class BuildingProblem(Problem):
         self._length = kwargs.get("length")
         self._height = kwargs.get("height")
         self._target = kwargs.get("blocks", self._width * self._length * self._height / 9)
-        self._min_height = kwargs.get("minHeight", 0.5)
+        self._min_height = kwargs.get("minHeight", 0.4)
         self._diversity = kwargs.get("diversity", 0.4)
 
         self._cerror = max(1, int(0.05 * self._target))
@@ -119,7 +128,13 @@ class BuildingProblem(Problem):
         target = get_range_reward(info["blocks"], 0, self._target)
         min_height = 0
         if target >= 1:
-            min_height = get_range_reward(min(info["heights"]), 0, self._min_height * self._height, self._height)
+            for i in range(int(self._min_height * self._height)):
+                heights = [h for h in info["heights"] if h == i + 1]
+                if len(heights) > 0:
+                    min_height += get_range_reward(len(heights), 0, 0, 0, self._width * self._length)
+                    break
+                min_height += 1
+            min_height /= int(self._min_height * self._height)
         return (target + min_height) / 2
     
     def diversity(self, info1, info2):
