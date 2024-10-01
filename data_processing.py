@@ -268,7 +268,7 @@ def create_line_plots(csv_file, output_dir):
 			# Plot customization
 			plt.title(f'{env_name} - {prop.title()} over Iterations')
 			plt.xlabel('Iteration')
-			plt.ylabel('Mean Values')
+			plt.ylabel(f'Mean {prop.title()}')
 			
 			# Custom legend
 			handles, labels = plt.gca().get_legend_handles_labels()
