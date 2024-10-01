@@ -214,7 +214,7 @@ class ArcadeRulesProblem(Problem):
             winMCTS = int(info["flat_mcts"][-1][0]['isWin'])
             winRandom = int(info["random"][-1][0]['isWin'])
             winNothing = int(info["do_nothing"][-1][0]['isWin'])
-            winValue = get_range_reward(winMCTS - winRandom - winNothing, -2, 2)
+            winValue = get_range_reward(2*winMCTS - winRandom - winNothing, -2, 2)
             challenge = get_range_reward(len(info["flat_mcts"]), 0, self._target * info["max_time"], info["max_time"]+1)
         
         return (stats + winValue + challenge + death) / 4.0
