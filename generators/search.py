@@ -108,7 +108,7 @@ class Generator(base.Generator):
             shutil.rmtree(folderpath)
         os.makedirs(folderpath)
         for i in range(len(self._chromosomes)):
-            self._chromosomes[i].save(os.path.join(folderpath, f"chromsome_{i}.json"))
+            self._chromosomes[i].save(os.path.join(folderpath, f"chromosome_{i}.json"))
     
     def load(self, folderpath):
         files = [os.path.join(folderpath, fn) for fn in os.listdir(folderpath) if "chromosome" in fn]
