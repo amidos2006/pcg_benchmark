@@ -4,6 +4,7 @@ from typing import List, Optional
 
 import fire
 import matplotlib.pyplot as plt
+import matplotlib
 import numpy as np
 import pandas as pd
 import seaborn as sns
@@ -18,7 +19,7 @@ def compute_credible_interval(data, confidence=0.95):
     """
 	n = len(data)
 	mean = np.mean(data)
-	sem = stats.sem(data)  # Standard error of the mean
+	sem = stats.sem(data)
 	interval = stats.t.interval(confidence, n - 1, loc=mean, scale=sem)
 	return interval
 
@@ -240,6 +241,9 @@ def create_line_plots(csv_file, output_dir):
 	# Ensure the output directory exists
 	os.makedirs(output_dir, exist_ok=True)
 	
+	# Change matplotlib font properties
+	matplotlib.rcParams.update({'font.size': 40})
+	
 	# Iterate over each environment type to generate plots for all environments
 	for env_name, env_group in df.groupby('env_name'):
 		
@@ -251,6 +255,7 @@ def create_line_plots(csv_file, output_dir):
 				x='iter_n',
 				y=f'mean_{prop}',
 				hue='algorithm',
+				hue_order=['random', 'ga', 'es'],  # Custom sorting of the algorithms
 				style='fitness_type',
 				markers=False,
 				dashes=True,
@@ -266,28 +271,82 @@ def create_line_plots(csv_file, output_dir):
 				)
 				
 			# Plot customization
-			plt.title(f'{env_name} - {prop.title()} over Iterations')
-			plt.xlabel('Iteration')
-			plt.ylabel(f'Mean {prop.title()}')
+			#plt.title(f'{env_name} - {prop.title()} over Iterations')
+			#plt.xlabel('Iteration')
+			#plt.ylabel(f'Mean {prop.title()}')
+						
+			plt.xticks([0, 50, 100, 150, 200])
+			plt.yticks([0., 0.25, 0.5, 0.75, 1.0])
 			
-			# Custom legend
-			handles, labels = plt.gca().get_legend_handles_labels()
-			unique_labels = dict(zip(labels, handles))  # Remove duplicate labels
-			plt.legend(unique_labels.values(), unique_labels.keys(), title='Fitness and Algorithm',
-			           bbox_to_anchor=(1.05, 1), loc='upper left')
-			
-			# plt.ylim(0, 1)
+			plt.xlabel('Generation' if env_name in ['smb-v0', 'sokoban-v0', 'talakat-v0', 'zelda-v0'] else '')
+			plt.ylabel(f'Mean {prop.title()}' if env_name in ['arcade-v0', 'elimination-v0', 'smb-v0'] else '')
+			plt.legend([],[],frameon=False)
+			plt.ylim(0, 1.1)
 
 			plt.tight_layout()
 			
 			# Save the plot
 			plot_filename = f"{env_name}_{prop}_statistics_lineplot.png"
 			plt.savefig(os.path.join(output_dir, plot_filename))
+			
+			
+			# Custom legend
+			handles, labels = plt.gca().get_legend_handles_labels()
+			for i, label in enumerate(labels):
+				if label == 'fitness_type':
+					labels[i] = 'Fitness function'
+					handles[i].set_linewidth(0.0)
+				if label == 'algorithm':
+					labels[i] = 'Algorithm'
+					handles[i].set_linewidth(0.0)
+			unique_labels = dict(zip(labels, handles))  # Remove duplicate labels
+			legend = plt.legend(unique_labels.values(), unique_labels.keys(), title='',
+								ncol=len(unique_labels), loc='lower left')
+			for legend_obj in legend.legend_handles:
+				legend_obj.set_linewidth(4.0)
+			fig = legend.figure
+			fig.patch.set_alpha(0.0)
+			fig.canvas.draw()
+			bbox = legend.get_window_extent().transformed(fig.dpi_scale_trans.inverted())
+			fig.savefig(os.path.join(output_dir, 'legend.png'), bbox_inches=bbox, transparent=True)
+			
 			plt.close()
 			
 			print(f"Plot saved: {plot_filename}")
 
 
+def render_elites(csv_file, output_dir):
+	import pcg_benchmark
+	
+	df = pd.read_csv(csv_file)
+	folder_path = os.path.join(csv_file, '..')  # This is a hack, I know, but it works
+	
+	for env_name in df['env_name'].unique():
+		for fitness_type in df['fitness_type'].unique():
+			for algorithm in df['algorithm'].unique():
+				for run_n in df['run_n'].unique():
+					print(f'Processing {env_name} ({fitness_type} - {algorithm} - {run_n})')
+					run_data = df.loc[
+						(df['env_name'] == env_name) &
+						(df['fitness_type'] == fitness_type) &
+						(df['algorithm'] == algorithm) &
+						(df['run_n'] == run_n)]
+					last_iter = max(run_data['iter_n'])
+					latest_elite_file = run_data.loc[run_data['iter_n'] == last_iter]['elite'].values[0]
+					
+					with open(f'./results/{env_name}/{fitness_type}/{algorithm}/{run_n}/iter_{last_iter}/{latest_elite_file}', 'r') as f:
+						latest_elite = json.load(f)
+					
+					env = pcg_benchmark.make(env_name)
+					
+					if env_name != 'talakat-v0':
+						env.render(latest_elite['content']).save(os.path.join(output_dir, f'{env_name}_{fitness_type}_{algorithm}_{run_n}_elite.png'))
+					else:
+						frames = env.render(latest_elite['content'])
+						frames[0].save(os.path.join(output_dir, f'{env_name}_{fitness_type}_{algorithm}_{run_n}_elite.gif'), append_images=frames[1:], save_all=True, duration=100, loop=0)
+	
+		
+			
 # Define a class to wrap both functions
 class DataCruncher:
 	def run_pipeline(self,
@@ -312,7 +371,10 @@ class DataCruncher:
 	
 	def plot(self, csv_file, output_dir):
 		create_line_plots(csv_file, output_dir)
-
+	
+	def render_elites(self, csv_file, output_dir):
+		render_elites(csv_file, output_dir)
+	
 
 if __name__ == "__main__":
 	if not os.path.exists('./plots'):

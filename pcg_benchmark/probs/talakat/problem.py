@@ -5,7 +5,7 @@ from pcg_benchmark.probs.talakat.engine import parameters, generateTalakatScript
 from pcg_benchmark.probs.talakat.engine.helper import calculateBuckets, calculateEntropy
 import numpy as np
 import json
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageSequence
 import os
 
 class TalakatProblem(Problem):
@@ -130,6 +130,7 @@ class TalakatProblem(Problem):
                                 int(result[i][0].boss.x+bossGfx.width/2), int(result[i][0].boss.y+bossGfx.height/2)), bossGfx)
             images.append(img)
         images[0].save(os.path.dirname(__file__) + "/images/temp.gif", save_all=True, optimize=False, append_images=images[1:], duration=100, loop=0)
-        gif_img = Image.open(os.path.dirname(__file__) + "/images/temp.gif")
+        with Image.Open(os.path.dirname(__file__) + "/images/temp.gif") as tmp_gif:
+            frames = [frame.copy() for frame in ImageSequence.Iterator(tmp_gif)]
         os.remove(os.path.dirname(__file__) + "/images/temp.gif")
-        return gif_img
+        return frames
