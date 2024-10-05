@@ -93,11 +93,13 @@ class DangerDaveProblem(Problem):
             play_stats += get_range_reward(info["num_jumps"],0,self._jumps, self._width * self._height)
             play_stats = play_stats / 2.0
             for dh in info["diamond_reachable"]:
-                diamond_stats += get_range_reward(dh,0,0,0,(self._width * self._height)**2)
+                diamond_stats += get_range_reward(dh,0,0,0,(self._width * self._height))
             if info["diamonds"] == 0:
                 diamond_stats = 1.0
             else:
                 diamond_stats /= info["diamonds"]
+            diamond_stats += get_range_reward(info["diamonds"], 0, 0, min(self._width, self._height), self._width * self._height)
+            diamond_stats /= 2.0
         return (stats + play_stats + diamond_stats) / 3.0
     
     def diversity(self, info1, info2):

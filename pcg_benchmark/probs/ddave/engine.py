@@ -207,6 +207,7 @@ class State:
         clone.door = self.door
         clone.spikes = self.spikes
         clone.key = self.key
+        clone.target = self.target
         clone.player = {"x":self.player["x"], "y":self.player["y"],
             "health":self.player["health"], "airTime": self.player["airTime"],
             "diamonds":self.player["diamonds"], "key": self.player["key"], "jumps":self.player["jumps"]}
