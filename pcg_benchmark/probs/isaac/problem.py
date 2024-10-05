@@ -33,34 +33,34 @@ class IsaacProblem(Problem):
         map_size = get_num_tiles(layout, list(range(1, 16)))
         num_regions = get_number_regions(layout, list(range(1, 16)))
         
-        maze_layout = np.zeros((2*self._height+1, 2*self._width+1)).astype(int)
+        maze_layout = np.zeros((3*self._height, 3*self._width)).astype(int)
         for y in range(self._height):
             for x in range(self._width):
                 if layout[y][x] > 0:
-                    maze_layout[2*y+1][2*x+1] = 1
+                    maze_layout[3*y+1][3*x+1] = 1
                 if layout[y][x] & 0x1:
-                    maze_layout[2*y+1][2*x] = 2
+                    maze_layout[3*y+1][3*x] = 2
                 if layout[y][x] & 0x2:
-                    maze_layout[2*y][2*x+1] = 2
+                    maze_layout[3*y][3*x+1] = 2
                 if layout[y][x] & 0x4:
-                    maze_layout[2*y+1][2*x+2] = 2
+                    maze_layout[3*y+1][3*x+2] = 2
                 if layout[y][x] & 0x8:
-                    maze_layout[2*y+2][2*x+1] = 2
+                    maze_layout[3*y+2][3*x+1] = 2
 
         connect_regions = get_number_regions(maze_layout, [1,2])
         loose_connections = 0
         for y in range(maze_layout.shape[0]):
             for x in range(maze_layout.shape[1]):
-                if maze_layout[y][x] == 2:
-                    if x == 0 or x == maze_layout.shape[1] - 1 or y == 0 or y == maze_layout.shape[0] - 1:
+                if x == 0 or x == maze_layout.shape[1] - 1 or y == 0 or y == maze_layout.shape[0] - 1:
+                    if maze_layout[y][x] == 2:
                         loose_connections += 1
-                        continue
-                    if x % 2 == 1 and maze_layout[y][x-1] != maze_layout[y][x+1]:
-                        loose_connections += 1
-                        continue
-                    if y % 2 == 1 and maze_layout[y-1][x] != maze_layout[y+1][x]:
-                        loose_connections += 1
-                        continue
+                    continue
+                if (x - 1) % 3 == 1 and maze_layout[y][x] != maze_layout[y][x+1]:
+                    loose_connections += 1
+                    continue
+                if (y - 1) % 3 == 1 and maze_layout[y][x] != maze_layout[y+1][x]:
+                    loose_connections += 1
+                    continue
         
         locations = set()
         if content["layout"][content["start"]] > 0:
