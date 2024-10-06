@@ -1,6 +1,6 @@
 from pcg_benchmark.probs import Problem
 from pcg_benchmark.spaces import ArraySpace, DictionarySpace, IntegerSpace
-from pcg_benchmark.probs.utils import get_number_regions, get_num_tiles, get_range_reward
+from pcg_benchmark.probs.utils import get_number_regions, get_num_tiles, _get_certain_tiles, get_range_reward
 from pcg_benchmark.probs.mdungeons.engine import State,BFSAgent,AStarAgent
 import numpy as np
 from PIL import Image
@@ -16,13 +16,12 @@ def _get_solution_sequence(content, sol):
             lvlString += gameCharacters[int(lvl[i][j])]
             if j == lvl.shape[1]-1:
                 lvlString += "\n"
-        lvlString += "\n"
     state = State()
     state.stringInitialize(lvlString.split("\n"))
 
     result = ""
     for a in sol:
-        result += state.update(a["x"], a["y"])
+        result += state.update(a["action"]["x"], a["action"]["y"])
     return result
 
 def _run_game(content, solver_power):
@@ -34,7 +33,6 @@ def _run_game(content, solver_power):
             lvlString += gameCharacters[int(lvl[i][j])]
             if j == lvl.shape[1]-1:
                 lvlString += "\n"
-        lvlString += "\n"
     state = State()
     state.stringInitialize(lvlString.split("\n"))
 
@@ -71,25 +69,26 @@ class MiniDungeonProblem(Problem):
                                                "solution_length": IntegerSpace(2*self._enemies, int(self._width * self._height / 2))})
         self._cerror = {"col_treasures": max(0.2 * (self._width + self._height), 1), 
                         "solution_length": max(0.5 * self._enemies, 1)}
-        
 
     def info(self, content):
         content = np.array(content)
 
         regions = get_number_regions(content, [1, 2, 3, 4, 5, 6, 7])
-        players = get_num_tiles(content, [2])
+        players = _get_certain_tiles(content, [2])
+        layout = get_num_tiles(content, [0,1])
+        enemies = _get_certain_tiles(content, [6, 7])
         exits = get_num_tiles(content, [3])
         potions = get_num_tiles(content, [4])
         treasures = get_num_tiles(content, [5])
-        enemies = get_num_tiles(content, [6, 7])
+
         heuristic, solution, stats = -1, [], {}
-        if regions == 1 and players == 1 and exits == 1:
+        if regions == 1 and len(players) == 1 and exits == 1:
             heuristic, solution, stats = _run_game(content, self._solver)
         result =  {
-            "regions": regions, "players": players, "exits": exits,
+            "regions": regions, "players": len(players), "exits": exits, "layout": layout,
             "heuristic": heuristic, "solution": solution, "content": content,
-            "potions": potions, "treasures": treasures, "enemies": enemies,
-            "solution_length": len(solution),
+            "potions": potions, "treasures": treasures, "enemies": len(enemies),
+            "solution_length": len(solution), "enemies_loc": enemies
         }
         for name in stats:
             result[name] = stats[name]
@@ -99,12 +98,30 @@ class MiniDungeonProblem(Problem):
         regions = get_range_reward(info["regions"], 0, 1, 1, self._width * self._height / 10)
         player = get_range_reward(info["players"], 0, 1, 1, self._width * self._height)
         exit = get_range_reward(info["exits"], 0, 1, 1, self._width * self._height)
-        stats = (player + exit + regions) / 3.0
-        added = 0
+        enemies = get_range_reward(info["enemies"], 0, self._enemies, self._width * self._height)
+        layout = get_range_reward(info["layout"], 0, self._width * self._height / 2, self._width * self._height)
+        stats = (player + exit + regions + enemies + layout) / 5.0
+        solution, added = 0, 0
         if player == 1 and exit == 1 and regions == 1:
-            added += get_range_reward(info["heuristic"],0,0,0,(self._width * self._height)**2)
-            added += get_range_reward(info["col_enemies"], 0, self._enemies, self._width * self._height)
-        return (stats + added) / 3.0
+            solution += get_range_reward(info["heuristic"],0,0,0,(self._width * self._height)**2)
+            solution += get_range_reward(len(info["solution"]), 0, self._enemies + 2, (self._width * self._height)**2)
+            solution /= 2.0
+            
+            dist_enemies = []
+            for e in info["enemies_loc"]:
+                distances = []
+                for l in info["solution"]:
+                    distances.append(abs(l["x"]-e[0]-1) + abs(l["y"]-e[1]-1)) 
+                if len(distances) > 0:   
+                    dist_enemies.append(min(distances))
+                else:
+                    dist_enemies.append(self._width + self._height)
+            dist_enemies.sort()
+            dist_enemies = dist_enemies[0:self._enemies]
+            added += get_range_reward(sum(dist_enemies), 0, 0, 0, self._enemies * (self._width + self._height))
+            # added += get_range_reward(info["col_enemies"], 0, self._enemies, self._width * self._height)
+            # added /= 2.0
+        return (stats + solution + added) / 3.0
     
     def diversity(self, info1, info2):
         seq1 = _get_solution_sequence(info1["content"], info1["solution"])
