@@ -55,6 +55,7 @@ If you want to add new variants for this framework, you can add it to [`__init__
 To pass the quality criteria, you need to pass multiple of criteria
 - The level has to have minimal horizontal changes (less than 11%)
 - The level has to have unbroken pipes (as pipes spawn on two slices)
+- The level has 50% or more of just flat platform to comply with mario distribution of tiles
 - The level has to be beatable by the A* agent
 
 ## Diversity Measurement

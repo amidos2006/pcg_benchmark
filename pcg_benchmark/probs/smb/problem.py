@@ -1,5 +1,5 @@
 from pcg_benchmark.probs import Problem
-from pcg_benchmark.probs.utils import get_range_reward
+from pcg_benchmark.probs.utils import get_range_reward, get_num_tiles
 from pcg_benchmark.probs.smb.engine import runLevel
 from pcg_benchmark.spaces import ArraySpace, IntegerSpace, DictionarySpace
 import numpy as np
@@ -53,6 +53,7 @@ class MarioProblem(Problem):
                     self._slices.append(s)
 
         self._width = kwargs.get("width")
+        self._empty = kwargs.get("empty", 0.5)
         self._noise = kwargs.get("noise", 0.11)
         self._solver = kwargs.get("solver", 100 / (int(self._width < 30) + 1))
         self._timer = kwargs.get("timer", math.ceil(self._width / 10))
@@ -87,8 +88,9 @@ class MarioProblem(Problem):
                         tube_issue += 1
                     test_tube = 0
         hnoise = _caulcute_hnoise(content, self._slices)
+        empty = get_num_tiles(np.array([content]), [0]) / len(content)
         
-        if tube_issue == 0 and hnoise <= self._noise:
+        if empty > self._empty and tube_issue == 0 and hnoise <= self._noise:
             result = runLevel(lvl, "heuristic", self._timer, self._solver)
             actions = []
             locations = []
@@ -105,6 +107,7 @@ class MarioProblem(Problem):
             return {
                 "width": len(content),
                 "tube": tube_issue,
+                "empty": empty,
                 "noise": hnoise,
                 "complete": result.getCompletionPercentage(),
                 "enemies": max(0, result.getKillsTotal() - result.getKillsByFall()),
@@ -118,6 +121,7 @@ class MarioProblem(Problem):
                 "width": len(content),
                 "tube": tube_issue,
                 "noise": hnoise,
+                "empty": empty,
                 "complete": 0.0,
                 "enemies": 0.0,
                 "coins": 0.0,
@@ -128,8 +132,11 @@ class MarioProblem(Problem):
 
     def quality(self, info):
         tube = get_range_reward(info["tube"], 0, 0, 0, 10)
-        noise = get_range_reward(info["noise"], 0, 0, self._noise, 1)
-        return (tube + noise + 2 * info["complete"]) / 4.0
+        empty = get_range_reward(info["empty"], 0, self._empty, 1)
+        noise = 0
+        if empty >= 1 and tube >= 1:
+            noise = get_range_reward(info["noise"], 0, 0, self._noise, 1)
+        return (tube + empty + noise + 2 * info["complete"]) / 5.0
 
     def diversity(self, info1, info2):
         total = 0
