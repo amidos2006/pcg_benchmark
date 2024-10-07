@@ -8,6 +8,7 @@ import os
 
 def _getWords(letters, dictionary):
     results = []
+    newWords = set()
     for i in range(2**len(letters)):
         binary = format(i, f'0{len(letters)}b')
         if binary.count('1') > len(letters) - 2:
@@ -16,8 +17,9 @@ def _getWords(letters, dictionary):
         for bi,b in enumerate(binary):
             if b == '1':
                 word += letters[bi]
-        if word in dictionary:
+        if word in dictionary and word not in newWords:
             results.append((word, len(max(binary.split('0')))))
+            newWords.add(word)
     return results
 
 class EliminationProblem(Problem):
@@ -42,13 +44,13 @@ class EliminationProblem(Problem):
         f = open(os.path.dirname(__file__) + "/count.txt")
         lines = f.readlines()
         self._common_words = {}
-        for l in lines:
+        for i,l in enumerate(lines):
             parts = l.split("\t")
             word = parts[0].strip().lower()
             frequency = int(parts[1])
             if(len(word) < 3 or not (word in self._dictionary)):
                 continue
-            self._common_words[word] = frequency
+            self._common_words[word] = (i * 1.0 / len(lines), frequency)
         f.close()
 
         self._content_space = ArraySpace((self._letters,), IntegerSpace(26))
@@ -64,9 +66,11 @@ class EliminationProblem(Problem):
             final_words.append([])
         for w,seq in all_words:
             is_common = 0
+            loc = 2.0
             if w in self._common_words:
                 is_common = 1
-            final_words[len(w) - 3].append((w, seq, is_common))
+                loc = self._common_words[w][0]
+            final_words[len(w) - 3].append((w, seq, is_common, loc))
         result = {
             "total": len(all_words), "word": "".join(letters)
         }
@@ -75,34 +79,44 @@ class EliminationProblem(Problem):
         return result
     
     def quality(self, info):
-        short_word_common = 0
-        tshort_word_common = 0
+        common_words = 0
+        for i in range(3,self._letters):
+            for w in info[f"words_{i}"]:
+                common_words += w[2]
+        common_fitness = get_range_reward(common_words, 0, info["total"])
+
+        short_word_common = []
+        tshort_word = 0
         for i in range(3,5):
             for w in info[f"words_{i}"]:
-                short_word_common += w[2]
-                tshort_word_common += 1
-        long_word_common = 0
-        tlong_word_common = 0
+                short_word_common.append(w[3])
+                tshort_word += 1
+        long_word_common = []
+        tlong_word = 0
         for i in range(5,7):
             for w in info[f"words_{i}"]:
-                long_word_common += w[2]
-                tlong_word_common += 1
+                long_word_common.append(w[3])
+                tlong_word += 1
         tunallowed_words = 0
         for i in range(7,self._letters):
             if len(info[f"words_{i}"]) > 0:
                 tunallowed_words += 1
-        constraints = get_range_reward(tshort_word_common, 0, 1, info["total"]) +\
-                        get_range_reward(tlong_word_common, 0, 1, info["total"]) +\
+        constraints = get_range_reward(tshort_word, 0, 1, info["total"]) +\
+                        get_range_reward(tlong_word, 0, 1, info["total"]) +\
                         get_range_reward(tunallowed_words, 0, 0, 0, info["total"])
         constraints /= 3.0
+
         added = 0.0
-        if tshort_word_common > 0 and tlong_word_common > 0 and tunallowed_words == 0:
-            added += get_range_reward(short_word_common / tshort_word_common, 0, max(0, self._short_percentage - self._offset), \
-                                      min(1, self._short_percentage + self._offset), 1)
-            added += get_range_reward(long_word_common / tlong_word_common, 0, max(0, self._long_percentage - self._offset), \
-                                      min(1, self._long_percentage + self._offset), 1)
-        added /= 2.0
-        return (constraints + added) / 2.0
+        if common_fitness >= 1 and constraints >= 1:
+            for l in short_word_common:
+                added += get_range_reward(l, 0, max(0, self._short_percentage - self._offset), \
+                                        min(1, self._short_percentage + self._offset), 1)
+            for l in long_word_common:
+                added += get_range_reward(l, 0, max(0, self._long_percentage - self._offset), \
+                                        min(1, self._long_percentage + self._offset), 1)
+            added /= len(short_word_common) + len(long_word_common)
+
+        return (common_fitness + constraints + added) / 3.0
     
     def diversity(self, info1, info2):
         ratio = SequenceMatcher(None, info1["word"], info2["word"]).ratio()

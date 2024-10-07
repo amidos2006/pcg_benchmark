@@ -40,8 +40,9 @@ To pass the quality criteria, you need to pass multiple of criteria
 - the letters can construct at least one short word (3, 4 letter word)
 - the letters can construct at least one long word (5, 6 letter word)
 - the letters can't construct any longer words (7, 8, 9, 10 letter word)
-- the common short words percentage should be in the short percentage range [short_percentage-offset, short_percentage+offset]
-- the common long words percentage should be in the long percentage range [long_percentage-offset, long_percentage+offset]
+- the short words should lie in the short percentage range [short_percentage-offset, short_percentage+offset]
+- the long words should lie in in the long percentage range [long_percentage-offset, long_percentage+offset]
+- all words has to be common words
 
 ## Diversity Measurement
 To pass the diversity criteria, you need the sequence distance ratio between two content more than the diversity parameter.
