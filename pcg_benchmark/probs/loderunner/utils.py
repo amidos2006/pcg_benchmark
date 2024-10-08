@@ -24,14 +24,16 @@ class State:
             self._y += 1
         else:
             if abs(dy) >= 1:
-                if self._level[self._y][self._x] == 5:
-                    self._y += dy
-                elif self._level[self._y][self._x] == 6 and dy > 0:
-                    self._y += dy
-                if self._y < 0:
-                    self._y = 0
-                if self._y > self._level.shape[0] - 1:
-                    self._y = self._level.shape[0] - 1
+                ny = self._y + dy
+                if ny < 0:
+                    ny = 0
+                if ny > self._level.shape[0] - 1:
+                    ny = self._level.shape[0] - 1
+                if self._level[ny][self._x] != 0:
+                    if self._level[self._y][self._x] == 5:
+                        self._y = ny
+                    elif self._level[self._y][self._x] == 6 and dy > 0:
+                        self._y = ny
             if abs(dx) >= 1:
                 nx = self._x + dx
                 if nx < 0:

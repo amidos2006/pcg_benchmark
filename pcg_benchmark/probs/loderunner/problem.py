@@ -1,10 +1,19 @@
 from pcg_benchmark.probs import Problem
 from pcg_benchmark.spaces import DictionarySpace, ArraySpace, IntegerSpace
 from pcg_benchmark.probs.loderunner.utils import play_loderunner, read_loderunner, js_dist
-from pcg_benchmark.probs.utils import get_num_tiles, _get_certain_tiles, get_vert_histogram, get_horz_histogram, get_range_reward
+from pcg_benchmark.probs.utils import get_num_tiles, _get_certain_tiles, get_number_regions, get_vert_histogram, get_horz_histogram, get_range_reward
 import numpy as np
 import os
 from PIL import Image
+
+def _getLvl(content, patterns):
+    lvl = np.zeros((content.shape[0] * 2, content.shape[1] * 2), dtype=int)
+    for y in range(content.shape[0]):
+        for x in range(content.shape[1]):
+            lvl[2*y:2*(y+1),2*x:2*(x+1)] = patterns[content[y][x]]
+    for x in range(lvl.shape[1]):
+            lvl[-1][x] = 0
+    return lvl
 
 class LodeRunnerProblem(Problem):
     def __init__(self, **kwargs):
@@ -16,8 +25,17 @@ class LodeRunnerProblem(Problem):
         self._enemies = kwargs.get("enemies")
 
         self._target = kwargs.get("exploration",  0.2)
+        self._islands = kwargs.get("islands", 0.1)
+        self._decorations = kwargs.get("decorations", 0.75)
+        self._used_tiles = kwargs.get("used_tiles", 0.75)
         self._diversity = kwargs.get("diversity", 0.4)
-        
+
+        self._patterns = []
+        with open(os.path.dirname(__file__) + "/patterns.txt") as f:
+            patterns = [l.strip() for l in f.readlines()]
+            for p in patterns:
+                if len(p) > 0:
+                    self._patterns.append(np.array([int(d) for d in p]).reshape(2,2))
         
         self._walking = np.zeros(self._width)
         self._hanging = np.zeros(self._width)
@@ -37,25 +55,32 @@ class LodeRunnerProblem(Problem):
 
         self._cerror = max(int(0.02 * self._width * self._height), 1)
 
-        self._content_space = ArraySpace((self._height, self._width), IntegerSpace(7))
+        self._content_space = ArraySpace((int(self._height / 2), int(self._width/2)), IntegerSpace(len(self._patterns)))
         self._control_space = DictionarySpace({
             "ladder": IntegerSpace(int(0.2 * self._width * self._height)),
             "rope": IntegerSpace(int(0.2 * self._width * self._height))
         })
 
     def info(self, content):
-        content = np.array(content)
+        content = _getLvl(np.array(content), self._patterns)
 
+        empty = get_num_tiles(content, [1])
         player = get_num_tiles(content, [2])
         gold = get_num_tiles(content, [3])
         enemy = get_num_tiles(content, [4])
         ladder = get_num_tiles(content, [5])
         rope = get_num_tiles(content, [6])
+        islands = 0
+        for row in content:
+            islands += get_number_regions(row.reshape(1,-1), [0])
+            islands += get_number_regions(row.reshape(1,-1), [6])
+        for col in content.transpose():
+            islands += get_number_regions(col.reshape(1,-1), [5])
 
         collected_gold = 0
         tiles = 0
         used_tiles = 0
-        exploration = np.zeros((self._height, self._width))
+        exploration = np.zeros(content.shape)
         if player == 1:
             exploration = play_loderunner(content)
             for y in range(self._height):
@@ -83,11 +108,13 @@ class LodeRunnerProblem(Problem):
         falling = np.array(falling) / max(1, sum(falling))
 
         return {
+            "empty": empty,
             "player": player,
             "gold": gold,
             "enemy": enemy,
             "ladder": ladder,
             "rope": rope,
+            "islands": islands,
 
             "exploration": exploration,
             "collected_gold": collected_gold,
@@ -101,29 +128,31 @@ class LodeRunnerProblem(Problem):
         }
     
     def quality(self, info):
-        player = get_range_reward(info["player"], 0, 1, 1, self._width * self._height)
-        gold = get_range_reward(info["gold"], 0, self._gold, 2 * self._gold, self._width * self._height)
-        enemy = get_range_reward(info["enemy"], 0, self._enemies, 2 * self._enemies, self._width * self._height)
-        stats = (player + gold + enemy) / 3.0
+        stats = get_range_reward(info["player"], 0, 1, 1, self._width * self._height)
+        stats += get_range_reward(info["gold"], 0, self._gold, 2 * self._gold, self._width * self._height)
+        stats += get_range_reward(info["enemy"], 0, self._enemies, 2 * self._enemies, self._width * self._height)
+        stats /= 3.0
 
         exploration = 0
         if stats >= 1:
-            exploration = get_range_reward(((info["exploration"] > 0).astype(int)).sum(), 0,\
+            exploration += get_range_reward(((info["exploration"] > 0).astype(int)).sum(), 0,\
                 int(self._target * self._width * self._height), self._width * self._height)
-
+        
         play_stats = 0
-        if exploration >= 1 and info["gold"] > 0:
+        if exploration >= 1:
             play_stats += info["collected_gold"] / info["gold"]
             if info["tiles"] > 0:
-                play_stats += info["used_tiles"] / info["tiles"]
-        play_stats /= 2.0
+                play_stats += get_range_reward(info["used_tiles"] / info["tiles"], 0, self._used_tiles, 1.0)
+            play_stats /= 2.0
 
         decoration = 0
         if play_stats >= 1:
             decoration = 0.9 * (info["walking"] + info["hanging"] + info["climbing"]) + 0.1 * info["falling"]
-            decoration = get_range_reward(decoration, 0, self._target, 1)
+            decoration = get_range_reward(decoration, 0, self._decorations, 1)
+            decoration += get_range_reward(info["islands"], 0, 0, self._islands * self._width * self._height, self._width * self._height / 2)
+            decoration /= 2
 
-        return 0.9 * (stats + exploration + play_stats) / 3 + 0.1 * decoration
+        return (stats + exploration + play_stats + decoration) / 4
     
     def diversity(self, info1, info2):
         walking = abs((info1["exploration"] == 1).astype(int) - (info2["exploration"] == 1).astype(int)).sum()
@@ -151,7 +180,7 @@ class LodeRunnerProblem(Problem):
             Image.open(os.path.dirname(__file__) + "/images/ladder.png").convert('RGBA'),
             Image.open(os.path.dirname(__file__) + "/images/rope.png").convert('RGBA'),
         ]
-        lvl = np.pad(np.array(content), ((0,1),(0,0)))
+        lvl = _getLvl(np.array(content), self._patterns)
         lvl_image = Image.new("RGBA", (lvl.shape[1]*scale, lvl.shape[0]*scale), (0,0,0,255))
         for y in range(lvl.shape[0]):
             for x in range(lvl.shape[1]):
