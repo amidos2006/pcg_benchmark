@@ -55,7 +55,7 @@ class LodeRunnerProblem(Problem):
 
         self._cerror = max(int(0.02 * self._width * self._height), 1)
 
-        self._content_space = ArraySpace((int(self._height / 2), int(self._width/2)), IntegerSpace(len(self._patterns)))
+        self._content_space = ArraySpace((int(self._height / 2), int(self._width / 2)), IntegerSpace(len(self._patterns)))
         self._control_space = DictionarySpace({
             "ladder": IntegerSpace(int(0.2 * self._width * self._height)),
             "rope": IntegerSpace(int(0.2 * self._width * self._height))

@@ -148,7 +148,7 @@ To pass the quality criteria, you need to pass multiple of criteria
 - The pattern should have a percentage of empty area when there is bullets on the screen so the player can protect themselves and stay away from bullets
 
 ## Diversity Measurement
-To pass the diversity criteria, the distance between the bullet coverage for the frames of both patterns is different from each other.
+To pass the diversity criteria, the distance between the bullet coverage for the every 30 frames of both patterns is different from each other.
 
 ## Controlability Measurement
 To pass the controlability criteria, you need to make sure that the distribution of bullets over every 30 frames as close as possible to the controlability provided parameters.
@@ -194,4 +194,4 @@ This is all the info that you can get about any content using the `info` functio
 - `percentage(float)`: is the bullet pattern is being produced and not crashing because of too many bullets or too many spawners
 - `bullet_coverage(float)`: the bullet coverage on the screen where 1 means there is bullets everywhere and 0 means bullets are concentrated at one area or no bullets at all.
 - `bullets(float[])`: the average number of bullets in every 30 frames
-- `bullet_locations(float[][][])`: 3d float array of the heat map of bullets over time steps
+- `bullet_locations(float[][][])`: 3d float array of the heat map of bullets over every 30 frames

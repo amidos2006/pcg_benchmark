@@ -46,16 +46,18 @@ The control parameter is simple, it is about controling the playthrough during t
 ## Adding a new Variant
 If you want to add new variants for this framework, you can add it to [`__init__.py`](https://github.com/amidos2006/pcg_benchmark/blob/main/pcg_benchmark/probs/smb/__init__.py) file. To add new variant please try to follow the following name structure `smb-{variant}-{version}` where `{version}` if first time make sure it is `v0`. The following parameter can be changed to create the variant:
 - `width(int)`: the width of the level
-- `noise(float)`: the percentage of acceptible horizontal change in the level (optional=0.11)
+- `empty(float)`: percentage of the level that is empty (optional=0.5)
+- `fenemies(float)`: percentage of enemies that are not on the ground (optional=0.1)
 - `timer(int)`: the amount of time that the level should be finished in (optional=width/10)
 - `solver(int)`: the maximum number of node expansions for the solver before it decides to execute its plan (optional=100/(width<30+1))
 - `diversity(float)`: the diversity percentage that if you pass it, the diversity value is equal to 1 (optional=0.4)
 
 ## Quality Measurement
 To pass the quality criteria, you need to pass multiple of criteria
-- The level has to have minimal horizontal changes (less than 11%)
+- The level has to have minimal horizontal changes
 - The level has to have unbroken pipes (as pipes spawn on two slices)
 - The level has 50% or more of just flat platform to comply with mario distribution of tiles
+- The level shouldn't contain very few floating enemies (most enemies should be on a solid tile)
 - The level has to be beatable by the A* agent
 
 ## Diversity Measurement
@@ -68,7 +70,7 @@ To pass the controlability criteria, you need to make sure that the number of ju
 This is all the info that you can get about any content using the `info` function:
 - `width(int)`: the level length
 - `tube(int)`: number of issues with mario tubes (a tube should be 2 slices wide)
-- `noise(float)`: percentage of changes horizontally from one tile to the next
+- `noise(float)`: percentage of changes horizontally from one tile to the next for each row
 - `complete(float)`: percentage of the level beaten by A* agent
 - `enemies(int)`: number of enemies that the A* player killed in total and not by falling off the map
 - `coins(int)`: number of collected coins by the A* player

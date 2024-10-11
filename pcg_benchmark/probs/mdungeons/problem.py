@@ -101,7 +101,7 @@ class MiniDungeonProblem(Problem):
         enemies = get_range_reward(info["enemies"], 0, self._enemies, self._width * self._height)
         layout = get_range_reward(info["layout"], 0, self._width * self._height / 2, self._width * self._height)
         stats = (player + exit + regions + enemies + layout) / 5.0
-        solution, added = 0, 0
+        solution, enemies = 0, 0
         if player == 1 and exit == 1 and regions == 1:
             solution += get_range_reward(info["heuristic"],0,0,0,(self._width * self._height)**2)
             solution += get_range_reward(len(info["solution"]), 0, self._enemies + 2, (self._width * self._height)**2)
@@ -118,10 +118,10 @@ class MiniDungeonProblem(Problem):
                     dist_enemies.append(self._width + self._height)
             dist_enemies.sort()
             dist_enemies = dist_enemies[0:self._enemies]
-            added += get_range_reward(sum(dist_enemies), 0, 0, 0, self._enemies * (self._width + self._height))
+            enemies += get_range_reward(sum(dist_enemies), 0, 0, 0, self._enemies * (self._width + self._height))
             # added += get_range_reward(info["col_enemies"], 0, self._enemies, self._width * self._height)
             # added /= 2.0
-        return (stats + solution + added) / 3.0
+        return (stats + solution + enemies) / 3.0
     
     def diversity(self, info1, info2):
         seq1 = _get_solution_sequence(info1["content"], info1["solution"])

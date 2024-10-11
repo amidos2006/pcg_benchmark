@@ -20,9 +20,9 @@ class TalakatProblem(Problem):
         self._diversity = kwargs.get("diversity", 0.5)
         self._diversitySampling = kwargs.get("diversitySampling", 5)
         self._renderSampling = kwargs.get("renderSampling", 5)
-        self._empty_area = kwargs.get("empty", 0.2)
-        self._min_bullets = kwargs.get("min_bullets", 20)
-        self._target = kwargs.get("coverage", 0.9)
+        self._empty_area = kwargs.get("empty", 0.4)
+        self._min_bullets = kwargs.get("min_bullets", 50)
+        self._target = kwargs.get("coverage", 0.95)
 
         parameters["maxHealth"] = self._maxHealth
         parameters["width"] = self._width
@@ -52,12 +52,12 @@ class TalakatProblem(Problem):
                         nextSpawners.append(spawned)
         result = runPattern(script)
         
-        bullets = []
-        num_bullets = [0] * self._pattern_sections
+        bullets = np.zeros((self._pattern_sections, parameters["bucketsX"] * parameters["bucketsY"]))
+        num_bullets = [0.0] * self._pattern_sections
         coverage = np.zeros(parameters["bucketsX"] * parameters["bucketsY"])
         for i, (world, _) in enumerate(result):
             temp = np.array(calculateBuckets(self._width, self._height, parameters["bucketsX"], parameters["bucketsY"], world.bullets))
-            bullets.append(temp / max(1, temp.sum()))
+            bullets[int(i/30)] += temp / max(1, temp.sum())
             coverage += temp / max(1, temp.sum())
             num_bullets[int(i/30)] += len(world.bullets)
         return {
@@ -75,14 +75,13 @@ class TalakatProblem(Problem):
         empty = 0.0
         if playable >= 1.0:
             coverage = get_range_reward(info["bullet_coverage"], 0, self._target, 1)
-            min_bullets = get_range_reward(sum(info["bullets"])/len(info["bullets"]), 0, self._min_bullets, parameters["maxNumBullets"], 100 * parameters["maxNumBullets"])
-            total = 0
+            min_bullets = 0
+            for b in info["bullets"]:
+                min_bullets += get_range_reward(b, 0, self._min_bullets, parameters["maxNumBullets"], 100 * parameters["maxNumBullets"])
+            min_bullets /= len(info["bullets"])
             for locs in info["bullet_locations"]:
-                if sum(locs) == 0:
-                    continue
-                empty += (np.array(locs) == 0).sum() / (parameters["bucketsX"] * parameters["bucketsY"])
-                total += 1
-            empty = get_range_reward(empty/max(1, total), 0, self._empty_area, 1)
+                empty += get_range_reward((np.array(locs) == 0).sum() / (parameters["bucketsX"] * parameters["bucketsY"]), 0, self._empty_area, 1)
+            empty /= max(1, len(info["bullet_locations"]))
         return (playable + coverage + min_bullets + empty) / 4.0
     
     def diversity(self, info1, info2):

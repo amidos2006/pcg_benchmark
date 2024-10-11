@@ -1,10 +1,22 @@
 from pcg_benchmark.probs import Problem
 from pcg_benchmark.probs.ddave.engine import State,BFSAgent,AStarAgent
-from pcg_benchmark.probs.utils import get_num_tiles, _get_certain_tiles, get_range_reward
+from pcg_benchmark.probs.utils import get_num_tiles, get_regions_size, _flood_fill, _get_certain_tiles, get_range_reward
 from pcg_benchmark.spaces import ArraySpace, DictionarySpace, IntegerSpace
 import numpy as np
 from PIL import Image
 import os
+
+def _getLvl(content):
+    content = np.array(content)
+    player_locations = _get_certain_tiles(content, [2])
+    if len(player_locations) > 0:
+        regions = get_regions_size(content, player_locations, [1,2,3,4,5,6])
+        loc = player_locations[np.argmax(regions)]
+        color_map = np.full(content.shape, -1)
+        _flood_fill(loc[0], loc[1], color_map, content, 1, [1,2,3,4,5,6])
+        color_map[color_map == -1] = 0
+        content = content * color_map
+    return content
 
 def _run_game(content, solver_power, target = None):
     lvl = np.pad(content, 1)
@@ -57,14 +69,21 @@ class DangerDaveProblem(Problem):
         })
 
     def info(self, content):
-        content = np.array(content)
+        content = _getLvl(content)
         player_locations = _get_certain_tiles(content, [2])
         players = len(player_locations)
         exit_locations = _get_certain_tiles(content, [3])
         exits = len(exit_locations)
         keys = get_num_tiles(content, [5])
+        spikes = get_num_tiles(content, [6])
         diamonds = _get_certain_tiles(content, [4])
         heuristic, solution, stats, diamondHeuristic = -1, [], {}, []
+        playerOnGround = 0
+        for loc in player_locations:
+            playerOnGround += int(loc[1] == self._height - 1 or content[loc[1] + 1][loc[0]] == 0)
+        exitOnGround = 0
+        for loc in exit_locations:
+            exitOnGround += int(loc[1] == self._height - 1 or content[loc[1] + 1][loc[0]] == 0)
         if players == 1 and exits == 1 and keys == 1:
             heuristic, solution, stats = _run_game(content, self._solver)
             for d in diamonds:
@@ -73,9 +92,9 @@ class DangerDaveProblem(Problem):
             for a in solution:
                 a["x"], a["y"] = a["x"] - 1, a["y"] - 1
         result =  {
-            "players": players, "exits": exits, "diamonds": len(diamonds), "keys": keys,
-            "player_locations": player_locations, "exit_locations": exit_locations,
-            "diamond_reachable": diamondHeuristic, "heuristic": heuristic, "solution": solution
+            "players": players, "exits": exits, "diamonds": len(diamonds), "keys": keys, "spikes": spikes,
+            "playerOnGround": playerOnGround, "player_locations": player_locations, "exit_locations": exit_locations,
+            "exitOnGround": exitOnGround, "diamond_reachable": diamondHeuristic, "heuristic": heuristic, "solution": solution
         }
         for name in stats:
             result[name] = stats[name]
@@ -83,17 +102,19 @@ class DangerDaveProblem(Problem):
     
     def quality(self, info):
         player = get_range_reward(info["players"], 0, 1, 1, self._width * self._height)
+        playerExitOnGround = get_range_reward(info["playerOnGround"] + info["exitOnGround"], 0, info["players"] + info["exits"], self._width * self._height)
         exit = get_range_reward(info["exits"], 0, 1, 1, self._width * self._height)
         key = get_range_reward(info["keys"], 0, 1, 1, self._width * self._height)
-        stats = (player + exit + key) / 3.0
+        spikes = get_range_reward(info["spikes"], 0, 0, 2 * max(self._width, self._height), self._width * self._height)
+        stats = (player + playerExitOnGround + exit + key + spikes) / 5.0
         play_stats = 0
         diamond_stats = 0
         if player == 1 and exit == 1 and key == 1:
-            play_stats += get_range_reward(info["heuristic"],0,0,0,(self._width * self._height)**2)
-            play_stats += get_range_reward(info["num_jumps"],0,self._jumps, self._width * self._height)
+            play_stats += get_range_reward(info["heuristic"],0,0,0, self._width * self._height)
+            play_stats += get_range_reward(info["num_jumps"],0,self._jumps, max(self._width,self._height))
             play_stats = play_stats / 2.0
             for dh in info["diamond_reachable"]:
-                diamond_stats += get_range_reward(dh,0,0,0,(self._width * self._height))
+                diamond_stats += get_range_reward(dh,0,0,0,self._width * self._height)
             if info["diamonds"] == 0:
                 diamond_stats = 1.0
             else:
@@ -104,11 +125,14 @@ class DangerDaveProblem(Problem):
     
     def diversity(self, info1, info2):
         path1 = np.zeros((self._height, self._width))
+        min_x, min_y = 0, 0
+        if len(info1["solution"] + info2["solution"]) > 0:
+            min_x, min_y = min([a["x"] for a in info1["solution"] + info2["solution"]]), min([a["y"] for a in info1["solution"] + info2["solution"]])
         for a in info1["solution"]:
-            path1[a["y"]][a["x"]] += 1
+            path1[a["y"]-min_y][a["x"]-min_x] += 1
         path2 = np.zeros((self._height, self._width))
         for a in info2["solution"]:
-            path2[a["y"]][a["x"]] += 1
+            path2[a["y"]-min_y][a["x"]-min_x] += 1
         path1_f = np.flip(path1, axis=1)
         diff = min(abs(path1 - path2).sum(), abs(path1_f - path2).sum())
         return get_range_reward(diff, 0, self._diversity * (self._width + self._height), self._width * self._height)
@@ -140,7 +164,7 @@ class DangerDaveProblem(Problem):
             Image.open(os.path.dirname(__file__) + "/images/key.png").convert('RGBA'),
             Image.open(os.path.dirname(__file__) + "/images/spike.png").convert('RGBA'),
         ]
-        lvl = np.pad(np.array(content), 1)
+        lvl = np.pad(_getLvl(content), 1)
         lvl_image = Image.new("RGBA", (lvl.shape[1]*scale, lvl.shape[0]*scale), (0,0,0,255))
         for y in range(lvl.shape[0]):
             for x in range(lvl.shape[1]):

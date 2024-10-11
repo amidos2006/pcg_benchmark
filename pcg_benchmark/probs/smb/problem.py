@@ -23,17 +23,37 @@ def _convert2str(content, slices):
         result += '\n'
     return result
 
-def _caulcute_hnoise(content, slices):
+def _calculate_hnoise(content, slices):
     lvl = _convert2str(content, slices).split('\n')
-    values = 0
+    values = []
     for l in lvl:
+        l = l.strip()
+        if len(l) == 0:
+            continue
         temp = 0
         for x in range(1,len(l)):
             if l[x] != l[x-1]:
                 temp += 1
         temp /= (len(l) - 1)
-        values += temp
-    return values / 16
+        values.append(temp)
+    return values
+
+def _caculate_fenemies(content, slices):
+    lvl = _convert2str(content, slices).split('\n')
+    enemies = set('ykgr')
+    solid = set('X#tSQ')
+    total = 0
+    floating = 0
+    for x in range(len(lvl[0].strip())):
+        for y in range(len(lvl)):
+            lvl[y] = lvl[y].strip()
+            if len(lvl[y]) == 0:
+                continue
+            if lvl[y][x] in enemies:
+                total += 1
+                if lvl[y+1][x] not in solid:
+                    floating += 1
+    return floating/total
 
 def _convert_action(action):
     result = 0
@@ -51,10 +71,13 @@ class MarioProblem(Problem):
             for s in strips:
                 if len(s) > 0:
                     self._slices.append(s)
-
+        self._hnoise = []
+        with open(os.path.dirname(__file__) + "/noise.txt") as f:
+            self._hnoise = np.array([float(v) for v in f.readlines()[0].strip().split(',')])
+            
         self._width = kwargs.get("width")
         self._empty = kwargs.get("empty", 0.5)
-        self._noise = kwargs.get("noise", 0.11)
+        self._fenemies = kwargs.get("fenemies", 0.1)
         self._solver = kwargs.get("solver", 100 / (int(self._width < 30) + 1))
         self._timer = kwargs.get("timer", math.ceil(self._width / 10))
         self._diversity = kwargs.get("diversity", 0.4)
@@ -65,7 +88,7 @@ class MarioProblem(Problem):
                                                "coins": IntegerSpace(0, max(2, int(self._width / 10)))})
         self._cerror = {"enemies": int(0.1 * self._control_space._value["enemies"]._max_value),
                         "jumps": int(0.1 * self._control_space._value["jumps"]._max_value),
-                        "coins": int(0.1 * self._control_space._value["coins"]._max_value),}
+                        "coins": int(0.1 * self._control_space._value["coins"]._max_value)}
 
     def parameters(self, **kwargs):
         Problem.parameters(self, **kwargs)
@@ -87,10 +110,12 @@ class MarioProblem(Problem):
                     if test_tube % 2 > 0:
                         tube_issue += 1
                     test_tube = 0
-        hnoise = _caulcute_hnoise(content, self._slices)
+        hnoise = np.array(_calculate_hnoise(content, self._slices)) - self._hnoise
+        hnoise[hnoise < 0] = 0
         empty = get_num_tiles(np.array([content]), [0]) / len(content)
+        fenemies = _caculate_fenemies(content, self._slices)
         
-        if empty > self._empty and tube_issue == 0 and hnoise <= self._noise:
+        if empty > self._empty and tube_issue == 0 and hnoise.sum() == 0 and fenemies < self._fenemies:
             result = runLevel(lvl, "heuristic", self._timer, self._solver)
             actions = []
             locations = []
@@ -109,6 +134,7 @@ class MarioProblem(Problem):
                 "tube": tube_issue,
                 "empty": empty,
                 "noise": hnoise,
+                "fenemies": fenemies,
                 "complete": result.getCompletionPercentage(),
                 "enemies": max(0, result.getKillsTotal() - result.getKillsByFall()),
                 "coins": result.getCurrentCoins(),
@@ -122,6 +148,7 @@ class MarioProblem(Problem):
                 "tube": tube_issue,
                 "noise": hnoise,
                 "empty": empty,
+                "fenemies": fenemies,
                 "complete": 0.0,
                 "enemies": 0.0,
                 "coins": 0.0,
@@ -133,10 +160,13 @@ class MarioProblem(Problem):
     def quality(self, info):
         tube = get_range_reward(info["tube"], 0, 0, 0, 10)
         empty = get_range_reward(info["empty"], 0, self._empty, 1)
+        fenemeis = get_range_reward(info["fenemies"], 0, 0, self._fenemies, 1)
         noise = 0
         if empty >= 1 and tube >= 1:
-            noise = get_range_reward(info["noise"], 0, 0, self._noise, 1)
-        return (tube + empty + noise + 2 * info["complete"]) / 5.0
+            for n in info["noise"]:
+                noise += get_range_reward(n, 0, 0, 0, 1)
+        noise /= 16
+        return (tube + empty + noise + fenemeis + 4 * info["complete"]) / 8.0
 
     def diversity(self, info1, info2):
         total = 0

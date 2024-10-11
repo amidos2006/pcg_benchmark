@@ -131,6 +131,19 @@ def get_number_regions(maze, tile_values):
             continue
     return region_index
 
+def get_regions_size(maze, locations, tile_values):
+    result = []
+    region_index=0
+    color_map = np.full((maze.shape[0], maze.shape[1]), -1)
+    for (x,y) in locations:
+        num_tiles = _flood_fill(x, y, color_map, maze, region_index + 1, tile_values)
+        if num_tiles > 0:
+            region_index += 1
+            result.append(num_tiles)
+        else:
+            continue
+    return result
+
 """
 Get the longest shortest path in a maze. This is calculated by first calculating the Dijstra for all the tiles values.
 Then Picking the highest value in the map and run Dijkstra again and get the maximum value

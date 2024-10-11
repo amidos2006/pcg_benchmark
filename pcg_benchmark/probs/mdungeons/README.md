@@ -62,6 +62,8 @@ To pass the quality criteria, you need to pass multiple of criteria
 - The level has to be fully connected
 - There has to be one player and one exit
 - The amount of enemies killed on the shortest solution for the level should be more than `enemies` parameter for the problem
+- The level has at least 50% solid and empty tiles
+<!-- - The distance between enemies and treasure and potions maximized so nothing is clustered around the player starting location. -->
 
 ## Diversity Measurement
 To pass the diversity criteria, the distance between the solution of two individuals and the hamming distance between the flattened maps should be different.

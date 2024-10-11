@@ -33,6 +33,7 @@ Different values have different meaning
 - *4:* diamond tile
 - *5:* key tile
 - *6:* spike tile
+The system finds the biggest fully connected area from a player starting location and use that as the main area and transform all the other non reachable area into solid tiles.
 
 ## Control Parameter
 The control parameter provides the player starting location (`sx` and `sy`), exit location (`ex` and `ey`), and finally number of diamonds that should appear in the level (`diamonds`). Here is an example of the control parameter.
@@ -56,7 +57,8 @@ If you want to add new variants for this framework, you can add it to [`__init__
 
 ## Quality Measurement
 To pass the quality criteria, you need to pass multiple of criteria
-- have one player, one key, and one door
+- have one player, one key, and one door, has minimum number of diamonds (min(width,height)) and spikes (2*max(width,height))
+- The player and the exit should be above a solid tile
 - the level has to be playable and the level solution has to have the minimum number of jumps
 - Finally, all the diamonds need to be reachable
 
