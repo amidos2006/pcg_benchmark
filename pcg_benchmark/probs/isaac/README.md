@@ -2,7 +2,7 @@
 	<img height="300px" src="../../../images/isaac/example.png"/>
 </p>
 <h1 align="center">
-The Binding of Isaac Problem
+Isaac Problem
 </h1>
 
 The goal is to generate a simplistic version of the original dungeon of ["The Binding of Isaac"](https://store.steampowered.com/app/113200/The_Binding_of_Isaac/) by [Edmund Mcmillen](https://x.com/edmundmcmillen). The goal is to make sure that you have a fully connected dungeon that contains a minimum number of rooms and have starting room, boss room, treasure room, and shop room.

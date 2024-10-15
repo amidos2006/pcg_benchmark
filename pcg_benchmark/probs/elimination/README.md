@@ -8,9 +8,9 @@ Elimination Problem
 This is the generation problem for the game [Elimination](http://akhalifa.com/elimination/), you can read about the original generator in ["Elimination from Design to Analysis"](https://arxiv.org/abs/1905.06379). The problem is to generate a sequence of letter that can create at least one short word (3, 4 in length), one long word (5, 6 in length) and nothing longer. Each variant have more additional constraints to make either an easy, normal, or hard level based on how many short and longer words.
 
 The problem has 3 variants:
-- `elimination-v0`: generate a sequence of 8 letters for the game elimination with 30% to 70% of words are short and 10% to 50% are long words
-- `elimination-easy-v0`: generate a sequence of 6 letters for the game elimination with 60% to 100% short words and 30% to 70% long words.
-- `elimination-hard-v0`: generate a sequence of 10 letters for the game elimination with 0% to 40% short words and 0% to 30% long words.
+- `elimination-v0`: generate a sequence of 8 letters for the game elimination with short words lays in 40% to 60% of common words dictionary and long words lays betwen 60% to 80%.
+- `elimination-easy-v0`: generate a sequence of 6 letters for the game elimination with short words lays in 10% to 30% of common words dictionary and long words lays betwen 30% to 50%.
+- `elimination-hard-v0`: generate a sequence of 10 letters for the game elimination with short words lays in 70% to 90% of common words dictionary and long words lays betwen 80% to 100%.
 
 ## Content Structure
 The content is a 1D array of integers where the number is which letter in the alphabet (0 is **A** and 25 is **Z**). For example, this is an example with 8 letters which are "LKISDETS"
@@ -32,7 +32,7 @@ If you want to add new variants for this framework, you can add it to [`__init__
 - `letters(int)`: the number of letters for the problem
 - `short_percentage(float)`: the percentage of short words (3, 4 letter words) that can be constructed from the sequence of letters
 - `long_percentage(float)`: the percentage of short words (5, 6 letter words) that can be constructed from the sequence of letters
-- `offset(float)`: the size of the short and long percentage. For example if the offset is 0.1 and short percentage is 0.6 then the range is [0.5, 0.7] (optional=0.2)
+- `offset(float)`: the size of the short and long percentage. For example if the offset is 0.1 and short percentage is 0.6 then the range is [0.5, 0.7] (optional=0.1)
 - `diversity(float)`: the diversity percentage that if you pass it, the diversity value is equal to 1 (optional=0.6)
 
 ## Quality Measurement

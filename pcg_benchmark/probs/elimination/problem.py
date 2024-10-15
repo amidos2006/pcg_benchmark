@@ -8,7 +8,6 @@ import os
 
 def _getWords(letters, dictionary):
     results = []
-    newWords = set()
     for i in range(2**len(letters)):
         binary = format(i, f'0{len(letters)}b')
         if binary.count('1') > len(letters) - 2:
@@ -17,9 +16,8 @@ def _getWords(letters, dictionary):
         for bi,b in enumerate(binary):
             if b == '1':
                 word += letters[bi]
-        if word in dictionary and word not in newWords:
+        if word in dictionary:
             results.append((word, len(max(binary.split('0')))))
-            newWords.add(word)
     return results
 
 class EliminationProblem(Problem):
@@ -29,7 +27,7 @@ class EliminationProblem(Problem):
         self._letters = kwargs.get("letters")
         self._short_percentage = kwargs.get("short_percentage")
         self._long_percentage = kwargs.get("long_percentage")
-        self._offset = kwargs.get("offset", 0.2)
+        self._offset = kwargs.get("offset", 0.1)
         self._diversity = kwargs.get("diversity", 0.6)
 
         f = open(os.path.dirname(__file__) + "/dictionary.txt")
