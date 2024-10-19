@@ -18,7 +18,6 @@ class TalakatProblem(Problem):
         self._pattern_sections = max(1, int(self._maxHealth / 30))
         
         self._diversity = kwargs.get("diversity", 0.5)
-        self._diversitySampling = kwargs.get("diversitySampling", 5)
         self._renderSampling = kwargs.get("renderSampling", 5)
         self._empty_area = kwargs.get("empty", 0.4)
         self._min_bullets = kwargs.get("min_bullets", 50)
@@ -65,7 +64,7 @@ class TalakatProblem(Problem):
             "percentage": len(result) / self._maxHealth,
             "bullets": np.array(num_bullets) / 30,
             "bullet_coverage": calculateEntropy(coverage / self._maxHealth),
-            "bullet_locations": bullets,
+            "bullet_locations": bullets / 30,
         }
     
     def quality(self, info):
@@ -86,11 +85,12 @@ class TalakatProblem(Problem):
     
     def diversity(self, info1, info2):
         diversity = []
-        for i in range(self._diversitySampling):
-            index1 = int(min(self._maxHealth * i / (self._diversitySampling - 1), len(info1["bullet_locations"]) - 1))
-            index2 = int(min(self._maxHealth * i / (self._diversitySampling - 1), len(info2["bullet_locations"]) - 1))
+        length = max(len(info1["bullet_locations"]), len(info2["bullet_locations"]))
+        for i in range(length):
+            index1 = min(i, len(info1["bullet_locations"]) - 1)
+            index2 = min(i, len(info2["bullet_locations"]) - 1)
             diversity.append(abs(info1["bullet_locations"][index1] - info2["bullet_locations"][index2]).sum() / 2.0)
-        return get_range_reward(np.array(diversity).max(), 0, self._diversity, 1)
+        return get_range_reward(np.array(diversity).min(), 0, self._diversity, 1)
     
     def controlability(self, info, control):
         bulletCoverage = 0
