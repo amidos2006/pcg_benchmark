@@ -62,6 +62,7 @@ To pass the quality criteria, you need to pass multiple of criteria
 - The rooms need to be close to each other where there is no isolate rooms far away from the others
 - The connections should create a fully connected dungeon
 - All the special rooms `start`, `boss`, `shop`, and `treasure` need to exist in a different unique room in the dungeon.
+- The `start` and `boss` are not too close too each other
 - No more loose connections which means all connections have to lead to a room and not to an empty area.
 
 ## Diversity Measurement

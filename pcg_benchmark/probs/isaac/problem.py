@@ -1,5 +1,5 @@
 from pcg_benchmark.probs import Problem
-from pcg_benchmark.probs.utils import get_number_regions, get_num_tiles, get_range_reward
+from pcg_benchmark.probs.utils import get_number_regions, get_num_tiles, get_range_reward, get_distance_length
 from pcg_benchmark.spaces import DictionarySpace, ArraySpace, IntegerSpace
 import os
 import numpy as np
@@ -71,6 +71,13 @@ class IsaacProblem(Problem):
             locations.add(content["treasure"])
         if content["layout"][content["shop"]] > 0:
             locations.add(content["shop"])
+        
+        player_x, player_y = content["start"] % self._width, int(content["start"] / self._width)
+        boss_x, boss_y = content["boss"] % self._width, int(content["boss"] / self._width)
+        level = maze_layout.copy()
+        level[player_y][player_x] = 3
+        level[boss_y][boss_x] = 4
+        player_boss = get_distance_length(level, [3], [4], [1,2,3,4])
 
         dead_end = 0
         for v in [0x1, 0x2, 0x4, 0x8]:
@@ -87,6 +94,7 @@ class IsaacProblem(Problem):
             "connect_regions": connect_regions,
             "loose_connections": loose_connections,
             "locations": len(locations),
+            "player_boss_distance": player_boss,
             "flat": maze_layout.flatten(),
             "dead_end": dead_end
         }
@@ -101,6 +109,8 @@ class IsaacProblem(Problem):
         functional = 0
         if regions >= 1:
             functional += get_range_reward(info["locations"], 0, 4)
+            functional += get_range_reward(info["player_boss_distance"], 0, self._width + self._height, 9 * self._width * self._height)
+            functional /= 2.0
         loose_connections = 0
         if functional >= 1:
             loose_connections = get_range_reward(info["loose_connections"], 0, 0, 0, self._width * self._height)
