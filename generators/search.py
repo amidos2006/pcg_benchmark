@@ -142,6 +142,6 @@ def fitness_quality_control_diversity(chromosome):
     result = chromosome.quality()
     if chromosome.quality() >= 1:
         result += chromosome.controlability()
-    if chromosome.controlability() >= 1:
+    if chromosome.quality() >= 1 and chromosome.controlability() >= 1:
         result += chromosome.diversity()
     return result / 3.0
