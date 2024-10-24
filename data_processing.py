@@ -468,6 +468,7 @@ def compute_runs_diversity(csv_file,
 
 			for algorithm in tqdm(df['algorithm'].unique(), desc='Algorithm', leave=False, dynamic_ncols=True):
 				elites = []
+				controls = []
 				n_success_quality = []
 				for run_n in tqdm(df['run_n'].unique(), desc='Run number', leave=False, dynamic_ncols=True):
 					run_data = df.loc[
@@ -480,10 +481,12 @@ def compute_runs_diversity(csv_file,
 					with open(f'{folder_path}/{env_name}/{fitness_type}/{algorithm}/{run_n}/iter_{last_iter}/{elite_fname}', 'r') as f:
 						elite = json.load(f)
 					elites.append(elite['content'])
+					controls.append(elite['control'])
 					n_success_quality = run_data.loc[run_data['iter_n'] == last_iter]['success_quality'].values[0]
 				diversity = env.diversity(elites)[0] * 100
+				controlability = env.controlability(elites, controls)[0] * 100
 				mean_success = np.mean(n_success_quality)
-				plot_data = plot_data._append({'fitness_type': fitness_type, 'env_name': env_name, 'algorithm': algorithm, 'elites_diversity': diversity, 'mean_success': mean_success}, ignore_index=True)
+				plot_data = plot_data._append({'fitness_type': fitness_type, 'env_name': env_name, 'algorithm': algorithm, 'elites_diversity': diversity, 'elites_controlability': controlability, 'mean_success': mean_success}, ignore_index=True)
 		
 	fitness_types = plot_data['fitness_type'].unique()
 
@@ -505,6 +508,26 @@ def compute_runs_diversity(csv_file,
 		plt.tight_layout()
 		
 		plot_filename = f"diversity_{fitness}.png"
+		plt.savefig(os.path.join(output_dir, plot_filename))
+		
+	for fitness in fitness_types:
+		fitness_data = plot_data[plot_data['fitness_type'] == fitness]
+
+		plt.figure(figsize=(12, 8))
+		sns.barplot(x='env_name', y='elites_controlability',
+					hue='algorithm', hue_order=['random', 'ga', 'es'],  # Custom sorting of the algorithms,
+					data=fitness_data)
+		
+		plt.title('')
+		plt.xlabel('Problems')
+		plt.xticks(rotation=45, ha='right')
+		plt.ylabel('% Unique Individuals')
+		plt.yticks([0, 25, 50, 75, 100])
+		
+		plt.legend([],[],frameon=False)
+		plt.tight_layout()
+		
+		plot_filename = f"controlability_{fitness}.png"
 		plt.savefig(os.path.join(output_dir, plot_filename))
 
 	for fitness in fitness_types:
