@@ -52,7 +52,7 @@ class EliminationProblem(Problem):
         f.close()
 
         self._content_space = ArraySpace((self._letters,), IntegerSpace(26))
-        self._control_space = DictionarySpace({"sequence": IntegerSpace(2, self._letters)})
+        self._control_space = DictionarySpace({"sequence": IntegerSpace(2, 7)})
 
     def info(self, content):
         letters = []
