@@ -20,7 +20,7 @@ def getScript(content):
     for key in ["player-red", "player-green", "player-yellow", "red-red", "red-green",\
                 "red-yellow", "green-green", "green-yellow", "yellow-yellow"]:
         result += f"  {key}: {action[int(content[key]['action'])]} - {score[int(content[key]['score'])]}\n"
-    result +=  f"Win: {win[int(content['win'])]}\n"
+    result +=  f"Win: {win[int(content['win'])]}"
     return result
 
 def runGame(engine, agent):

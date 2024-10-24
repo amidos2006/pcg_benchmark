@@ -196,6 +196,9 @@ python data_processing.py run_pipeline --root_dir="./results" --output_dir='./pl
 ```
 You can also just execute single steps of the pipeline (`process_environment`, `process_all_envs`, `aggregate_envs_statistics`, `aggregate_over_runs`, and `plot`) by changing `run_pipeline` with the corresponding function (and using the corresponding parameters).
 
+## Special Thanks
+Thanks to Kenny for creating [1-Bit Pack](https://kenney.nl/assets/1-bit-pack) which was used for most of the 12 problems in the benchmark. Even the ones that didn't use it were inspired by the color palette used in that pack.
+
 ## Contributing
 Bug reports and pull requests are welcome on GitHub at [https://github.com/amidos2006/pcg_benchmark/](https://github.com/amidos2006/pcg_benchmark/).
 

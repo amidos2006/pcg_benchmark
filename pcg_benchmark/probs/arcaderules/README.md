@@ -170,15 +170,17 @@ To pass the diversity criteria, you need to pass two main criteria
 To pass the controlability criteria, you need to make sure all the objects can be laid correctly without problems.
 
 ## Render Function
-The render function just generate an image of the rules of the game, if you don't want that and you want the actual string, please use [`getScript`](https://github.com/amidos2006/pcg_benchmark/blob/main/pcg_benchmark/probs/arcaderules/engine.py#L6) function from `pcg_benchmark.probs.arcaderules.engine` using the following code:
+The render function just generate an image of the rules of the game, if you don't want that and you want the actual string, please change the `_render_type` variable to `"string"` instead of `"image"` using the following code:
 
 ```python
 import pcg_benchmark
-from pcg_benchmark.probs.arcaderules.engine import getScript
 
 env = pcg_benchmark.make('arcade-v0')
 content = env.content_space.sample()
-script = getScript(content)
+env._render_type = "string"
+script = env.render(content)
+with open("rules.txt", "w") as f:
+    f.write(script)
 ```
 
 ## Content Info
