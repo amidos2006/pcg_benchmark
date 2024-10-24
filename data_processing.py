@@ -468,6 +468,7 @@ def compute_runs_diversity(csv_file,
 
 			for algorithm in tqdm(df['algorithm'].unique(), desc='Algorithm', leave=False, dynamic_ncols=True):
 				elites = []
+				controls = []
 				n_success_quality = []
 				for run_n in tqdm(df['run_n'].unique(), desc='Run number', leave=False, dynamic_ncols=True):
 					run_data = df.loc[
@@ -480,9 +481,10 @@ def compute_runs_diversity(csv_file,
 					with open(f'{folder_path}/{env_name}/{fitness_type}/{algorithm}/{run_n}/iter_{last_iter}/{elite_fname}', 'r') as f:
 						elite = json.load(f)
 					elites.append(elite['content'])
+					controls.append(elite['control'])
 					n_success_quality = run_data.loc[run_data['iter_n'] == last_iter]['success_quality'].values[0]
 				diversity = env.diversity(elites)[0] * 100
-				controlability = env.controlabiliy(elites)[0] * 100
+				controlability = env.controlability(elites, controls)[0] * 100
 				mean_success = np.mean(n_success_quality)
 				plot_data = plot_data._append({'fitness_type': fitness_type, 'env_name': env_name, 'algorithm': algorithm, 'elites_diversity': diversity, 'elites_controlability': controlability, 'mean_success': mean_success}, ignore_index=True)
 		
