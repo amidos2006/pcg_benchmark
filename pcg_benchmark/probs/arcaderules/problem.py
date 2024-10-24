@@ -1,7 +1,7 @@
 from pcg_benchmark.probs import Problem
 from pcg_benchmark.spaces import DictionarySpace, ArraySpace, IntegerSpace
 from pcg_benchmark.probs.utils import get_number_regions, get_range_reward
-from pcg_benchmark.probs.arcaderules.engine import runGame, Engine, DoNothingAgent, RandomAgent, FlatMCTSAgent
+from pcg_benchmark.probs.arcaderules.engine import runGame, getScript, Engine, DoNothingAgent, RandomAgent, FlatMCTSAgent
 from PIL import Image, ImageDraw
 import math
 import numpy as np
@@ -100,6 +100,7 @@ class ArcadeRulesProblem(Problem):
         self._s_target = kwargs.get("safety", 0.15)
         self._d_target = kwargs.get("minToDeath", 0.4)
         self._target = kwargs.get("minToWin", 0.75)
+        self._render_type = "image"
 
         self._layout = np.ones((self._height, self._width))
         for x in range(math.ceil(0.25 * self._width), math.floor(self._width - 0.25 * self._width)):
@@ -294,36 +295,31 @@ class ArcadeRulesProblem(Problem):
         Image: the rules written in english language on an image and returned
     """
     def render(self, content):
-        behaviors = ["still", "flicker", "randomShort", "randomLong", "wanderHorz", "wanderVert", "chase", "flee"]
-        win = ["time", "score5", "score10", "score20"]
-        action = ["none", "killFirst", "killSecond", "killBoth"]
-        score = [0, 1, 2, 4]
-
+        script = getScript(content)
+        if self._render_type == "string":
+            return script
+        lines = script.split("\n")
         img = Image.new("RGBA", (300, 230), (71,45,60,255))
         draw = ImageDraw.Draw(img)
         x = 8
         y = 8
-        draw.text((x,y), f"Start: {content['x']},{content['y']} - {content['seed']}", fill=(60,172,215,255))
+        draw.text((x,y), lines[0], fill=(60,172,215,255))
         y+=20
-        draw.text((x,y), "Behavior:", fill=(207,198,184,255))
+        draw.text((x,y), lines[1], fill=(207,198,184,255))
         y+= 12
-        x = 16
         for key in ["red", "yellow", "green"]:
             locs = ""
             for i in range(content[f"{key}Start"]["num"]):
                 locs += f"- {content[f'{key}Start']['x'][i]},{content[f'{key}Start']['y'][i]} "
-            draw.text((x,y), f"{key}: {behaviors[int(content[key])]} {locs}", fill=(191,121,88,255))
+        for i in range(3):
+            draw.text((x,y), lines[i+2], fill=(191,121,88,255))
             y += 12
         y += 8
-        x = 8
-        draw.text((x,y), "Rules:", fill=(207,198,184,255))
+        draw.text((x,y), lines[5], fill=(207,198,184,255))
         y += 12
-        x = 16
-        for key in ["player-red", "player-green", "player-yellow", "red-red", "red-green",\
-                    "red-yellow", "green-green", "green-yellow", "yellow-yellow"]:
-            draw.text((x,y), f"{key}: {action[int(content[key]['action'])]} - {score[int(content[key]['score'])]}", fill=(191,121,88,255))
+        for i in range(9):
+            draw.text((x,y), lines[6+i], fill=(191,121,88,255))
             y += 12
         y += 8
-        x = 8
-        draw.text((x,y), f"Win: {win[int(content['win'])]}", fill=(244,180,27,255))
+        draw.text((x,y), lines[-1], fill=(244,180,27,255))
         return img

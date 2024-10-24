@@ -282,7 +282,7 @@ class PCGEnv:
         contents(any|any[]): a single or an array of the content that need to be rendered
 
     Returns:
-        Image|Image[]: a PIL.Image for each of the input content
+        any|any[]: a rendered representaion for each of the input content which can be string, image, video, image sequence, etc.
     """
     def render(self, contents):
         single_input = False

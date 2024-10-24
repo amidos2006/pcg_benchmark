@@ -154,15 +154,15 @@ To pass the diversity criteria, the distance between the bullet coverage for the
 To pass the controlability criteria, you need to make sure that the distribution of bullets over every 30 frames as close as possible to the controlability provided parameters.
 
 ## Render Function
-This problem is about generating bullet pattern so the render function return an animation (`PIL.GifImagePlugin.GifImageFile`) instead of normal static image (`PIL.Image`). To save this image, you can't just use `save` with no attributes instead you need to do the following. If you didn't add the extra parameters, it will only save the first frame of the animation.
+This problem is about generating bullet pattern so the render function return an array of images (`PIL.Image`) instead of a single image. To save this array, you can just save every frame independently but that might be too exhausting and too much images. Another way is to save it as `gif` file.
 
 ```python
 import pcg_benchmark
 
 env = pcg_benchmark.make('talakat-v0')
 content = env.content_space.sample()
-img = env.render(content)
-img.save("talakat.gif", save_all=True, duration=100, loop=0)
+imgs = env.render(content)
+imgs[0].save(os.path.dirname(__file__) + "/images/talakat.gif", save_all=True, optimize=False, append_images=imgs[1:], duration=100, loop=0)
 ```
 
 If you want instead to save the script instead of the animated bullet pattern, you can change the renderType using the following lines. After you do that you get an image which contains the talakat script. 
@@ -177,7 +177,18 @@ img = env.render(content)
 img.save("talakat.png")
 ```
 
-If you want the actual string, you need to use [`generateTalakatScript`](https://github.com/amidos2006/pcg_benchmark/blob/main/pcg_benchmark/probs/talakat/engine/__init__.py#L17) function from `pcg_benchmark.probs.talakat.engine`
+If you want to have it as a string istead and save it as json file, please follow the following code instead where the render_type is set to string.
+
+```python
+import pcg_benchmark
+
+env = pcg_benchmark.make('talakat-v0')
+env._problem._render_type = "string"
+content = env.content_space.sample()
+script = env.render(content)
+with open("talakat.json", "w") as f:
+	f.write(script)
+```
 
 ```python
 import pcg_benchmark
