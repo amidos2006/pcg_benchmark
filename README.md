@@ -146,21 +146,21 @@ for _ in range(100):
 Finally, if you want to evolve content assuming the content is always a flat float array. the [`Space`](https://github.com/amidos2006/pcg_benchmark/blob/main/pcg_benchmark/spaces/space.py#L19) class have two helpful functions towards that. The [`sampleFlat`](https://github.com/amidos2006/pcg_benchmark/blob/main/pcg_benchmark/spaces/space.py#L85) and [`restructure`](https://github.com/amidos2006/pcg_benchmark/blob/main/pcg_benchmark/spaces/space.py#L76). The `sampleFlat` will return a float array that represents the content instead of the structured shape, while `restructure` takes a float array and make it back to the content shape and fix any wrong values in it.
 
 ## Using The Generator Runner
-This section talks about using [`run.py`](https://github.com/amidos2006/pcg_benchmark/blob/main/run.py) to run one of the generators in the [`generators`](https://github.com/amidos2006/pcg_benchmark/tree/main/generators) folder. The `run.py` is designed to run interactive generators and save the data between these iterations. The script takes a couple of parameters and then runs the generator and saves all the details of the run in folders on your hard drive. The parameters are:
+This section talks about using [`run.py`](run.py) to run one of the generators in the [`generators`](generators/) folder. The `run.py` is designed to run interactive generators and save the data between these iterations. The script takes a couple of parameters and then runs the generator and saves all the details of the run in folders on your hard drive. The parameters are:
 - `outputfolder`: This is the only **mandatory** input for the script. It specifies the folder that the outputs should be saved inside.
-- `--problem`|`-p`: The problem name that you want to run the generator against. Look at all the problem names in [Problems section](https://github.com/amidos2006/pcg_benchmark/?#problems) for that. The default value for this parameter is `binary-v0`
-- `--generator`|`-g`: The file name where the generator is saved in. Right now there are three files for three different generators. [`random`](https://github.com/amidos2006/pcg_benchmark/blob/main/generators/random.py) contains a Random Search algorithm, [`es`](https://github.com/amidos2006/pcg_benchmark/blob/main/generators/es.py) contains a Mu + Lambda evolution Strategy, and [`ga`](https://github.com/amidos2006/pcg_benchmark/blob/main/generators/ga.py) contains a Genetic algorithm. The default value for this parameter is `random`.
-- `--steps`|`-s`: The number of iterations to run the generator [`update`](https://github.com/amidos2006/pcg_benchmark/blob/main/generators/utils.py#L25) function for.
+- `--problem`|`-p`: The problem name that you want to run the generator against. Look at all the problem names in [Problems section](#problems) for that. The default value for this parameter is `binary-v0`
+- `--generator`|`-g`: The file name where the generator is saved in. Right now there are three files for three different generators. [`random`](generators/random.py) contains a Random Search algorithm, [`es`](generators/es.py) contains a Mu + Lambda evolution Strategy, and [`ga`](generators/ga.py) contains a Genetic algorithm. The default value for this parameter is `random`.
+- `--steps`|`-s`: The number of iterations to run the generator [`update`](generators/utils.py#L25) function for.
 - `--earlystop`|`-e`: If this exists in the command line, the generator will stop as soon as the best solution is the maximum which is 1.0.
 
 If you wanna set some of the algorithm hyperparameters for the available algorithm such as the fitness function used in the search process. You can in the command line the parameter name in the form of `fitness` or `--fitness` and then follow by the allowed values. For the fitness function, we have 3 different ones: 
-- [`quality`|`fitness_quality`](https://github.com/amidos2006/pcg_benchmark/blob/main/generators/utils.py#L111) computes the quality metric for the content and returns it as fitness. 
-- [`quality_control`|`fitness_quality_control`](https://github.com/amidos2006/pcg_benchmark/blob/main/generators/utils.py#L114) computes the quality metric then control if you passed the quality as cascaded fitness. 
-- [`quality_control_diversity`|`fitness_quality_control_diversity`](https://github.com/amidos2006/pcg_benchmark/blob/main/generators/utils.py#L120) computes the quality then controllability then diversity in cascaded manner as fitness, this fitness is not stable because diversity depends on the population and how diverse it is so the value of a chromosome from before that passes diversity might not pass it now.
+- [`quality`|`fitness_quality`](generators/utils.py#L111) computes the quality metric for the content and returns it as fitness. 
+- [`quality_control`|`fitness_quality_control`](generators/utils.py#L114) computes the quality metric then control if you passed the quality as cascaded fitness. 
+- [`quality_control_diversity`|`fitness_quality_control_diversity`](generators/utils.py#L120) computes the quality then controllability then diversity in cascaded manner as fitness, this fitness is not stable because diversity depends on the population and how diverse it is so the value of a chromosome from before that passes diversity might not pass it now.
 
 Every parameter has a default value for example the fitness default is `quality`.
 
-Here is an example of running a Genetic Algorithm to try to solve [`sokoban-v0`](https://github.com/amidos2006/pcg_benchmark/tree/main/pcg_benchmark/probs/sokoban) problem with a fitness that cares about quality and controllability and number of generations/iterations of 1000. If at any time the algorithm finds a solution, it will stop before reaching 1000 iterations.
+Here is an example of running a Genetic Algorithm to try to solve [`sokoban-v0`](pcg_benchmark/probs/sokoban) problem with a fitness that cares about quality and controllability and number of generations/iterations of 1000. If at any time the algorithm finds a solution, it will stop before reaching 1000 iterations.
 ```bash
 python run.py outputs -p sokoban-v0 -g ga -s 1000 -e --fitness quality_control
 ```
@@ -187,7 +187,7 @@ One last note, if you decide to build a search algorithm you can build on top of
 If you want to have your new fitness function just add it in the same module `generators.search` and the system will access it using the name when provided in the command line.
 
 ## Examples of Generated Content
-These are some examples of the generated content for every environment in the framework, for the optimization algorithm more details can be found about them in the paper or by checking [`generators.es`](https://github.com/amidos2006/pcg_benchmark/blob/main/generators/es.py) and [`generators.ga`](https://github.com/amidos2006/pcg_benchmark/blob/main/generators/ga.py). Random here is just sampling randomly from the space. If you need to check more examples please check the [images](images/) folder.
+These are some examples of the generated content for every environment in the framework, for the optimization algorithm more details can be found about them in the paper or by checking [`generators.es`](generators/es.py) and [`generators.ga`](generators/ga.py). Random here is just sampling randomly from the space. If you need to check more examples please check the [images](images/) folder.
 
 | Name | Random | Evolution Strategy | Genetic Algorithm |
 | ---- | ------ | ------------------ | ----------------- |
