@@ -187,6 +187,22 @@ One last note, if you decide to build a search algorithm you can build on top of
 If you want to have your new fitness function just add it in the same module `generators.search` and the system will access it using the name when provided in the command line.
 
 ## Examples of Generated Content
+These are some examples of the generated content for every environment in the framework, for the optimization algorithm more details can be found about them in the paper or by checking [`generators.es`](https://github.com/amidos2006/pcg_benchmark/blob/main/generators/es.py) and [`generators.ga`](https://github.com/amidos2006/pcg_benchmark/blob/main/generators/ga.py). Random here is just sampling randomly from the space. If you need to check more examples please check the [images](images/) folder.
+
+| Name | Random | Evolution Strategy | Genetic Algorithm |
+| ---- | ------ | ------------------ | ----------------- |
+| `arcade-v0` | ![Random](images/arcaderules/random_1.png) | ![Evolution Strategy](images/arcaderules/es_1.png) | ![Genetic Algorithm](images/arcaderules/ga_1.png) |
+| `binary-v0` | ![Random](images/binary/random_1.png) | ![Evolution Strategy](images/binary/es_1.png) | ![Genetic Algorithm](images/binary/ga_1.png) |
+| `building-v0` | ![Random](images/building/random_1.png) | ![Evolution Strategy](images/building/es_1.png) | ![Genetic Algorithm](images/building/ga_1.png) |
+| `ddave-v0` | ![Random](images/ddave/random_1.png) | ![Evolution Strategy](images/ddave/es_1.png) | ![Genetic Algorithm](images/ddave/ga_1.png) |
+| `elimination-v0` | ![Random](images/elimination/random_1.png) | ![Evolution Strategy](images/elimination/es_1.png) | ![Genetic Algorithm](images/elimination/ga_1.png) |
+| `isaac-v0` | ![Random](images/isaac/random_1.png) | ![Evolution Strategy](images/isaac/es_1.png) | ![Genetic Algorithm](images/isaac/ga_1.png) |
+| `loderunner-v0` | ![Random](images/loderunner/random_1.png) | ![Evolution Strategy](images/loderunner/es_1.png) | ![Genetic Algorithm](images/loderunner/ga_1.png) |
+| `mdungeons-v0` | ![Random](images/mdungeons/random_1.png) | ![Evolution Strategy](images/mdungeons/es_1.png) | ![Genetic Algorithm](images/mdungeons/ga_1.png) |
+| `smb-v0` | ![Random](images/smb/random_1.png) | ![Evolution Strategy](images/smb/es_1.png) | ![Genetic Algorithm](images/smb/ga_1.png) |
+| `sokoban-v0` | ![Random](images/sokoban/random_1.png) | ![Evolution Strategy](images/sokoban/es_1.png) | ![Genetic Algorithm](images/sokoban/ga_1.png) |
+| `talakat-v0` | ![Random](images/talakat/random_1.gif) | ![Evolution Strategy](images/talakat/es_1.gif) | ![Genetic Algorithm](images/talakat/ga_1.gif) |
+| `zelda-v0` | ![Random](images/zelda/random_1.png) | ![Evolution Strategy](images/zelda/es_1.png) | ![Genetic Algorithm](images/zelda/ga_1.png) |
 
 ## Processing results
 You can quickly run and then evaluate your results, plotting the relevant graphs using `run_experiments.bat` and `data_processing.py`, provided in this repo but not included in the library itself.
