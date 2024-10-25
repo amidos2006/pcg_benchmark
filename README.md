@@ -150,13 +150,13 @@ This section talks about using [`run.py`](run.py) to run one of the generators i
 - `outputfolder`: This is the only **mandatory** input for the script. It specifies the folder that the outputs should be saved inside.
 - `--problem`|`-p`: The problem name that you want to run the generator against. Look at all the problem names in [Problems section](#problems) for that. The default value for this parameter is `binary-v0`
 - `--generator`|`-g`: The file name where the generator is saved in. Right now there are three files for three different generators. [`random`](generators/random.py) contains a Random Search algorithm, [`es`](generators/es.py) contains a Mu + Lambda evolution Strategy, and [`ga`](generators/ga.py) contains a Genetic algorithm. The default value for this parameter is `random`.
-- `--steps`|`-s`: The number of iterations to run the generator [`update`](generators/search.py#L25) function for.
+- `--steps`|`-s`: The number of iterations to run the generator [`update`](generators/generator.py#L12) function for.
 - `--earlystop`|`-e`: If this exists in the command line, the generator will stop as soon as the best solution is the maximum which is 1.0.
 
 If you wanna set some of the algorithm hyperparameters for the available algorithm such as the fitness function used in the search process. You can in the command line the parameter name in the form of `fitness` or `--fitness` and then follow by the allowed values. For the fitness function, we have 3 different ones: 
-- [`quality`|`fitness_quality`](generators/search.py#L111) computes the quality metric for the content and returns it as fitness. 
-- [`quality_control`|`fitness_quality_control`](generators/search.py#L114) computes the quality metric then control if you passed the quality as cascaded fitness. 
-- [`quality_control_diversity`|`fitness_quality_control_diversity`](generators/search.py#L120) computes the quality then controllability then diversity in cascaded manner as fitness, this fitness is not stable because diversity depends on the population and how diverse it is so the value of a chromosome from before that passes diversity might not pass it now.
+- [`quality`|`fitness_quality`](generators/search.py#L132) computes the quality metric for the content and returns it as fitness. 
+- [`quality_control`|`fitness_quality_control`](generators/search.py#L135) computes the quality metric then control if you passed the quality as cascaded fitness. 
+- [`quality_control_diversity`|`fitness_quality_control_diversity`](generators/search.py#L141) computes the quality then controllability then diversity in cascaded manner as fitness, this fitness is not stable because diversity depends on the population and how diverse it is so the value of a chromosome from before that passes diversity might not pass it now.
 
 Every parameter has a default value for example the fitness default is `quality`.
 
