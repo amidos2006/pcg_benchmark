@@ -74,7 +74,7 @@ The framework supports multitude of problems that can be found at [`pcg_benchmar
 | Name | Description | Problem Name | Example |
 | ---- | ----------- | ------------ | ------- |
 | [Arcade Rules](pcg_benchmark/probs/arcaderules/README.md) | create a small rule set for a simple arcade game | `arcade-v0` | ![Example](images/arcaderules/example.png) |
-| [Binary](pcg_benchmark/probs/binary/README.md) | create a simple 2D fully connected maze | `binary-v0` | | ![Example](images/binary/example.png) |
+| [Binary](pcg_benchmark/probs/binary/README.md) | create a simple 2D fully connected maze | `binary-v0` | ![Example](images/binary/example.png) |
 | [Building](pcg_benchmark/probs/building/README.md) | create an isometric building of using different falling cubes | `building-v0` | ![Example](images/building/example.png) |
 | [Dangerous Dave](pcg_benchmark/probs/ddave/README.md) | create a playable dangeroud dave level | `ddave-v0` | ![Example](images/ddave/example.png) |
 | [Elimination](pcg_benchmark/probs/elimination/README.md) | create a playable elimination word game level | `elimination-v0` | ![Example](images/elimination/example.png) |
@@ -83,7 +83,7 @@ The framework supports multitude of problems that can be found at [`pcg_benchmar
 | [MiniDungeons](pcg_benchmark/probs/mdungeons/README.md) | create a puzzle roguelike playable dungeon for mini dungeons | `mdungeons-v0` | ![Example](images/mdungeons/example.png) |
 | [Super Mario Bros](pcg_benchmark/probs/smb/README.md) | create a playable super mario bros level using vertical slices | `smb-v0` | ![Example](images/smb/example.png) |
 | [Sokoban](pcg_benchmark/probs/sokoban/README.md) | create a playable sokoban level | `sokoban-v0` | ![Example](images/sokoban/example.png) |
-| [Talakat](pcg_benchmark/probs/talakat/README.md) | create a bullet pattern for bullet hell games | `talakat-v0` | ![Example](images/talakat/example.png) |
+| [Talakat](pcg_benchmark/probs/talakat/README.md) | create a bullet pattern for bullet hell games | `talakat-v0` | ![Example](images/talakat/example.gif) |
 | [Zelda](pcg_benchmark/probs/zelda/README.md) | create a simple playable arcade dungeon crawler game | `zelda-v0` | ![Example](images/zelda/example.png) |
 
 To understand how to add new problems to the framework, please check the main [README.md](pcg_benchmark/probs/README.md) in the probs folder.
