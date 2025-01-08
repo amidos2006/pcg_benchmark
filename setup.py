@@ -6,7 +6,7 @@ with open("README.md", "r") as fh:
 setup(name='pcg_benchmark',
       version='0.1.0',
       install_requires=['numpy>=1.22', 'pillow'],
-      packages=find_packages()
+      packages=find_packages(),
       author="Ahmed Khalifa",
       author_email="ahmed@akhalifa.com",
       description="A package for \"Procedural Content Generation Benchmark\" to test and compare your pcg algorithm against each other.",
