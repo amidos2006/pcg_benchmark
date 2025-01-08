@@ -19,6 +19,13 @@ This repo contains the framework that is used in our paper for the generators pl
 ```
 
 ## Installation
+There is two ways to install this repo, directly from github or by cloning locally then installing it
+
+### Directly from Github
+1. To install the package from github, run `pip install git+https://github.com/amidos2006/pcg_benchmark.git`. (Don't worry it will install all the dependencies automatically which are `numpy` and `PIL`).
+2. If everything goes fine, the PCG Benchmark is ready to be used. Check the [following section](#usage) on how to use it.
+
+### Locally Installing
 1. Clone this repo to your local machine.
 2. To install the package, run `pip install -e .` from inside the repo folder. (Don't worry it will install all the dependencies automatically which are `numpy` and `PIL`).
 3. If everything goes fine, the PCG Benchmark is ready to be used. Check the [following section](#usage) on how to use it.
