@@ -1,4 +1,4 @@
-from .problem import TalakatProblem
+from pcg_benchmark.probs.talakat.problem import TalakatProblem
 
 PROBLEMS = {
     "talakat-v0": (TalakatProblem, {"width": 200, "height": 300, "spawnerComplexity": 10, "maxHealth": 150}),

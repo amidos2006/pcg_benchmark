@@ -1,4 +1,4 @@
-from .problem import EliminationProblem
+from pcg_benchmark.probs.elimination.problem import EliminationProblem
 
 PROBLEMS = {
     "elimination-v0": (EliminationProblem, {"letters": 8, "short_percentage": 0.5, "long_percentage": 0.7}),

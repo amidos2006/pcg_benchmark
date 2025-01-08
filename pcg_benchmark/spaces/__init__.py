@@ -1,8 +1,8 @@
-from .float import FloatSpace
-from .integer import IntegerSpace
-from .array import ArraySpace
-from .generic import GenericSpace
-from .dictionary import DictionarySpace
+from pcg_benchmark.spaces.float import FloatSpace
+from pcg_benchmark.spaces.integer import IntegerSpace
+from pcg_benchmark.spaces.array import ArraySpace
+from pcg_benchmark.spaces.generic import GenericSpace
+from pcg_benchmark.spaces.dictionary import DictionarySpace
 import copy
 import numpy as np
 

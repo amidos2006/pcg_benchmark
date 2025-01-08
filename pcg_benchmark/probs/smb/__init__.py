@@ -1,4 +1,4 @@
-from .problem import MarioProblem
+from pcg_benchmark.probs.smb.problem import MarioProblem
 
 PROBLEMS = {
     "smb-v0": (MarioProblem, {"width": 150}),

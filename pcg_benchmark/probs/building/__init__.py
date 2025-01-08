@@ -1,4 +1,4 @@
-from .problem import BuildingProblem
+from pcg_benchmark.probs.building.problem import BuildingProblem
 
 PROBLEMS = {
     "building-v0": (BuildingProblem, {"width": 7, "length": 7, "height": 12, "blocks": 40}),

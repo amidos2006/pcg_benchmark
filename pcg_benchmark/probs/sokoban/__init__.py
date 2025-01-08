@@ -1,4 +1,4 @@
-from .problem import SokobanProblem
+from pcg_benchmark.probs.sokoban.problem import SokobanProblem
 
 PROBLEMS = {
     "sokoban-v0": (SokobanProblem, {"width": 5, "height": 5, "difficulty": 1, "solver": 5000}),

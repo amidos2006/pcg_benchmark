@@ -1,4 +1,4 @@
-from .problem import IsaacProblem
+from pcg_benchmark.probs.isaac.problem import IsaacProblem
 
 PROBLEMS = {
     "isaac-v0": (IsaacProblem, {"width": 4, "height": 4, "rooms": 6}),
