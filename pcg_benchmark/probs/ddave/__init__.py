@@ -1,4 +1,4 @@
-from pcg_benchmark.probs.ddave.problem import DangerDaveProblem
+from .problem import DangerDaveProblem
 
 PROBLEMS = {
     "ddave-v0": (DangerDaveProblem, {"width": 11, "height": 7, "jumps": 2}),

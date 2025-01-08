@@ -1,4 +1,4 @@
-from pcg_benchmark.probs.problem import Problem
+from .problem import Problem
 from importlib import import_module
 import os
 

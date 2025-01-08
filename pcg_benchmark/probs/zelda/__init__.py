@@ -1,4 +1,4 @@
-from pcg_benchmark.probs.zelda.problem import ZeldaProblem
+from .problem import ZeldaProblem
 
 PROBLEMS = {
     "zelda-v0": (ZeldaProblem, {"width": 11, "height": 7, "enemies": 3}),

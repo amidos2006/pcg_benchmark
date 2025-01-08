@@ -1,4 +1,4 @@
-from pcg_benchmark.probs.arcaderules.problem import ArcadeRulesProblem
+from .problem import ArcadeRulesProblem
 
 PROBLEMS = {
     # arcade rules problem with small width and height

@@ -1,4 +1,4 @@
-from pcg_benchmark.probs.mdungeons.problem import MiniDungeonProblem
+from .problem import MiniDungeonProblem
 
 PROBLEMS = {
     "mdungeons-v0": (MiniDungeonProblem, {"width": 8, "height": 12, "enemies": 8}),

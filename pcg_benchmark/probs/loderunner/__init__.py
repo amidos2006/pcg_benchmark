@@ -1,4 +1,4 @@
-from pcg_benchmark.probs.loderunner.problem import LodeRunnerProblem
+from .problem import LodeRunnerProblem
 
 PROBLEMS = {
     "loderunner-v0": (LodeRunnerProblem, {"width": 32, "height": 22, "gold": 6, "enemies": 3}),

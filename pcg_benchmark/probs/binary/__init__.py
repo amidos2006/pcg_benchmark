@@ -1,4 +1,4 @@
-from pcg_benchmark.probs.binary.problem import BinaryProblem
+from .problem import BinaryProblem
 
 PROBLEMS = {
     "binary-v0": (BinaryProblem, {"width": 14, "height": 14}),

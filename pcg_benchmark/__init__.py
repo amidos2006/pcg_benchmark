@@ -1,5 +1,5 @@
-from pcg_benchmark.pcg_env import PCGEnv
-from pcg_benchmark.probs import PROBLEMS
+from .pcg_env import PCGEnv
+from .probs import PROBLEMS
 from difflib import SequenceMatcher
 
 """
