@@ -10,8 +10,8 @@ import numpy as np
 Check if the two input content are equal
 
 Parameters:
-    content1 (any): sampled content from a space
-    content2 (any): sampled content from a space
+    content1 (any): content from a space
+    content2 (any): content from a space
 
 Returns:
     bool: return if content1 and content 2 are equal in all the values
@@ -32,6 +32,19 @@ def isContentEqual(content1, content2):
     except:
         return False
 
+"""
+An internal recursive function to swap two contents together based on specific probability and 
+maximum number of swaps
+
+Parameters:
+    content1 (any): content from a space
+    content2 (any): content from a space
+    swapInfo (dict): dictionary containing the maximum number of swaps and the probability of 
+    swapping and any additional information for later
+
+Returns:
+    any: returns the swapped content
+"""
 def _recursiveSwap(content1, content2, swapInfo):
     if not hasattr(content1, "__len__"):
         if swapInfo["maxSwaps"] != 0 and swapInfo["random"].random() < swapInfo["probability"]:
@@ -48,6 +61,20 @@ def _recursiveSwap(content1, content2, swapInfo):
         result.append(_recursiveSwap(c1, c2, swapInfo))
     return result
 
+"""
+Swap the two provided content with a given probability where each element of the content has 
+the same probability to be swapped with the other content and have maximum number of swaps
+
+Parameters:
+    content1 (any): content from a space
+    content2 (any): content from a space
+    swap_probability (float): probability of swapping each part of the content
+    maxSwaps (int): maximum number of swaps allowed
+    seed (any): seed for the random number generator or the random number generator itself
+
+Returns:
+    any: returns the swapped content
+"""
 def contentSwap(content1, content2, swap_probability, maxSwaps=-1, seed = None):
     if seed == None:
         random = np.random.default_rng()

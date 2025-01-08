@@ -131,6 +131,17 @@ def get_number_regions(maze, tile_values):
             continue
     return region_index
 
+"""
+Calculate the size of the regions in the maze specified by the locations that have the same values in the tile_values
+
+Parameters:
+    maze(int[][]): the maze that need to be tested for regions
+    locations([int,int][]): an array of x,y locations that specify the starting point of the regions
+    tile_values(int[]): the values that are considered the same in the regions
+    
+Returns:
+    int[]: an array of the size of the regions that have the starting points in the locations
+"""
 def get_regions_size(maze, locations, tile_values):
     result = []
     region_index=0

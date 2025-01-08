@@ -1,5 +1,13 @@
 import numpy as np
 
+"""
+An internal recurrsive function to calculate the number of unique content and the minimum 
+diversity value for each input content. This function might be replaced in the future with better one 
+such as Vendi Score.
+
+Parameters:
+    structureContent (dict[]): a list of dictionary containing the content and the similarity value between all the content
+"""
 def _recursiveDiversity(structureContent):
     if len(structureContent) == 0:
         return

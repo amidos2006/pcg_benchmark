@@ -1,5 +1,14 @@
 import numpy as np
 
+"""
+An internal recursive function to flatten the input structure into an array of floats
+
+Parameters:
+    input (any): the input structure to flatten usually something sampled from a space
+
+Returns:
+    float[]: a 1D array of floats without any structure (multidimension array, dictionary, etc.)
+"""
 def _recursiveFlat(input):
     if not hasattr(input, "__len__"):
         return [float(input)]
