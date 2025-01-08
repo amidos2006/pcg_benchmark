@@ -71,7 +71,7 @@ If you want to test only one thing like `quality`, `diversity`, or `controlabili
 
 ## Problems
 The framework supports multitude of problems that can be found at [`pcg_benchmark.probs`](pcg_benchmark/probs). To understand more about each problem go to any of their folders and check the README files. Here a list of the current 12 problems:
-| Name | Description | <div style="min-width:400px">Problem Name</div> | Example |
+| Name | Description | Problem Name | Example |
 | ---- | ----------- | ------------ | ------- |
 | [Arcade Rules](pcg_benchmark/probs/arcaderules/README.md) | create a small rule set for a simple arcade game | `arcade-v0` | ![Example](images/arcaderules/example.png) |
 | [Binary](pcg_benchmark/probs/binary/README.md) | create a simple 2D fully connected maze | `binary-v0` | | ![Example](images/binary/example.png) |
