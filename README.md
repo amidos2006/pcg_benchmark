@@ -13,7 +13,7 @@ PCG Benchmark is a framework to test and compare different content generators ov
 This repo contains the framework that is used in our paper for the generators please check the following repo [https://github.com/amidos2006/benchmark_experiments](https://github.com/amidos2006/benchmark_experiments). To cite the framework or the paper use the following bibliography
 ```
 @inproceedings{khalifa2025pcgbenchmark,
-  title={The Procedural Content Generation Benchmark: An Open-source Testbed for Generative Challenges in Games,
+  title={The Procedural Content Generation Benchmark: An Open-source Testbed for Generative Challenges in Games},
   author={Khalifa, Ahmed and Gallota, Roberto and Barthet, Matthew and Liapis, Antonios and Togelius, Julian and Yannakakis, Georgios N.},
   booktitle={Foundations of Digital Games Conference},
   year={2025},
