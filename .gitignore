@@ -10,7 +10,6 @@ __pycache__/
 *.ipynb
 original/
 original/*
-slices.txt
 .DS_Store
 
 # Distribution / packaging
