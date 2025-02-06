@@ -6,23 +6,28 @@ diversity value for each input content. This function might be replaced in the f
 such as Vendi Score.
 
 Parameters:
-    structureContent (dict[]): a list of dictionary containing the content and the similarity value between all the content
+    infos (dict[]): a list of dictionary containing the information about each content
+    sim_matrix (float[][]): a matrix containing the similarity value between all the contents
+
+Returns:
+    float[]: an array of the minimum diversity value for each content
 """
-def _recursiveDiversity(structureContent):
-    if len(structureContent) == 0:
-        return
-    structureContent = sorted(structureContent, key=lambda v: v["similar"], reverse=True)
-    if structureContent[0]["similar"] <= 0:
-        structureContent[0]["similar"] = 0
-        return
-    for sc,div in structureContent[0]["diversity"]:
-        if sc == None:
-            break
-        if sc in structureContent:
-            if div < structureContent[0]["minimum"]:
-                structureContent[0]["minimum"] = div
-            sc["similar"] -= 1
-    _recursiveDiversity(structureContent[1:])
+def _recursiveDiversity(infos, sim_matrix):
+    values = sim_matrix.sum(axis=1)
+    max_value = np.max(values)
+    if max_value <= 1:
+        return [1.0] * len(infos)
+    index = np.argmax(values)
+    div_value = min(max(2 - max_value, 0.0), 1.0)
+    new_infos = infos.copy()
+    new_infos.pop(index)
+    new_sim_matrix = sim_matrix.copy()
+    new_sim_matrix=np.delete(new_sim_matrix, (index), axis=0)
+    new_sim_matrix=np.delete(new_sim_matrix, (index), axis=1)
+    tempArray = _recursiveDiversity(new_infos, new_sim_matrix)
+    tempArray.insert(index, div_value)
+    return tempArray
+
 
 """
 PCG Environment class. This class is the base class where the user is interacting with.
@@ -178,32 +183,12 @@ class PCGEnv:
         else:
             infos = contents
         
-        temp = []
-        for i in range(len(infos)):
-            temp.append({
-                "index": i,
-                "diversity": [],
-                "similar": 0,
-                "minimum": 1.0,
-                "wrong": False
-            })
+        sim_mat = np.zeros((len(infos), len(infos)))
+        for i1 in range(len(infos)):
+            for i2 in range(len(infos)):
+                sim_mat[i1][i2] = 1.0-self._problem.diversity(infos[i1], infos[i2])
 
-        for i1 in range(len(temp)):
-            if temp[i1]["wrong"]:
-                continue
-            for i2 in range(i1+1, len(temp)):
-                value = self._problem.diversity(infos[i1], infos[i2])
-                temp[i1]["diversity"].append((temp[i2], value))
-                temp[i2]["diversity"].append((temp[i1], value))
-                if value < 1:
-                    temp[i1]["similar"] += 1
-                    temp[i2]["similar"] += 1
-        _recursiveDiversity(temp)
-        temp = sorted(temp, key=lambda v: v["index"])
-        diversity = []
-        for sc in temp:
-            diversity.append(sc["minimum"])
-        diversity = np.array(diversity)
+        diversity = np.array(_recursiveDiversity(infos, sim_mat))
 
         if not is_array:
             return float(diversity[0] >= 1), diversity[0], infos[0]
