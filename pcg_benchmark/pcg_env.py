@@ -8,24 +8,29 @@ such as Vendi Score.
 Parameters:
     infos (dict[]): a list of dictionary containing the information about each content
     sim_matrix (float[][]): a matrix containing the similarity value between all the contents
+    indces (int[]): an array of the indices of the contents that need to be evaluated (don't provide that)
 
 Returns:
     float[]: an array of the minimum diversity value for each content
 """
-def _recursiveDiversity(infos, sim_matrix):
+def _recursiveDiversity(infos, sim_matrix, indices=None):
+    if indices == None:
+        indices = list(range(len(infos)))
     values = sim_matrix.sum(axis=1)
     max_value = np.max(values)
     if max_value <= 1:
         return [1.0] * len(infos)
     index = np.argmax(values)
     div_value = min(max(2 - max_value, 0.0), 1.0)
+    index_value = indices[index]
     new_infos = infos.copy()
     new_infos.pop(index)
+    indices.pop(index)
     new_sim_matrix = sim_matrix.copy()
     new_sim_matrix=np.delete(new_sim_matrix, (index), axis=0)
     new_sim_matrix=np.delete(new_sim_matrix, (index), axis=1)
-    tempArray = _recursiveDiversity(new_infos, new_sim_matrix)
-    tempArray.insert(index, div_value)
+    tempArray = _recursiveDiversity(new_infos, new_sim_matrix, indices)
+    tempArray.insert(index_value, div_value)
     return tempArray
 
 
