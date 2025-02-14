@@ -21,7 +21,8 @@ def _recursiveDiversity(infos, sim_matrix, indices=None):
     if max_value <= 1:
         return [1.0] * len(infos)
     index = np.argmax(values)
-    div_value = min(max(2 - max_value, 0.0), 1.0)
+    amount = (sim_matrix[index] > 0).sum()
+    div_value = min(max(1-(max_value - 1) / amount, 0.0), 1.0)
     index_value = indices[index]
     new_infos = infos.copy()
     new_infos.pop(index)
