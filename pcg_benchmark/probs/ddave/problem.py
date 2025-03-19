@@ -94,7 +94,8 @@ class DangerDaveProblem(Problem):
         result =  {
             "players": players, "exits": exits, "diamonds": len(diamonds), "keys": keys, "spikes": spikes,
             "playerOnGround": playerOnGround, "player_locations": player_locations, "exit_locations": exit_locations,
-            "exitOnGround": exitOnGround, "diamond_reachable": diamondHeuristic, "heuristic": heuristic, "solution": solution
+            "exitOnGround": exitOnGround, "diamond_reachable": diamondHeuristic, "heuristic": heuristic, "solution": solution,
+            "repaired_content": content
         }
         for name in stats:
             result[name] = stats[name]

@@ -79,3 +79,4 @@ This is all the info that you can get about any content using the `info` functio
 - `diamond_reachable(float[])`: an array of values where each value tells you how close the player is to collect a specific diamond (0 means they have collected that diamond), 
 - `heuristic(float)`: a value that tells you how close the player to winning (0 if the player won the game), 
 - `solution(dict[str,int][])`: an array of the actions needed to solve the level if this is possible
+- `repaired_content((int)[][])`: this is the level after it got cleaned of any isolated areas
