@@ -89,9 +89,11 @@ The framework supports multitude of problems that can be found at [`pcg_benchmar
 | [Dangerous Dave](pcg_benchmark/probs/ddave/README.md) | create a playable dangeroud dave level | `ddave-v0` | ![Example](images/ddave/example.png) |
 | [Elimination](pcg_benchmark/probs/elimination/README.md) | create a playable elimination word game level | `elimination-v0` | ![Example](images/elimination/example.png) |
 | [Isaac](pcg_benchmark/probs/isaac/README.md) | create a playable binding of isaac dungeon | `isaac-v0` | ![Example](images/isaac/example.png) |
-| [Lode Runner](pcg_benchmark/probs/loderunner/README.md) | create a playable lode runner level | `loderunner-v0` | ![Example](images/loderunner/example.png) |
+| [Lode Runner](pcg_benchmark/probs/loderunner/README.md) | create a playable lode runner level using 2x2 tile patterns | `loderunner-v0` | ![Example](images/loderunner/example.png) |
+| [Lode Runner Tile](pcg_benchmark/probs/loderunnertile/README.md) | create a playable lode runner level using single tiles | `loderunnertile-v0` | ![Example](images/loderunnertile/example.png) | 
 | [MiniDungeons](pcg_benchmark/probs/mdungeons/README.md) | create a puzzle roguelike playable dungeon for mini dungeons | `mdungeons-v0` | ![Example](images/mdungeons/example.png) |
 | [Super Mario Bros](pcg_benchmark/probs/smb/README.md) | create a playable super mario bros level using vertical slices | `smb-v0` | ![Example](images/smb/example.png) |
+| [Super Mario Bros Tile](pcg_benchmark/probs/smbtile/README.md) | create a playable super mario bros level using single tiles | `smbtile-v0` | ![Example](images/smbtile/example.png) |
 | [Sokoban](pcg_benchmark/probs/sokoban/README.md) | create a playable sokoban level | `sokoban-v0` | ![Example](images/sokoban/example.png) |
 | [Talakat](pcg_benchmark/probs/talakat/README.md) | create a bullet pattern for bullet hell games | `talakat-v0` | ![Example](images/talakat/example.gif) |
 | [Zelda](pcg_benchmark/probs/zelda/README.md) | create a simple playable arcade dungeon crawler game | `zelda-v0` | ![Example](images/zelda/example.png) |
