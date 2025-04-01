@@ -41,7 +41,7 @@ variants = [name for name in pcg_benchmark.list() if len(name.split('-')) > 2]
 | [Talakat](https://github.com/amidos2006/pcg_benchmark/blob/main/pcg_benchmark/probs/talakat/README.md) | create a bullet pattern for bullet hell games | `talakat-v0` | `talakat-small-v0`, `talakat-long-v0` |
 | [Zelda](https://github.com/amidos2006/pcg_benchmark/blob/main/pcg_benchmark/probs/zelda/README.md) | create a simple playable arcade dungeon crawler game | `zelda-v0` | `zelda-enemies-v0`, `zelda-large-v0` |
 
-## Adding New Problems
+## Creating and Registering New Problems
 The first step to create new problem is to create a class that inherit from the base [`Problem`](https://github.com/amidos2006/pcg_benchmark/blob/main/pcg_benchmark/probs/problem.py) class from `pcg_benchmark.probs`. The new class should implement the main functions that was explained at the beginning of the document. Here are there repeated again:
 - [`info(content)`](https://github.com/amidos2006/pcg_benchmark/blob/main/pcg_benchmark/probs/problem.py#L32): do all the simulation and the calculation and return an object that contains all the information
 - [`quality(info)`](https://github.com/amidos2006/pcg_benchmark/blob/main/pcg_benchmark/probs/problem.py#L49): takes an info object a return a number between 0 and 1 where 1 means it solved the problem
@@ -61,3 +61,112 @@ A more complicated space might be used to have more complex search space. Here a
 - [`ArraySpace`](https://github.com/amidos2006/pcg_benchmark/blob/main/pcg_benchmark/spaces/array.py): a space of any shape array with a space as the base value.
 - [`DictionarySpace`](https://github.com/amidos2006/pcg_benchmark/blob/main/pcg_benchmark/spaces/dictionary.py): a space that has keys and values where values can be anything, if it is a space then it can be sampled recursively.
 - [`GenericSpace`](https://github.com/amidos2006/pcg_benchmark/blob/main/pcg_benchmark/spaces/generic.py): a space of any thing. [`ArraySpace`](https://github.com/amidos2006/pcg_benchmark/blob/main/pcg_benchmark/spaces/array.py) and [`DictionarySpace`](https://github.com/amidos2006/pcg_benchmark/blob/main/pcg_benchmark/spaces/dictionary.py) are special case of this space. This class can sample if there is base classes inside or keep the same structure of everything else.
+
+After creating the problem class, there is two ways to register it, the easiest way is to register it using `register` function provided by the framework. The function takes a name, the class, and any parameters needed to initialize the class. For example, here an example of registering a new problem called all ones. This problem is about generating 1D dimension array of 1s and 0s and the quality is to have at least 75% of numbers are 1, while diversity is difference between number of 1s should be at least 25%. Finally, controlability is how many ones are there in the string with minimum equal to 75% of the length.
+
+```python
+import pcg_benchmark
+import numpy as np
+from pcg_benchmark.spaces import DictionarySpace, ArraySpace, IntegerSpace
+from pcg_benchmark.probs import Problem
+
+"""
+All Ones problem where you try to generate 1d array of zeros and ones
+"""
+class AllOnes(Problem):
+    """
+    The constructor for all ones problems
+    
+    Parameters:
+        length(int): the length of the array that you want to generate
+    """
+    def __init__(self, **kwargs):
+        self._length = kwargs.get('length')
+        self._target = int(0.75 * self._length)
+        self._difference = int(0.1 * self._length)
+
+        self._content_space = ArraySpace((self._length), IntegerSpace(2))
+        self._control_space = DictionarySpace({"ones": IntegerSpace(self._target, self._length)})
+
+    """
+    The info function that returns the information of the content that is used
+    in all the evaluation functions.
+
+    Parameters:
+        content(int[]): the content that you want to get its information
+
+    Returns:
+        dict: a dictionary of the information of the content (number of ones in the content)
+    """
+    def info(self, content):
+        return {"ones": np.sum(content) }
+
+    """
+    The quality function that returns the quality of the content based on the
+    information of the content.
+    
+    Parameters:
+        info(dict): the information dictionary about the content need to be evaluated.
+
+    Returns:
+        float: the quality of the content based on the information where 1 means perfect 
+        (more than 75% of the content is ones).
+    """
+    def quality(self, info):
+        if info["ones"] > self._target:
+            return 1.0
+        return (self._target - info["ones"]) / self._target
+
+    """
+    The diversity function that returns the diversity between two contents based on their information.
+    
+    Parameters:
+        info1(dict): the information dictionary about the first content
+        info2(dict): the information dictionary about the second content
+
+    Returns:
+        float: the diversity between the two contents based on their information 
+        where 1 means completely different (more than 10% of the number of ones are different) 
+        and 0 means completely similar.
+    """
+    def diversity(self, info1, info2):
+        diff = abs(info1["ones"] - info2["ones"])
+        if diff > self._difference:
+            return 1.0
+        return (self._difference - diff) / self._difference
+  
+    """
+    The controlability function that returns the controllability of the content 
+    based on the information and the control parameter
+
+    Parameters:
+        info(dict): the information dictionary about the content
+        control(dict): the control dictionary that you need to target
+
+    Returns:
+        float: the controllability of the content based on the information and control 
+        where 1 means completely controllable (the number of ones is equal to the target) 
+        and 0 means not controllable.
+    """
+    def controlability(self, info, control):
+        return (self._length - abs(info["ones"] - control["ones"])) / self._length
+
+    """
+    The render function that returns the content in a string format.
+
+    Returns:
+        string: the content in a string format.
+    """
+    def render(self, content):
+        return str(content)
+
+# Register the problem in the pcg_benchmark
+# The name of the problem is allones-v0 following the naming scheme {name}-{version}
+pcg_benchmark.register('allones-v0', AllOnes, **{"length": 100})
+# Register a variation of the problem with a different length
+# The name of the problem is allones-long-v1 following the naming scheme {name}-{modification}-{version}
+pcg_benchmark.register('allones-long-v1', AllOnes, **{"length": 1000})
+
+# Example of how to use the problem using the registered name
+env = pcg_benchmark.make('allones-v0')
+```
