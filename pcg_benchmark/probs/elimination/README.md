@@ -35,6 +35,14 @@ If you want to add new variants for this framework, you can add it to [`__init__
 - `offset(float)`: the size of the short and long percentage. For example if the offset is 0.1 and short percentage is 0.6 then the range is [0.5, 0.7] (optional=0.1)
 - `diversity(float)`: the diversity percentage that if you pass it, the diversity value is equal to 1 (optional=0.6)
 
+An easier way without editing the framework files is to use the `register` function from the `pcg_benchmark` to add the variant.
+```python
+from pcg_benchmark.probs.elimination import EliminationProblem
+import pcg_benchmark
+
+pcg_benchmark.register('elimination-extreme-v0', EliminationProblem, {"letters": 20, "short_percentage": 0.5, "long_percentage": 0.9})
+```
+
 ## Quality Measurement
 To pass the quality criteria, you need to pass multiple of criteria
 - the letters can construct at least one short word (3, 4 letter word)

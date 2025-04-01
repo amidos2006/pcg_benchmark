@@ -135,10 +135,18 @@ If you want to add new variants for this framework, you can add it to [`__init__
 - `height(int)`: the height of the level
 - `spawnerComplexity(int)`: the number of spawners
 - `maxHealth(int)`: the number of frames of the bullet pattern
-- `min_bullets(int)`: the minimum number of bullets that need to be on average on screen all the time (optional=20)
-- `coverage(float)`: the entropy of the bullet distribution over all the frames
-- `empty(float)`: the percentage of empty space on screen when there is bullets
+- `min_bullets(int)`: the minimum number of bullets that need to be on average on screen all the time (optional=50)
+- `coverage(float)`: the entropy of the bullet distribution over all the frames (optional=0.95)
+- `empty(float)`: the percentage of empty space on screen when there is bullets (optional=0.4)
 - `diversity(float)`: the diversity percentage that if you pass it, the diversity value is equal to 1 (optional=0.5)
+
+An easier way without editing the framework files is to use the `register` function from the `pcg_benchmark` to add the variant.
+```python
+from pcg_benchmark.probs.talakat import TalakatProblem
+import pcg_benchmark
+
+pcg_benchmark.register('talakat-extreme-v0', TalakatProblem, {"width": 200, "height": 300, "spawnerComplexity": 25, "maxHealth": 300})
+```
 
 ## Quality Measurement
 To pass the quality criteria, you need to pass multiple of criteria

@@ -133,6 +133,14 @@ If you want to add new variants for this framework, you can add it to [`__init__
 - `minToWin(float)`: the minimum percentage of steps needed for the flatmcts agent to take before winning (optional=0.75) 
 - `diversity(float)`: the diversity percentage that if you pass it, the diversity value is equal to 1 (optional=0.4) 
 
+An easier way without editing the framework files is to use the `register` function from the `pcg_benchmark` to add the variant.
+```python
+from pcg_benchmark.probs.binary import BinaryProblem
+import pcg_benchmark
+
+pcg_benchmark.register('binary-extreme-v0', BinaryProblem, {"width": 7, "length": 7, "safety": 1})
+```
+
 ## Quality Measurement
 To pass the quality criteria, you need to pass multitude of criteria
 - all objects including the player has to be able to be placed on the layout and not on solid tile

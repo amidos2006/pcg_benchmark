@@ -67,6 +67,14 @@ If you want to add new variants for this framework, you can add it to [`__init__
 - `exploration(float)`: the percentage of the level that is reachable by walking in the level (optional=0.2)
 - `diversity(float)`: the diversity percentage that if you pass it, the diversity value is equal to 1 (optional=0.6)
 
+An easier way without editing the framework files is to use the `register` function from the `pcg_benchmark` to add the variant.
+```python
+from pcg_benchmark.probs.loderunnertile import LodeRunnerProblem
+import pcg_benchmark
+
+pcg_benchmark.register('loderunnertile-extreme-v0', LodeRunnerProblem, {"width": 32, "height": 21, "gold": 40, "enemies": 20})
+```
+
 ## Quality Measurement
 To pass the quality criteria, you need to pass multiple of criteria
 - There has to be one player

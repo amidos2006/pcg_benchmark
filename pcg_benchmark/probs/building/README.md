@@ -81,6 +81,14 @@ If you want to add new variants for this framework, you can add it to [`__init__
 - `minHeight(float)`: the percentage of the max height that the building lowest part should reach (optional=0.5)
 - `diversity(float)`: the diversity percentage that if you pass it, the diversity value is equal to 1 (optional=0.4)
 
+An easier way without editing the framework files is to use the `register` function from the `pcg_benchmark` to add the variant.
+```python
+from pcg_benchmark.probs.building import BuildingProblem
+import pcg_benchmark
+
+pcg_benchmark.register('building-extreme-v0', BuildingProblem, {"width": 24, "length": 24, "height": 10, "blocks": 500})
+```
+
 ## Quality Measurement
 To pass the quality criteria, you need to pass two of criteria
 - have a the blocks be abled to be used and not outside of the height

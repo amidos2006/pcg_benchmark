@@ -50,6 +50,14 @@ If you want to add new variants for this framework, you can add it to [`__init__
 - `sol_length(int)`: the minimum length for the solution length so it is not a trivial level (optional=width+height)
 - `diversity(float)`: the diversity percentage that if you pass it, the diversity value is equal to 1 (optional=0.3)
 
+An easier way without editing the framework files is to use the `register` function from the `pcg_benchmark` to add the variant.
+```python
+from pcg_benchmark.probs.zelda import ZeldaProblem
+import pcg_benchmark
+
+pcg_benchmark.register('zelda-extreme-v0', ZeldaProblem, {"width": 40, "height": 40, "enemies": 50})
+```
+
 ## Quality Measurement
 To pass the quality criteria, you need to pass multiple of criteria
 - The level should be fully connected

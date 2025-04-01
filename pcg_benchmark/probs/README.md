@@ -162,10 +162,10 @@ class AllOnes(Problem):
 
 # Register the problem in the pcg_benchmark
 # The name of the problem is allones-v0 following the naming scheme {name}-{version}
-pcg_benchmark.register('allones-v0', AllOnes, **{"length": 100})
+pcg_benchmark.register('allones-v0', AllOnes, {"length": 100})
 # Register a variation of the problem with a different length
 # The name of the problem is allones-long-v1 following the naming scheme {name}-{modification}-{version}
-pcg_benchmark.register('allones-long-v1', AllOnes, **{"length": 1000})
+pcg_benchmark.register('allones-long-v1', AllOnes, {"length": 1000})
 
 # Example of how to use the problem using the registered name
 env = pcg_benchmark.make('allones-v0')

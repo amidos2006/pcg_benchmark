@@ -57,6 +57,14 @@ If you want to add new variants for this framework, you can add it to [`__init__
 - `solver(int)`: the maximum number of node expansions for the solver before it decides there is no solution. The higher the value the solver will be able to solve more complex levels (optional=5000)
 - `diversity(float)`: the diversity percentage that if you pass it, the diversity value is equal to 1 (optional=0.4)
 
+An easier way without editing the framework files is to use the `register` function from the `pcg_benchmark` to add the variant.
+```python
+from pcg_benchmark.probs.mdungeons import MiniDungeonProblem
+import pcg_benchmark
+
+pcg_benchmark.register('mdungeons-extreme-v0', MiniDungeonProblem, {"width": 24, "height": 36, "enemies": 40, "solver": 100000})
+```
+
 ## Quality Measurement
 To pass the quality criteria, you need to pass multiple of criteria
 - The level has to be fully connected

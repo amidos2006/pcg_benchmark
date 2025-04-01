@@ -13,7 +13,7 @@ Parameters:
     problemArgs (dict[string,any]): the parameters the constructor of the problemClass needs for example 
     width and height for level generation.
 """
-def register(name, problemClass, **problemArgs):
+def register(name, problemClass, problemArgs={}):
     if name in PROBLEMS:
         raise AttributeError(f'This problem name ({name}) is already been defined')
     PROBLEMS[name] = (problemClass, problemArgs)

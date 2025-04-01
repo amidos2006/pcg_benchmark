@@ -48,6 +48,14 @@ If you want to add new variants for this framework, you can add it to [`__init__
 - `path(float)`: the target path length (optional=width+height)
 - `diversity(float)`: the diversity percentage that if you pass it, the diversity value is equal to 1 (optional=0.4) 
 
+An easier way without editing the framework files is to use the `register` function from the `pcg_benchmark` to add the variant.
+```python
+from pcg_benchmark.probs.binary import BinaryProblem
+import pcg_benchmark
+
+pcg_benchmark.register('binary-extreme-v0', BinaryProblem, {"width": 50, "length": 50, "path": 500})
+```
+
 ## Quality Measurement
 To pass the quality criteria, you need to pass two of criteria
 - have a fully connected map that consists of one region

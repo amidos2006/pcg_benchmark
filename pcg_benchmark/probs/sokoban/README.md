@@ -46,6 +46,14 @@ If you want to add new variants for this framework, you can add it to [`__init__
 - `solver(int)`: the solver number of nodes to expand before deaming the level is unsolvable (optional=5000)
 - `diversity(float)`: the diversity percentage that if you pass it, the diversity value is equal to 1 (optional=0.5)
 
+An easier way without editing the framework files is to use the `register` function from the `pcg_benchmark` to add the variant.
+```python
+from pcg_benchmark.probs.sokoban import SokobanProblem
+import pcg_benchmark
+
+pcg_benchmark.register('sokoban-extreme-v0', SokobanProblem, {"width": 10, "height": 10, "difficulty": 5, "solver": 200000})
+```
+
 ## Quality Measurement
 To pass the quality criteria, you need to pass multiple of criteria
 - The level has to have 1 player

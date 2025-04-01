@@ -57,6 +57,14 @@ If you want to add new variants for this framework, you can add it to [`__init__
 - `map_size(int)`: the minimum number of rooms the dungeon should have (optional=6)
 - `diversity(float)`: the diversity percentage that if you pass it, the diversity value is equal to 1 (optional=0.6)
 
+An easier way without editing the framework files is to use the `register` function from the `pcg_benchmark` to add the variant.
+```python
+from pcg_benchmark.probs.isaac import IsaacProblem
+import pcg_benchmark
+
+pcg_benchmark.register('isaac-extreme-v0', IsaacProblem, {"width": 20, "height": 20, "rooms": 40})
+```
+
 ## Quality Measurement
 To pass the quality criteria, you need to pass multiple of criteria
 - The rooms need to be close to each other where there is no isolate rooms far away from the others

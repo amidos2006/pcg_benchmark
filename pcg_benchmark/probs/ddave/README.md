@@ -55,6 +55,14 @@ If you want to add new variants for this framework, you can add it to [`__init__
 - `solver(int)`: the solver power for checking level solvability, the higher the better but also the slower (optional=5000)
 - `diversity(float)`: the diversity percentage that if you pass it, the diversity value is equal to 1 (optional=0.4)
 
+An easier way without editing the framework files is to use the `register` function from the `pcg_benchmark` to add the variant.
+```python
+from pcg_benchmark.probs.ddave import DangerDaveProblem
+import pcg_benchmark
+
+pcg_benchmark.register('ddave-extreme-v0', DangerDaveProblem, {"width": 22, "height": 14, "jumps": 20})
+```
+
 ## Quality Measurement
 To pass the quality criteria, you need to pass multiple of criteria
 - have one player, one key, and one door, has minimum number of diamonds (min(width,height)) and spikes (2*max(width,height))
