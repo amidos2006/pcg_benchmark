@@ -163,7 +163,7 @@ class BuildingProblem(Problem):
         ]
         mask = Image.open(os.path.dirname(__file__) + "/images/1x1.png").convert('RGBA')
         lvl, _, _ = _simulate(content, self._width, self._length, self._height)
-        image = Image.new("RGBA", (int((self._width + self._length)*scale_x / 2), int((2*self._height+ self._length+ self._width+1)*scale_y/2)), (0,0,0,255))
+        image = Image.new("RGBA", (int((self._width + self._length)*scale_x / 2), int((2*self._height+ self._length+ self._width+1)*scale_y/2)), (71,45,60,255))
         shift_x, shift_y = (self._length-1)*scale_x/2, (self._height-1)*scale_y
         for x in range(self._width):
             for y in range(self._length):
