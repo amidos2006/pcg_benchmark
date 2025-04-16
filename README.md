@@ -10,7 +10,7 @@ PCG Benchmark
 
 PCG Benchmark is a framework to test and compare different content generators over different problems. The framework follows the same design methodology of [OpenAI Gym](https://github.com/openai/gym) which makes it easy to use, test, and expand for new problems.
 
-This repo contains the framework that is used in our paper for the generators please check the following repo [https://github.com/amidos2006/benchmark_experiments](https://github.com/amidos2006/benchmark_experiments). To cite the framework or the paper use the following bibliography
+This repo contains the framework that is used in our paper: [https://arxiv.org/abs/2503.21474](https://arxiv.org/abs/2503.21474). Please check the following repo for the experiments: [https://github.com/amidos2006/benchmark_experiments](https://github.com/amidos2006/benchmark_experiments). To cite the framework or the paper, use the following bibliography
 ```
 @inproceedings{khalifa2025pcgbenchmark,
   title={The Procedural Content Generation Benchmark: An Open-source Testbed for Generative Challenges in Games},
