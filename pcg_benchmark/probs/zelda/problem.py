@@ -15,7 +15,7 @@ class ZeldaProblem(Problem):
         self._diversity = kwargs.get("diversity", 0.3)
         self._erange = max(int(self._enemies * 0.25), 1)
 
-        self._target = kwargs.get("sol_legnth", self._width + self._height)
+        self._target = kwargs.get("sol_length", self._width + self._height)
         self._cerror = max(int(self._target / 2 * 0.25), 1)
 
         self._content_space = ArraySpace((self._height, self._width), IntegerSpace(6))
