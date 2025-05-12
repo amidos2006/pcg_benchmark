@@ -31,22 +31,22 @@ Returns:
     int[][]: the dijkstra map where the value is the distance towards x, y location
     int[][]: a binary 2D array where 1 means visited by Dijkstra algorithm and 0 means not
 """
-def _run_dikjstra(x, y, map, passable_values):
-    dikjstra_map = np.full((map.shape[0], map.shape[1]),-1)
+def _run_dijkstra(x, y, map, passable_values):
+    dijkstra_map = np.full((map.shape[0], map.shape[1]),-1)
     visited_map = np.zeros((map.shape[0], map.shape[1]))
     queue = [(x, y, 0)]
     while len(queue) > 0:
         (cx,cy,cd) = queue.pop(0)
-        if map[cy][cx] not in passable_values or (dikjstra_map[cy][cx] >= 0 and dikjstra_map[cy][cx] <= cd):
+        if map[cy][cx] not in passable_values or (dijkstra_map[cy][cx] >= 0 and dijkstra_map[cy][cx] <= cd):
             continue
         visited_map[cy][cx] = 1
-        dikjstra_map[cy][cx] = cd
+        dijkstra_map[cy][cx] = cd
         for (dx,dy) in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
             nx,ny=cx+dx,cy+dy
             if nx < 0 or ny < 0 or nx >= len(map[0]) or ny >= len(map):
                 continue
             queue.append((nx, ny, cd + 1))
-    return dikjstra_map, visited_map
+    return dijkstra_map, visited_map
 
 """
 Get an array of positions that leads to the starting of Dijkstra
@@ -59,17 +59,17 @@ Parameters:
 Returns:
     [int,int][]: an array of all the positions that lead from starting position to (sx,sy)
 """
-def _get_path(dikjsta, sx, sy):
+def _get_path(dijkstra, sx, sy):
     path = []
     cx,cy = sx,sy
-    while dikjsta[cy][cx] > 0:
+    while dijkstra[cy][cx] > 0:
         path.append((cx,cy))
         minx, miny = cx, cy
         for (dx,dy) in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
             nx,ny=cx+dx,cy+dy
-            if nx < 0 or ny < 0 or nx >= len(dikjsta[0]) or ny >= len(dikjsta) or dikjsta[ny][nx] < 0:
+            if nx < 0 or ny < 0 or nx >= len(dijkstra[0]) or ny >= len(dijkstra) or dijkstra[ny][nx] < 0:
                 continue
-            if dikjsta[ny][nx] < dikjsta[miny][minx]:
+            if dijkstra[ny][nx] < dijkstra[miny][minx]:
                 minx, miny = nx, ny
         if minx == cx and miny == cy:
             break
@@ -173,11 +173,11 @@ def get_longest_path(maze, tile_values):
     for (x,y) in empty_tiles:
         if final_visited_map[y][x] > 0:
             continue
-        dikjstra_map, visited_map = _run_dikjstra(x, y, maze, tile_values)
+        dijkstra_map, visited_map = _run_dijkstra(x, y, maze, tile_values)
         final_visited_map += visited_map
-        (my,mx) = np.unravel_index(np.argmax(dikjstra_map, axis=None), dikjstra_map.shape)
-        dikjstra_map, _ = _run_dikjstra(mx, my, maze, tile_values)
-        max_value = np.max(dikjstra_map)
+        (my,mx) = np.unravel_index(np.argmax(dijkstra_map, axis=None), dijkstra_map.shape)
+        dijkstra_map, _ = _run_dijkstra(mx, my, maze, tile_values)
+        max_value = np.max(dijkstra_map)
         if max_value > final_value:
             final_value = max_value
     return final_value
@@ -201,8 +201,8 @@ def get_distance_length(maze, start_tile, end_tile, passable_tiles):
         return -1
     (sx,sy) = start_tiles[0]
     (ex,ey) = end_tiles[0]
-    dikjstra_map, _ = _run_dikjstra(sx, sy, maze, passable_tiles)
-    return dikjstra_map[ey][ex]
+    dijkstra_map, _ = _run_dijkstra(sx, sy, maze, passable_tiles)
+    return dijkstra_map[ey][ex]
 
 """
 Get a path between two position as (x,y) locations
@@ -224,8 +224,8 @@ def get_path(maze, start_tile, end_tile, passable_tiles):
         return []
     (sx,sy) = start_tiles[0]
     (ex,ey) = end_tiles[0]
-    dikjstra_map, _ = _run_dikjstra(sx, sy, maze, passable_tiles)
-    return _get_path(dikjstra_map, ex, ey)
+    dijkstra_map, _ = _run_dijkstra(sx, sy, maze, passable_tiles)
+    return _get_path(dijkstra_map, ex, ey)
 
 """
 Calculate horizontal symmetric tiles

@@ -6,6 +6,17 @@ import numpy as np
 from PIL import Image
 import os
 
+from enum import IntEnum
+
+class Tile(IntEnum):
+    WALL = 0,
+    EMPTY = 1,
+    PLAYER = 2,
+    KEY = 3,
+    DOOR = 4,
+    ENEMY = 5
+
+
 class ZeldaProblem(Problem):
     def __init__(self, **kwargs):
         Problem.__init__(self, **kwargs)
@@ -23,19 +34,21 @@ class ZeldaProblem(Problem):
             "player_key": IntegerSpace(int(self._target / 2 + self._cerror), int(self._width * self._height / 4)),
             "key_door": IntegerSpace(int(self._target / 2 + self._cerror), int(self._width * self._height / 4))
         })
+        # the quality compute is using the self._target, and the self._control_space is seperately sampling the 2 paths
+        # just note that if the target is using the default value and control is using the sample from the control space, their values might be different
 
     def info(self, content):
         content = np.array(content)
-        number_regions = get_number_regions(content, [1, 2, 3, 4, 5])
-        number_player = get_num_tiles(content, [2])
-        number_key = get_num_tiles(content, [3])
-        number_door = get_num_tiles(content, [4])
-        number_enemies = get_num_tiles(content, [5])
-        player_key = get_distance_length(content, [2], [3], [1, 2, 3, 5])
-        pk_path = get_path(content, [2], [3], [1, 2, 3, 5])
-        key_door = get_distance_length(content, [3], [4], [1, 2, 3, 4, 5])
-        kd_path = get_path(content, [2], [3], [1, 2, 3, 5])
-
+        number_regions = get_number_regions(content, [Tile.EMPTY, Tile.PLAYER, Tile.KEY, Tile.DOOR, Tile.ENEMY])
+        number_player = get_num_tiles(content, [Tile.PLAYER])
+        number_key = get_num_tiles(content, [Tile.KEY])
+        number_door = get_num_tiles(content, [Tile.DOOR])
+        number_enemies = get_num_tiles(content, [Tile.ENEMY])
+        player_key = get_distance_length(content, [Tile.PLAYER], [Tile.KEY], [Tile.EMPTY, Tile.PLAYER, Tile.KEY, Tile.ENEMY])
+        pk_path = get_path(content, [Tile.PLAYER], [Tile.KEY], [Tile.EMPTY, Tile.PLAYER, Tile.KEY, Tile.ENEMY])
+        key_door = get_distance_length(content, [Tile.KEY], [Tile.DOOR], [Tile.EMPTY, Tile.PLAYER, Tile.KEY, Tile.DOOR, Tile.ENEMY])
+        kd_path = get_path(content, [Tile.KEY], [Tile.DOOR], [Tile.EMPTY, Tile.PLAYER, Tile.KEY, Tile.DOOR, Tile.ENEMY]) # the target need to be set as pass
+        
         return {
             "regions": number_regions, "players": number_player, 
             "keys": number_key, "doors": number_door, "enemies": number_enemies,

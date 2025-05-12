@@ -5,6 +5,12 @@ import numpy as np
 from PIL import Image
 import os
 
+from enum import IntEnum
+
+class Tile(IntEnum):
+    EMPTY = 0
+    WALL = 1
+
 class BinaryProblem(Problem):
     def __init__(self, **kwargs):
         Problem.__init__(self, **kwargs)
@@ -19,8 +25,8 @@ class BinaryProblem(Problem):
 
     def info(self, content):
         content = np.array(content)
-        number_regions = get_number_regions(content, [1])
-        longest = get_longest_path(content, [1])
+        number_regions = get_number_regions(content, [Tile.EMPTY])
+        longest = get_longest_path(content, [Tile.EMPTY])
 
         return {"path": longest, "regions": number_regions, "flat": content.flatten()}
 

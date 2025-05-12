@@ -1,7 +1,7 @@
 from enum import Enum
 import numpy as np
 import math
-from pcg_benchmark.probs.utils import _run_dikjstra
+from pcg_benchmark.probs.utils import _run_dijkstra
 
 def getScript(content):
     behaviors = ["still", "flicker", "randomShort", "randomLong", "wanderHorz", "wanderVert", "chase", "flee"]
@@ -215,12 +215,12 @@ class Engine:
         for key in ["red", "green", "yellow"]:
             if (self._content[key] == 6 or self._content[key] == 7) and self._content[f"{key}Start"]["num"] > 0:
                 needDijkstra = True
-        self._dikjstra = {}
+        self._dijkstra = {}
         if needDijkstra:
             for y in range(self._layout.shape[0]):
                 for x in range(self._layout.shape[1]):
                     if self._layout[y][x] == 1:
-                        self._dikjstra[f"{x},{y}"] = _run_dikjstra(x, y, self._layout, [1])[0]
+                        self._dijkstra[f"{x},{y}"] = _run_dijkstra(x, y, self._layout, [1])[0]
     
     def initialize(self):
         self._random = np.random.default_rng(self._content["seed"])
@@ -279,10 +279,10 @@ class Engine:
                 obj["state"] = 1 - obj["state"]
                 self.move(obj, dir["x"], dir["y"])
         if self._content[t.get_name()] == 6 or self._content[t.get_name()] == 7:
-            dikjstra = self._dikjstra[f"{px},{py}"]
+            dijkstra = self._dijkstra[f"{px},{py}"]
             dir = [{"x":-1,"y":0,"value":10000},{"x":1,"y":0,"value":10000},{"x":0,"y":-1,"value":10000},{"x":0,"y":1,"value":10000}]
             for d in dir:
-                d["value"] = dikjstra[obj["y"] + d["y"]][obj["x"] + d["x"]]
+                d["value"] = dijkstra[obj["y"] + d["y"]][obj["x"] + d["x"]]
             dir.sort(key=lambda x: x["value"], reverse=self._content[t.get_name()] == 7)
             self.move(obj, dir[0]["x"], dir[0]["y"])
     
