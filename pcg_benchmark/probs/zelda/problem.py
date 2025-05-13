@@ -34,7 +34,7 @@ class ZeldaProblem(Problem):
         player_key = get_distance_length(content, [2], [3], [1, 2, 3, 5])
         pk_path = get_path(content, [2], [3], [1, 2, 3, 5])
         key_door = get_distance_length(content, [3], [4], [1, 2, 3, 4, 5])
-        kd_path = get_path(content, [2], [3], [1, 2, 3, 5])
+        kd_path = get_path(content, [3], [4], [1, 2, 3, 5])
 
         return {
             "regions": number_regions, "players": number_player, 
