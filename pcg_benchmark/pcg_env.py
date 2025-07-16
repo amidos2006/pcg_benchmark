@@ -202,7 +202,8 @@ class PCGEnv:
 
     """
     Calculate the controlability of the provided contents with respect to the provided controls 
-    for the current problem
+    for the current problem.
+    If the size of the controls less than content, it will loop through them over the contents
 
     Parameters:
         contents(any|any[]): a single or an array of contents or infos that need to be evaluated for controlability
@@ -218,13 +219,21 @@ class PCGEnv:
         is_content = self.content_space.isSampled(contents)
         if is_content:
             contents = [contents]
-            controls = [controls]
         else:
             is_array = hasattr(contents, "__len__") and not isinstance(contents, dict)
             if is_array:
                 is_content = self.content_space.isSampled(contents[0])
             else:
                 contents = [contents]
+        
+        is_control = self.control_space.isSampled(controls)
+        if is_control:
+            controls = [controls]
+        else:
+            is_array = hasattr(controls, "__len__") and not isinstance(controls, dict)
+            if is_array:
+                is_control = self.content_space.isSampled(contents[0])
+            else:
                 controls = [controls]
 
         infos = []
@@ -232,8 +241,11 @@ class PCGEnv:
             infos = self.info(contents)
         else:
             infos = contents
-        if len(infos) != len(controls):
-            raise ValueError(f"Length of contents ({len(infos)}) is not equal to length of controls ({len(controls)})")
+        # Adjusting the controls length to be the same as info by repeating
+        if len(controls) < len(infos):
+            controls = controls * round(len(infos) / len(controls) + 0.5)
+        if len(controls) > len(infos):
+            controls = controls[:len(infos)]
         
         controlability = []
         for i, ct in zip(infos, controls):

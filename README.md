@@ -62,19 +62,29 @@ env = pcg_benchmark.make('zelda-v0')
 # generate 100 random content from the content_space
 contents = [env.content_space.sample() for _ in range(100)]
 
-# geberate 100 random control parameters from the control_space
-controls = [env.control_space.sample() for _ in range(100)]
+# geberate 1 random control parameters from the control_space to evaluate all the content against
+control = env.control_space.sample()
 
-# evaluate contents and controls from quality, diversity, controlability metrics
+# evaluate contents and control from quality, diversity, controlability metrics
 # quality is the percentage of the 100 levels that has passed the quality criteria
 # diversity is the percentage of the 100 levels that are different from each other
-# controlability is the percentage of the 100 levels that fits with the controls parameters
+# controlability is the percentage of the 100 levels that fits with the control parameters
 # details is a dictionary with "quality", "diversity", and "controlability" keys that have float array of 100 numbers between 0 and 1 which represents how close to solve the problem
 # infos is an array of dictionaries that contain details about each content
-quality, diversity, controlability, details, infos = env.evaluate(contents, controls)
+quality, diversity, controlability, details, infos = env.evaluate(contents, control)
 
 # generate images for each content
 imgs = env.render(contents)
+```
+
+This example use one control parameter for all the content but you can sample more than one parameter for each content if that is what you are looking for by changing the control line to sample one control for each content and then use the evaluate function normally:
+
+```python
+# geberate 100 random control parameters from the control_space to evaluate each content against one
+controls = [env.control_space.sample() for _ in range(100)]
+
+# evaluate contents and control from quality, diversity, controlability metrics
+quality, diversity, controlability, details, infos = env.evaluate(contents, controls)
 ```
 
 If you want to test only one thing like `quality`, `diversity`, or `controlability`. You can use the corresponding function with the same name. These functions can take either 1 content, an array of content, 1 info dictionary, or an array of info dictionaries. `info` function is very useful as it generates all the useful information for the other functions. You can cache these values and use them instead of content so it doesn't need to do exhaustive calculations or simulations (It can be used for optimization). Finally, if you want to fix the random number generator used, please use `seed` function and provide a seed value to make sure that all the random number generators are set.

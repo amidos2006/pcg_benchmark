@@ -11,6 +11,7 @@ if __name__ == '__main__':
         # the range of values that content can lies within. It can be used for mutation function for evolution
         content_range = env.content_space.range()
         # generate a random control parameters for this problem can be used to check if your generator can be controlled
+        # The controls can be just one parameter for all the content and not one for each content
         controls = [env.control_space.sample() for _ in range(100)]
         # the range of values that the control parameter can have. It can be used to noramlize the control values
         control_range = env.control_space.range()
