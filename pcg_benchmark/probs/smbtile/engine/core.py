@@ -968,7 +968,7 @@ class MarioWorld:
         self.mario.alive = False
 
     def getSceneObservation(self, centerX, centerY, detail):
-        ret = np.zeroes((MarioGame.tileWidth, MarioGame.tileHeight), dtype=int)
+        ret = np.zeros((MarioGame.tileWidth, MarioGame.tileHeight), dtype=int)
         centerXInMap = int(centerX / 16)
         centerYInMap = int(centerY / 16)
         
@@ -992,7 +992,7 @@ class MarioWorld:
         return ret
 
     def getEnemiesObservation(self, centerX, centerY, detail):
-        ret = np.zeroes((MarioGame.tileWidth, MarioGame.tileHeight), dtype=int)
+        ret = np.zeros((MarioGame.tileWidth, MarioGame.tileHeight), dtype=int)
         centerXInMap = int(centerX / 16)
         centerYInMap = int(centerY / 16)
 
@@ -1011,7 +1011,7 @@ class MarioWorld:
         return ret
 
     def getMergedObservation(self, centerX, centerY, sceneDetail, enemiesDetail):
-        ret = np.zeroes((MarioGame.tileWidth, MarioGame.tileHeight), dtype=int)
+        ret = np.zeros((MarioGame.tileWidth, MarioGame.tileHeight), dtype=int)
         centerXInMap = int(centerX / 16)
         centerYInMap = int(centerY / 16)
 
