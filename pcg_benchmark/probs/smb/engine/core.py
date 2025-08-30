@@ -1005,9 +1005,9 @@ class MarioWorld:
                     sprite.getMapY() >= 0 and\
                     sprite.getMapY() > centerYInMap - MarioGame.tileHeight / 2 and\
                     sprite.getMapY() < centerYInMap + MarioGame.tileHeight / 2:
-                obsX = sprite.getMapX() - centerXInMap + MarioGame.tileWidth / 2
-                obsY = sprite.getMapY() - centerYInMap + MarioGame.tileHeight / 2
-                ret[obsX][obsY] = MarioForwardModel.getSpriteTypeGeneralization(sprite.type, detail)
+                obsX = int(sprite.getMapX() - centerXInMap + MarioGame.tileWidth / 2)
+                obsY = int(sprite.getMapY() - centerYInMap + MarioGame.tileHeight / 2)
+                ret[obsX][obsY] = MarioForwardModel.getSpriteTypeGeneralization(sprite.type.value, detail)
         return ret
 
     def getMergedObservation(self, centerX, centerY, sceneDetail, enemiesDetail):
@@ -1044,7 +1044,7 @@ class MarioWorld:
                     sprite.getMapY() < centerYInMap + MarioGame.tileHeight / 2:
                 obsX = int(sprite.getMapX() - centerXInMap + MarioGame.tileWidth / 2)
                 obsY = int(sprite.getMapY() - centerYInMap + MarioGame.tileHeight / 2)
-                tmp = MarioForwardModel.getSpriteTypeGeneralization(sprite.type, enemiesDetail)
+                tmp = MarioForwardModel.getSpriteTypeGeneralization(sprite.type.value, enemiesDetail)
                 if tmp != SpriteType.NONE.value:
                     ret[obsX][obsY] = tmp
         return ret
