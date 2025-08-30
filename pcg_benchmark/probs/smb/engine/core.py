@@ -1042,8 +1042,8 @@ class MarioWorld:
                     sprite.getMapY() >= 0 and\
                     sprite.getMapY() > centerYInMap - MarioGame.tileHeight / 2 and\
                     sprite.getMapY() < centerYInMap + MarioGame.tileHeight / 2:
-                obsX = sprite.getMapX() - centerXInMap + MarioGame.tileWidth / 2
-                obsY = sprite.getMapY() - centerYInMap + MarioGame.tileHeight / 2
+                obsX = int(sprite.getMapX() - centerXInMap + MarioGame.tileWidth / 2)
+                obsY = int(sprite.getMapY() - centerYInMap + MarioGame.tileHeight / 2)
                 tmp = MarioForwardModel.getSpriteTypeGeneralization(sprite.type, enemiesDetail)
                 if tmp != SpriteType.NONE.value:
                     ret[obsX][obsY] = tmp
