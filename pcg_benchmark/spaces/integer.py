@@ -88,7 +88,7 @@ class IntegerSpace(Space):
         value = int(values.pop(0))
         if value < self._min_value:
             value = self._min_value
-        if value > self._max_value:
-            value = self._max_value
+        if value >= self._max_value:
+            value = self._max_value - 1
         return value
         
