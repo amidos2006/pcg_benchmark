@@ -902,7 +902,7 @@ class MarioWorld:
         enemies = []
         for sprite in self._sprites:
             if (self._isEnemy(sprite)):
-                enemies.add(sprite)
+                enemies.append(sprite)
         return enemies
 
     def clone(self):

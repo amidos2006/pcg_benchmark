@@ -97,7 +97,7 @@ class Enemy(MarioSprite):
         yMarioD = self.world.mario.y - self.y
         if xMarioD > -self.width * 2 - 4 and xMarioD < self.width * 2 + 4:
             if yMarioD > -self.height and yMarioD < self.world.mario.height:
-                if self.type != SpriteType.SPIKY and type != SpriteType.SPIKY_WINGED and type != SpriteType.ENEMY_FLOWER and\
+                if self.type != SpriteType.SPIKY and self.type != SpriteType.SPIKY_WINGED and type != SpriteType.ENEMY_FLOWER and\
                         self.world.mario.ya > 0 and yMarioD <= 0 and (not self.world.mario.onGround or not self.world.mario.wasOnGround):
                     self.world.mario.stomp(self)
                     if self._winged:
@@ -1116,7 +1116,7 @@ class Mushroom(MarioSprite):
                 collide = True
             elif collide or self._isBlocking(self.x + xa - self.width, self.y + ya - self.height, xa, ya):
                 collide = True
-            elif collide or self.isBlocking(self.x + xa + self.width, self.y + ya - self.height, xa, ya):
+            elif collide or self._isBlocking(self.x + xa + self.width, self.y + ya - self.height, xa, ya):
                 collide = True
         if xa > 0:
             if self._isBlocking(self.x + xa + self.width, self.y + ya - self.height, xa, ya):
