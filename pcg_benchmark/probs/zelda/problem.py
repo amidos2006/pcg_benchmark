@@ -15,7 +15,7 @@ class ZeldaProblem(Problem):
         self._diversity = kwargs.get("diversity", 0.3)
         self._erange = max(int(self._enemies * 0.25), 1)
 
-        self._target = kwargs.get("sol_legnth", self._width + self._height)
+        self._target = kwargs.get("sol_length", self._width + self._height)
         self._cerror = max(int(self._target / 2 * 0.25), 1)
 
         self._content_space = ArraySpace((self._height, self._width), IntegerSpace(6))
@@ -34,7 +34,7 @@ class ZeldaProblem(Problem):
         player_key = get_distance_length(content, [2], [3], [1, 2, 3, 5])
         pk_path = get_path(content, [2], [3], [1, 2, 3, 5])
         key_door = get_distance_length(content, [3], [4], [1, 2, 3, 4, 5])
-        kd_path = get_path(content, [3], [4], [1, 2, 3, 5])
+        kd_path = get_path(content, [3], [4], [1, 2, 3, 4, 5])
 
         return {
             "regions": number_regions, "players": number_player, 
