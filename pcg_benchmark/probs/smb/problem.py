@@ -53,6 +53,8 @@ def _caculate_fenemies(content, slices):
                 total += 1
                 if lvl[y+1][x] not in solid:
                     floating += 1
+    if total == 0:
+        return 0.0
     return floating/total
 
 def _convert_action(action):
