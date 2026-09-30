@@ -692,6 +692,7 @@ class BulletBill(MarioSprite):
             if yMarioD > -self.height and yMarioD < self.world.mario.height:
                 if self.world.mario.ya > 0 and yMarioD <= 0 and (not self.world.mario.onGround or not self.world.mario.wasOnGround):
                     self.world.mario.stomp(self)
+                    self.world.addEvent(EventType.STOMP_KILL, self.type.value)
                     self.world.removeSprite(self)
                 else:
                     self.world.addEvent(EventType.HURT, self.type.value)
