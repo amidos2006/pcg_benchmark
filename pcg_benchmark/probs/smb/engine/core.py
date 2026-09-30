@@ -943,6 +943,8 @@ class MarioWorld:
         sprite.update()
 
     def removeSprite(self, sprite):
+        if sprite in self._removedSprites:
+            return
         self._removedSprites.append(sprite)
         sprite.alive = False
         sprite.removed()
