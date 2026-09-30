@@ -1,4 +1,5 @@
 from pcg_benchmark.spaces.space import Space
+import numpy as np
 
 """
 An Integer space that confines the content generated from it to be an float in a specific range
@@ -11,8 +12,8 @@ class FloatSpace(Space):
     Otherwise the range is [min_value, max_value)
 
     Parameters:
-        min_value(int): the minimum value that can be sampled from the space.
-        max_value(int): the maximum value that space can't exceed (excluded)
+        min_value(float): the minimum value that can be sampled from the space.
+        max_value(float): the maximum value that space can't exceed (excluded)
     """
     def __init__(self, min_value = None, max_value = None):
         Space.__init__(self)
@@ -64,14 +65,14 @@ class FloatSpace(Space):
         return self._random.random() * (self._max_value - self._min_value) + self._min_value
     
     """
-    Removes a value from the array and return that as float in the space range
+    Removes a value from the array and returns it as a float in the space range
     
     Parameters:
         values(float[]): a group of values to restructure
         copy(bool): copy the values array before modifying it
 
     Returns:
-        int: a correctly bounded value in the float space
+        float: a correctly bounded value in the float space
     """
     def restructure(self, values, copy=True):
         if len(values) == 0:
@@ -81,6 +82,6 @@ class FloatSpace(Space):
         value = float(values.pop(0))
         if value < self._min_value:
             value = self._min_value
-        if value > self._max_value:
-            value = self._max_value
+        if value >= self._max_value:
+            value = float(np.nextafter(self._max_value, self._min_value))
         return value
