@@ -97,16 +97,16 @@ class Enemy(MarioSprite):
         yMarioD = self.world.mario.y - self.y
         if xMarioD > -self.width * 2 - 4 and xMarioD < self.width * 2 + 4:
             if yMarioD > -self.height and yMarioD < self.world.mario.height:
-                if self.type != SpriteType.SPIKY and self.type != SpriteType.SPIKY_WINGED and type != SpriteType.ENEMY_FLOWER and\
+                if self.type != SpriteType.SPIKY and self.type != SpriteType.SPIKY_WINGED and self.type != SpriteType.ENEMY_FLOWER and\
                         self.world.mario.ya > 0 and yMarioD <= 0 and (not self.world.mario.onGround or not self.world.mario.wasOnGround):
                     self.world.mario.stomp(self)
                     if self._winged:
                         self._winged = False
                         self.ya = 0
                     else:
-                        if type == SpriteType.GREEN_KOOPA or type == SpriteType.GREEN_KOOPA_WINGED:
+                        if self.type == SpriteType.GREEN_KOOPA or self.type == SpriteType.GREEN_KOOPA_WINGED:
                             self.world.addSprite(Shell(self.x, self.y, 1, self.initialCode))
-                        elif type == SpriteType.RED_KOOPA or type == SpriteType.RED_KOOPA_WINGED:
+                        elif self.type == SpriteType.RED_KOOPA or self.type == SpriteType.RED_KOOPA_WINGED:
                             self.world.addSprite(Shell(self.x, self.y, 0, self.initialCode))
                         self.world.addEvent(EventType.STOMP_KILL, self.type.value)
                         self.world.removeSprite(self)
