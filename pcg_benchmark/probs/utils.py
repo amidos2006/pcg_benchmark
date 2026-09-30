@@ -363,11 +363,10 @@ Returns:
     float: a value between 0 and 1 based on where it falls in the trapizoid reward scheme
 """
 def get_range_reward(value, min_value, plat_low, plat_high = None, max_value = None):
-    if max_value == None:
-        max_value = plat_high
     if plat_high == None:
         plat_high = plat_low
-        max_value = plat_low
+    if max_value == None:
+        max_value = plat_high
     if value >= plat_low and value <= plat_high:
         return 1.0
     if value <= min_value or value >= max_value:
