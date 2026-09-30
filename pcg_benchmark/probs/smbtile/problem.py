@@ -173,14 +173,14 @@ class MarioProblem(Problem):
 
     def diversity(self, info1, info2):
         total = 0
-        visited_1 = np.zeros((info1["height"], info1["width"]))
+        visited_1 = np.zeros((info1["height"], info1["width"] + 6))
         for loc in info1["locations"]:
-            x, y = max(0, min(15, int(loc[0] / 16))), max(0, min(15, int(loc[1] / 16)))
+            x, y = max(0, min(visited_1.shape[1] - 1, int(loc[0] / 16))), max(0, min(visited_1.shape[0] - 1, int(loc[1] / 16)))
             visited_1[y][x] += 1
             total += 1
-        visited_2 = np.zeros((info2["height"], info2["width"]))
+        visited_2 = np.zeros((info2["height"], info2["width"] + 6))
         for loc in info2["locations"]:
-            x, y = max(0, min(15, int(loc[0] / 16))), max(0, min(15, int(loc[1] / 16)))
+            x, y = max(0, min(visited_2.shape[1] - 1, int(loc[0] / 16))), max(0, min(visited_2.shape[0] - 1, int(loc[1] / 16)))
             visited_2[y][x] += 1
             total += 1
         if total == 0:
