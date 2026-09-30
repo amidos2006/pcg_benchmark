@@ -11,6 +11,7 @@ __pycache__/
 original/
 original/*
 .DS_Store
+settings.json
 
 # Distribution / packaging
 .Python
