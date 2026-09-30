@@ -12,7 +12,7 @@ class IsaacProblem(Problem):
         self._width = kwargs.get("width")
         self._height = kwargs.get("height")
 
-        self._target = kwargs.get("map_size", 6)
+        self._target = kwargs.get("rooms", 6)
         self._diversity = kwargs.get("diversity", 0.6)
 
         self._cerror = 0.2 * self._width * self._height
@@ -72,8 +72,8 @@ class IsaacProblem(Problem):
         if content["layout"][content["shop"]] > 0:
             locations.add(content["shop"])
         
-        player_x, player_y = content["start"] % self._width, int(content["start"] / self._width)
-        boss_x, boss_y = content["boss"] % self._width, int(content["boss"] / self._width)
+        player_x, player_y = 3 * (content["start"] % self._width) + 1, 3 * int(content["start"] / self._width) + 1
+        boss_x, boss_y = 3 * (content["boss"] % self._width) + 1, 3 * int(content["boss"] / self._width) + 1
         level = maze_layout.copy()
         level[player_y][player_x] = 3
         level[boss_y][boss_x] = 4
@@ -124,7 +124,7 @@ class IsaacProblem(Problem):
         return get_range_reward(0.25 * norm_rooms + 0.75 * norm_connections, 0, self._diversity, 1)
     
     def controlability(self, info, control):
-        map_size = get_range_reward(info["map_size"], control["map_size"]-self._cerror,\
+        map_size = get_range_reward(info["map_size"], 0, control["map_size"]-self._cerror,\
             control["map_size"]+self._cerror, self._width * self._height)
         return map_size
     
