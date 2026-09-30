@@ -225,8 +225,8 @@ class PCGEnv:
         if is_control:
             controls = [controls]
         else:
-            is_array = hasattr(controls, "__len__") and not isinstance(controls, dict)
-            if is_array:
+            control_is_array = hasattr(controls, "__len__") and not isinstance(controls, dict)
+            if control_is_array:
                 is_control = self.control_space.isSampled(controls[0])
             else:
                 controls = [controls]
