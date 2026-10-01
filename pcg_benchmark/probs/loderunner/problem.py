@@ -147,8 +147,8 @@ class LodeRunnerProblem(Problem):
 
         decoration = 0
         if play_stats >= 1:
-            decoration = 0.9 * (info["walking"] + info["hanging"] + info["climbing"]) + 0.1 * info["falling"]
-            decoration = get_range_reward(decoration, 0, self._decorations, 1)
+            decoration = 0.9 * (info["walking"] + info["hanging"] + info["climbing"]) / 3 + 0.1 * info["falling"]
+            decoration = get_range_reward(1 - decoration, 0, self._decorations, 1)
             decoration += get_range_reward(info["islands"], 0, 0, self._islands * self._width * self._height, self._width * self._height / 2)
             decoration /= 2
 
