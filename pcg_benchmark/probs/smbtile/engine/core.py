@@ -128,7 +128,7 @@ class MarioGame:
                 actions = self._agent.getActions(MarioForwardModel(self._world.clone()))
                 if MarioGame.verbose:
                     if MarioForwardModel.maxMoves < 0 and abs(MarioForwardModel.maxMoves) > MarioGame.graceTime:
-                        print("The Agent is slowing down the game by: " + abs(MarioForwardModel.maxMoves) + " moves.")
+                        print("The Agent is slowing down the game by: " + str(abs(MarioForwardModel.maxMoves)) + " moves.")
                 # update world
                 self._world.update(actions)
                 gameEvents += self._world.lastFrameEvents
@@ -602,7 +602,7 @@ class MarioLevel:
             self.height = 0
             return
 
-        lines = level.split("\n")
+        lines = level.rstrip("\n").split("\n")
         self.tileWidth = len(lines[0])
         self.width = self.tileWidth * 16
         self.tileHeight = len(lines)
