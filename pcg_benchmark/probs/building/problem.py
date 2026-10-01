@@ -90,7 +90,7 @@ class BuildingProblem(Problem):
         self._width = kwargs.get("width")
         self._length = kwargs.get("length")
         self._height = kwargs.get("height")
-        self._target = kwargs.get("blocks", self._width * self._length * self._height / 9)
+        self._target = int(kwargs.get("blocks", self._width * self._length * self._height / 9))
         self._min_height = kwargs.get("minHeight", 0.4)
         self._diversity = kwargs.get("diversity", 0.4)
 
