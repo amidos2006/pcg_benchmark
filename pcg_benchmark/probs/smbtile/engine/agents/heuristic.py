@@ -10,7 +10,7 @@ class Agent(MarioAgent):
     def getActions(self, model):
         self._actions[MarioActions.SPEED.value] = model.mayMarioJump() or not model.isMarioOnGround()
         self._actions[MarioActions.JUMP.value] = model.mayMarioJump() or not model.isMarioOnGround()
-        return self._actions
+        return list(self._actions)
 
     def getAgentName(self):
         return "SergeyKarakovskiyAgent"

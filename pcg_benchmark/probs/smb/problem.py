@@ -24,17 +24,14 @@ def _convert2str(content, slices):
     return result
 
 def _calculate_hnoise(content, slices):
-    lvl = _convert2str(content, slices).split('\n')
     values = []
-    for l in lvl:
-        l = l.strip()
-        if len(l) == 0:
-            continue
+    for y in range(len(slices[0])):
+        row = [slices[c][y] for c in content]
         temp = 0
-        for x in range(1,len(l)):
-            if l[x] != l[x-1]:
+        for x in range(1,len(row)):
+            if row[x] != row[x-1]:
                 temp += 1
-        temp /= (len(l) - 1)
+        temp /= max(1, len(row) - 1)
         values.append(temp)
     return values
 
@@ -105,25 +102,20 @@ class MarioProblem(Problem):
                     if test_tube % 2 > 0:
                         tube_issue += 1
                     test_tube = 0
-        hnoise = np.array(_calculate_hnoise(content, self._slices)) - self._hnoise
+        allowed = np.where(self._hnoise > 0, np.maximum(self._hnoise, 2 / max(1, len(content) - 1)), 0)
+        hnoise = np.array(_calculate_hnoise(content, self._slices)) - allowed
         hnoise[hnoise < 0] = 0
         empty = get_num_tiles(np.array([content]), [0]) / len(content)
         fenemies = _caculate_fenemies(content, self._slices)
-        
+
         if empty > self._empty and tube_issue == 0 and hnoise.sum() == 0 and fenemies < self._fenemies:
-            result = runLevel(lvl, "heuristic", self._timer, self._solver)
+            result = runLevel(lvl, "astar", self._timer, self._solver)
             actions = []
             locations = []
-            if result.getCompletionPercentage() >= 1.0:
-                for ae in result.getAgentEvents():
-                    actions.append(_convert_action(ae.getActions()))
-                    locations.append([ae.getMarioX(), ae.getMarioY()])
-            else:
-                result = runLevel(lvl, "astar", self._timer, self._solver)
-                for ae in result.getAgentEvents():
-                    actions.append(_convert_action(ae.getActions()))
-                    locations.append([ae.getMarioX(), ae.getMarioY()])
-            
+            for ae in result.getAgentEvents():
+                actions.append(_convert_action(ae.getActions()))
+                locations.append([ae.getMarioX(), ae.getMarioY()])
+
             return {
                 "width": len(content),
                 "tube": tube_issue,
