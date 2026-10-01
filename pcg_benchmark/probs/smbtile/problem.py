@@ -91,13 +91,6 @@ class MarioProblem(Problem):
                         "jumps": int(0.1 * self._control_space._value["jumps"]._max_value),
                         "coins": int(0.1 * self._control_space._value["coins"]._max_value)}
 
-    def parameters(self, **kwargs):
-        Problem.parameters(self, **kwargs)
-
-        self._diversity = kwargs.get("diversity", 0.4)
-        self._solver = kwargs.get("solver", self._solver)
-        self._timer = kwargs.get("timer", self._timer)
-
     def info(self, content):
         lvl = _convert2str(content, self._symbols)
         lvl_lines = lvl.split("\n")

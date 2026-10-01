@@ -23,11 +23,12 @@ class TalakatProblem(Problem):
         self._min_bullets = kwargs.get("min_bullets", 50)
         self._target = kwargs.get("coverage", 0.95)
 
-        parameters["maxHealth"] = self._maxHealth
-        parameters["width"] = self._width
-        parameters["height"] = self._height
-        parameters["bucketsX"] = max(1, int(self._width / 20))
-        parameters["bucketsY"] = max(1, int(self._height / 20))
+        self._parameters = dict(parameters)
+        self._parameters["maxHealth"] = self._maxHealth
+        self._parameters["width"] = self._width
+        self._parameters["height"] = self._height
+        self._parameters["bucketsX"] = max(1, int(self._width / 20))
+        self._parameters["bucketsY"] = max(1, int(self._height / 20))
 
         self._cerror = int(0.5 * self._min_bullets)
         self._render_type = "image"
@@ -35,30 +36,35 @@ class TalakatProblem(Problem):
         self._content_space = ArraySpace((self._spawnerComplexity, 100), IntegerSpace(100))
         self._control_space = DictionarySpace({
             "bullets": ArraySpace((self._pattern_sections), IntegerSpace(self._min_bullets+self._cerror, 
-                                                                         int(parameters["maxNumBullets"]/2)-self._cerror))
+                                                                         int(self._parameters["maxNumBullets"]/2)-self._cerror))
         })
     
     def info(self, content):
-        script = generateTalakatScript(content)
         connections = set()
-        nextSpawners = ["spawner_0"]
-        while len(nextSpawners) > 0:
-            currentSpawner = nextSpawners.pop(0)
-            for spawned in script["spawners"][currentSpawner]["pattern"]:
-                if "spawner_" in spawned:
-                    if not spawned in connections:
-                        connections.update([spawned])
-                        nextSpawners.append(spawned)
-        result = runPattern(script)
-        
-        bullets = np.zeros((self._pattern_sections, parameters["bucketsX"] * parameters["bucketsY"]))
+        result = []
+        try:
+            script = generateTalakatScript(content, self._parameters)
+            nextSpawners = ["spawner_0"]
+            while len(nextSpawners) > 0:
+                currentSpawner = nextSpawners.pop(0)
+                for spawned in script["spawners"][currentSpawner]["pattern"]:
+                    if "spawner_" in spawned:
+                        if not spawned in connections:
+                            connections.update([spawned])
+                            nextSpawners.append(spawned)
+            result = runPattern(script, self._parameters)
+        except RecursionError:
+            pass
+
+        bullets = np.zeros((self._pattern_sections, self._parameters["bucketsX"] * self._parameters["bucketsY"]))
         num_bullets = [0.0] * self._pattern_sections
-        coverage = np.zeros(parameters["bucketsX"] * parameters["bucketsY"])
+        coverage = np.zeros(self._parameters["bucketsX"] * self._parameters["bucketsY"])
         for i, (world, _) in enumerate(result):
-            temp = np.array(calculateBuckets(self._width, self._height, parameters["bucketsX"], parameters["bucketsY"], world.bullets))
-            bullets[int(i/30)] += temp / max(1, temp.sum())
+            section = min(int(i/30), self._pattern_sections - 1)
+            temp = np.array(calculateBuckets(self._width, self._height, self._parameters["bucketsX"], self._parameters["bucketsY"], world.bullets))
+            bullets[section] += temp / max(1, temp.sum())
             coverage += temp / max(1, temp.sum())
-            num_bullets[int(i/30)] += len(world.bullets)
+            num_bullets[section] += len(world.bullets)
         return {
             "script_connectivity": (len(connections) + 1) / self._spawnerComplexity,
             "percentage": len(result) / self._maxHealth,
@@ -76,14 +82,16 @@ class TalakatProblem(Problem):
             coverage = get_range_reward(info["bullet_coverage"], 0, self._target, 1)
             min_bullets = 0
             for b in info["bullets"]:
-                min_bullets += get_range_reward(b, 0, self._min_bullets, parameters["maxNumBullets"], 100 * parameters["maxNumBullets"])
+                min_bullets += get_range_reward(b, 0, self._min_bullets, self._parameters["maxNumBullets"], 100 * self._parameters["maxNumBullets"])
             min_bullets /= len(info["bullets"])
             for locs in info["bullet_locations"]:
-                empty += get_range_reward((np.array(locs) == 0).sum() / (parameters["bucketsX"] * parameters["bucketsY"]), 0, self._empty_area, 1)
+                empty += get_range_reward((np.array(locs) == 0).sum() / (self._parameters["bucketsX"] * self._parameters["bucketsY"]), 0, self._empty_area, 1)
             empty /= max(1, len(info["bullet_locations"]))
         return (playable + coverage + min_bullets + empty) / 4.0
     
     def diversity(self, info1, info2):
+        if info1["percentage"] == 0 or info2["percentage"] == 0:
+            return 0.0
         diversity = []
         length = max(len(info1["bullet_locations"]), len(info2["bullet_locations"]))
         for i in range(length):
@@ -95,11 +103,11 @@ class TalakatProblem(Problem):
     def controlability(self, info, control):
         bulletCoverage = 0
         for v,c in zip(info["bullets"], control["bullets"]):
-            bulletCoverage += get_range_reward(v, 0, c - self._cerror, c + self._cerror, parameters["maxNumBullets"])
+            bulletCoverage += get_range_reward(v, 0, c - self._cerror, c + self._cerror, self._parameters["maxNumBullets"])
         return bulletCoverage / len(control["bullets"])
     
     def render(self, content):
-        script = generateTalakatScript(content)
+        script = generateTalakatScript(content, self._parameters)
 
         if self._render_type == "string":
             pretty_json = json.dumps(script, indent=2)
@@ -122,10 +130,10 @@ class TalakatProblem(Problem):
             return img
 
         bossGfx = Image.open(os.path.dirname(__file__) + "/images/boss.png").convert('RGBA')
-        result = runPattern(script)
+        result = runPattern(script, self._parameters)
         images = []
         for i in range(0, len(result), self._renderSampling):
-            img = Image.new("RGBA", (parameters["width"], parameters["height"]), (71,45,60,255))
+            img = Image.new("RGBA", (self._parameters["width"], self._parameters["height"]), (71,45,60,255))
             draw = ImageDraw.Draw(img)
             draw.rectangle([0,0,img.width,img.height], fill=(71,45,60,255))
             for b in result[i][0].bullets:

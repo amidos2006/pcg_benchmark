@@ -14,7 +14,7 @@ parameters = None
 with open(os.path.dirname(__file__) + "/parameters.json") as f:
       parameters = json.load(f)
 
-def generateTalakatScript(spawnerSequences):
+def generateTalakatScript(spawnerSequences, parameters=parameters):
       is_multiple = hasattr(spawnerSequences[0], "__len__")
       if not is_multiple:
             spawnerSequences = [spawnerSequences]
@@ -57,7 +57,7 @@ def runGame(jsonScript):
                   break
       return results
 
-def runPattern(jsonScript):
+def runPattern(jsonScript, parameters=parameters):
       startWorld = World(parameters["width"], parameters["height"], parameters["maxNumBullets"])
       startWorld.initialize(jsonScript)
       startWorld.player.invulnerable = True
