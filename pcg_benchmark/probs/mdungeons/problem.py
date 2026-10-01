@@ -19,9 +19,10 @@ def _get_solution_sequence(content, sol):
     state = State()
     state.stringInitialize(lvlString.split("\n"))
 
+    directions = {(-1, 0): "L", (1, 0): "R", (0, -1): "U", (0, 1): "D"}
     result = ""
     for a in sol:
-        result += state.update(a["action"]["x"], a["action"]["y"])
+        result += directions.get((a["action"]["x"], a["action"]["y"]), "") + state.update(a["action"]["x"], a["action"]["y"])
     return result
 
 def _run_game(content, solver_power):
@@ -88,7 +89,7 @@ class MiniDungeonProblem(Problem):
             "regions": regions, "players": len(players), "exits": exits, "layout": layout,
             "heuristic": heuristic, "solution": solution, "content": content,
             "potions": potions, "treasures": treasures, "enemies": len(enemies),
-            "solution_length": len(solution), "enemies_loc": enemies
+            "solution_length": max(0, len(solution) - 1), "enemies_loc": enemies
         }
         for name in stats:
             result[name] = stats[name]
@@ -129,7 +130,6 @@ class MiniDungeonProblem(Problem):
         hamming = (abs(info1["content"] - info2["content"]) > 0).sum() / (self._width * self._height)
         seq_score = 1 - SequenceMatcher(None, seq1, seq2).ratio()
         return get_range_reward(seq_score * 0.8 + hamming * 0.2, 0, self._diversity, 1.0)
-                
     
     def controlability(self, info, control):
         if info["heuristic"] == -1:
