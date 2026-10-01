@@ -1,4 +1,4 @@
-from enum import Enum
+from enum import IntEnum
 import math
 
 def calculateEntropy(values):
@@ -73,7 +73,7 @@ def getSafestBucket(px, py, bucketX, buckets):
             bestY = y
     return {"x": bestX, "y":bestY}
 
-class ActionNumber(Enum):
+class ActionNumber(IntEnum):
     LEFT = 0
     RIGHT = 1
     UP = 2

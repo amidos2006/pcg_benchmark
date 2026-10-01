@@ -422,10 +422,10 @@ class World:
         self.deleted.append(entity)
 
     def removeAllBullets(self):
-        self.deleted = self.deleted.concat(self.bullets)
+        self.deleted = self.deleted + self.bullets
 
     def removeAllSpawners(self):
-        self.deleted = self.deleted.concat(self.spawners)
+        self.deleted = self.deleted + self.spawners
 
     def removeSpawners(self, name):
         for s in self.spawners:

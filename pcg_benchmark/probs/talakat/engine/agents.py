@@ -83,7 +83,7 @@ class AStar:
             if len(currentNode.world.spawners) > parameters["maxNumSpawners"]:
                 return -1
             if currentNode.world.isWon():
-                solution = node.getSequence()
+                solution = currentNode.getSequence()
                 break
             if currentNumbers >= value or currentNode.world.isLose():
                 continue
