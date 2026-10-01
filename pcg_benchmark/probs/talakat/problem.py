@@ -110,7 +110,10 @@ class TalakatProblem(Problem):
         return bulletCoverage / len(control["bullets"])
     
     def render(self, content):
-        script = generateTalakatScript(content, self._parameters)
+        try:
+            script = generateTalakatScript(content, self._parameters)
+        except RecursionError:
+            script = {}
 
         if self._render_type == "string":
             pretty_json = json.dumps(script, indent=2)
@@ -133,7 +136,7 @@ class TalakatProblem(Problem):
             return img
 
         bossGfx = Image.open(os.path.dirname(__file__) + "/images/boss.png").convert('RGBA')
-        result = runPattern(script, self._parameters)
+        result = runPattern(script, self._parameters) if script else []
         images = []
         for i in range(0, len(result), self._renderSampling):
             img = Image.new("RGBA", (self._parameters["width"], self._parameters["height"]), (71,45,60,255))
