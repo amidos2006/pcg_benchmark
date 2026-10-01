@@ -40,10 +40,12 @@ def _orient(lvl, width, length, height):
         shift_x, shift_y = shift_y, shift_x
     new_lvl = lvl.copy()
     for z in range(height):
-        for y in range(length):
-            for x in range(width):
+        for y in range(lvl.shape[1]):
+            for x in range(lvl.shape[2]):
                 new_lvl[z][y-shift_y][x-shift_x] = lvl[z][y][x]
-    return new_lvl
+    result = np.zeros((height, length, width), dtype=new_lvl.dtype)
+    result[:, :min(length, new_lvl.shape[1]), :min(width, new_lvl.shape[2])] = new_lvl[:, :length, :width]
+    return result
 
 def _simulate(content, width, length, height):
     result, heights, failed = np.zeros((height, length, width)).astype(int), [], 0
