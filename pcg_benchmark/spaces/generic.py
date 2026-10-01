@@ -1,4 +1,5 @@
 from pcg_benchmark.spaces.space import Space
+import numpy as np
 
 """
 Seed all the random number generators in all the spaces inside each other
@@ -12,11 +13,12 @@ def _recursiveSeed(input, seed):
         if issubclass(type(input), Space):
             input.seed(seed)
     else:
+        random = np.random.default_rng(seed)
         for v in input:
             if isinstance(input, dict):
-                _recursiveSeed(input[v], seed)
+                _recursiveSeed(input[v], random.integers(2**31))
             else:
-                _recursiveSeed(v, seed)
+                _recursiveSeed(v, random.integers(2**31))
 
 """
 Sample a value from space recursively
@@ -161,6 +163,7 @@ class GenericSpace(Space):
         seed (int): the seed value for the used random generator
     """
     def seed(self, seed):
+        Space.seed(self, seed)
         _recursiveSeed(self._value, seed)
     
     """
