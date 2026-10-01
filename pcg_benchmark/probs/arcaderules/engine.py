@@ -1,6 +1,7 @@
 from enum import Enum
 import numpy as np
 import math
+import copy
 from pcg_benchmark.probs.utils import _run_dikjstra
 
 def getScript(content):
@@ -127,15 +128,10 @@ class State:
     def clone(self):
         state = State(self._engine, self._player["x"], self._player["y"], self._player["score"], self._player["time"])
         state._player["alive"] = self._player["alive"]
-        for i,obj in enumerate(self._reds):
-            state.add(Pieces.RED, obj["x"], obj["y"], obj["state"], obj["value"])
-            state._reds[i]["alive"] = self._reds[i]["alive"]
-        for i,obj in enumerate(self._greens):
-            state.add(Pieces.GREEN, obj["x"], obj["y"], obj["state"], obj["value"])
-            state._greens[i]["alive"] = self._greens[i]["alive"]
-        for i,obj in enumerate(self._yellows):
-            state.add(Pieces.YELLOW, obj["x"], obj["y"], obj["state"], obj["value"])
-            state._yellows[i]["alive"] = self._yellows[i]["alive"]
+        state._random = copy.deepcopy(self._random)
+        state._reds = [dict(obj) for obj in self._reds]
+        state._greens = [dict(obj) for obj in self._greens]
+        state._yellows = [dict(obj) for obj in self._yellows]
         return state
 
     def update(self, dx, dy):
@@ -143,11 +139,11 @@ class State:
             self._player["time"] += 1
             self._engine.move(self._player, dx, dy)
             for obj in self._reds:
-                self._engine.updateBehavior(Pieces.RED, obj, self._player["x"], self._player["y"])
+                self._engine.updateBehavior(Pieces.RED, obj, self._player["x"], self._player["y"], self._random)
             for obj in self._greens:
-                self._engine.updateBehavior(Pieces.GREEN, obj, self._player["x"], self._player["y"])
+                self._engine.updateBehavior(Pieces.GREEN, obj, self._player["x"], self._player["y"], self._random)
             for obj in self._yellows:
-                self._engine.updateBehavior(Pieces.YELLOW, obj, self._player["x"], self._player["y"])
+                self._engine.updateBehavior(Pieces.YELLOW, obj, self._player["x"], self._player["y"], self._random)
             
             for obj in self._reds:
                 if obj["alive"]:
@@ -158,26 +154,26 @@ class State:
             for obj in self._yellows:
                 if obj["alive"]:
                     self._player["score"] += self._engine.updateCollision(Pieces.PLAYER, Pieces.YELLOW, self._player, obj)
-            for obj1 in self._reds:
-                for obj2 in self._reds:
-                    if obj1 != obj2 and obj1["alive"] and obj2["alive"]:
+            for i, obj1 in enumerate(self._reds):
+                for obj2 in self._reds[i+1:]:
+                    if obj1["alive"] and obj2["alive"]:
                         self._player["score"] += self._engine.updateCollision(Pieces.RED, Pieces.RED, obj1, obj2)
                 for obj2 in self._greens:
-                    if obj1 != obj2 and obj1["alive"] and obj2["alive"]:
+                    if obj1["alive"] and obj2["alive"]:
                         self._player["score"] += self._engine.updateCollision(Pieces.RED, Pieces.GREEN, obj1, obj2)
                 for obj2 in self._yellows:
-                    if obj1 != obj2 and obj1["alive"] and obj2["alive"]:
+                    if obj1["alive"] and obj2["alive"]:
                         self._player["score"] += self._engine.updateCollision(Pieces.RED, Pieces.YELLOW, obj1, obj2)
-            for obj1 in self._greens:
-                for obj2 in self._greens:
-                    if obj1 != obj2 and obj1["alive"] and obj2["alive"]:
+            for i, obj1 in enumerate(self._greens):
+                for obj2 in self._greens[i+1:]:
+                    if obj1["alive"] and obj2["alive"]:
                         self._player["score"] += self._engine.updateCollision(Pieces.GREEN, Pieces.GREEN, obj1, obj2)
                 for obj2 in self._yellows:
-                    if obj1 != obj2 and obj1["alive"] and obj2["alive"]:
+                    if obj1["alive"] and obj2["alive"]:
                         self._player["score"] += self._engine.updateCollision(Pieces.GREEN, Pieces.YELLOW, obj1, obj2)
-            for obj1 in self._yellows:
-                for obj2 in self._yellows:
-                    if obj1 != obj2 and obj1["alive"] and obj2["alive"]:
+            for i, obj1 in enumerate(self._yellows):
+                for obj2 in self._yellows[i+1:]:
+                    if obj1["alive"] and obj2["alive"]:
                         self._player["score"] += self._engine.updateCollision(Pieces.YELLOW, Pieces.YELLOW, obj1, obj2)
     
     def isWin(self):
@@ -223,8 +219,8 @@ class Engine:
                         self._dikjstra[f"{x},{y}"] = _run_dikjstra(x, y, self._layout, [1])[0]
     
     def initialize(self):
-        self._random = np.random.default_rng(self._content["seed"])
         state = State(self, self._content["x"] + 1, self._content["y"] + 1)
+        state._random = np.random.default_rng(self._content["seed"])
         for i in range(self._content["redStart"]["num"]):
             x, y = self._content["redStart"]["x"][i]+1, self._content["redStart"]["y"][i]+1
             if self._layout[y][x] == 1:
@@ -246,25 +242,25 @@ class Engine:
             return True
         return False
 
-    def updateBehavior(self, t, obj, px, py):
-        if not obj["alive"] and self._content[t.get_name()] != 1:
+    def updateBehavior(self, t, obj, px, py, random):
+        if obj.get("killed", False) or (not obj["alive"] and self._content[t.get_name()] != 1):
             return
         obj["value"] += 1
         if self._content[t.get_name()] == 1:
             obj["alive"] = int(obj["value"] / 5) % 2 == 0
         if self._content[t.get_name()] == 2:
-            if obj["value"] % 5 == 1: 
-                obj["state"] = self._random.integers(4)
+            if obj["value"] % 5 == 1:
+                obj["state"] = random.integers(4)
             dir = [{"x":-1,"y":0},{"x":1,"y":0},{"x":0,"y":-1},{"x":0,"y":1}][obj["state"]]
             self.move(obj, dir["x"], dir["y"])
         if self._content[t.get_name()] == 3:
-            if obj["value"] % 10 == 1: 
-                obj["state"] = self._random.integers(4)
+            if obj["value"] % 10 == 1:
+                obj["state"] = random.integers(4)
             dir = [{"x":-1,"y":0},{"x":1,"y":0},{"x":0,"y":-1},{"x":0,"y":1}][obj["state"]]
             self.move(obj, dir["x"], dir["y"])
         if self._content[t.get_name()] == 4:
             if obj["value"] == 1:
-                obj["state"] = self._random.integers(2)
+                obj["state"] = random.integers(2)
             dir = [{"x":-1,"y":0},{"x":1,"y":0}][obj["state"]]
             moved = self.move(obj, dir["x"], dir["y"])
             if not moved:
@@ -272,7 +268,7 @@ class Engine:
                 self.move(obj, dir["x"], dir["y"])
         if self._content[t.get_name()] == 5:
             if obj["value"] == 1:
-                obj["state"] = self._random.integers(2)
+                obj["state"] = random.integers(2)
             dir = [{"x":0,"y":-1},{"x":0,"y":1}][obj["state"]]
             moved = self.move(obj, dir["x"], dir["y"])
             if not moved:
@@ -283,19 +279,20 @@ class Engine:
             dir = [{"x":-1,"y":0,"value":10000},{"x":1,"y":0,"value":10000},{"x":0,"y":-1,"value":10000},{"x":0,"y":1,"value":10000}]
             for d in dir:
                 d["value"] = dikjstra[obj["y"] + d["y"]][obj["x"] + d["x"]]
+            dir = [d for d in dir if d["value"] >= 0]
             dir.sort(key=lambda x: x["value"], reverse=self._content[t.get_name()] == 7)
-            self.move(obj, dir[0]["x"], dir[0]["y"])
+            if len(dir) > 0:
+                self.move(obj, dir[0]["x"], dir[0]["y"])
     
     def updateCollision(self, t1, t2, obj1, obj2):
         if obj1["x"] == obj2["x"] and obj1["y"] == obj2["y"]:
             index = f"{t1.get_name()}-{t2.get_name()}"
-            if self._content[index]["action"] == 1:
+            if self._content[index]["action"] == 1 or self._content[index]["action"] == 3:
                 obj1["alive"] = False
-            if self._content[index]["action"] == 2:
+                obj1["killed"] = True
+            if self._content[index]["action"] == 2 or self._content[index]["action"] == 3:
                 obj2["alive"] = False
-            if self._content[index]["action"] == 3:
-                obj1["alive"] = False
-                obj2["alive"] = False
+                obj2["killed"] = True
             if self._content[index]["score"] == 3:
                 return 4
             return self._content[index]["score"]

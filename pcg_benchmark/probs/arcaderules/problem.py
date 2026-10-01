@@ -281,7 +281,7 @@ class ArcadeRulesProblem(Problem):
                     value += 1.0
                 total += 1.0
         if total == 0:
-            return 1.0
+            return (1.0 + player) / 2.0
         return (value / total + player) / 2.0
 
     """
