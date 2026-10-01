@@ -141,7 +141,7 @@ class GenericSpace(Space):
     def __init__(self, value = None):
         Space.__init__(self)
 
-        if value == None:
+        if value is None:
             value = 1
         self._value = value
 
