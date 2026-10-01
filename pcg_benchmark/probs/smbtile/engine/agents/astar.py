@@ -174,6 +174,8 @@ class Agent(MarioAgent):
     def getActions(self, model):
         if self._action == None or len(self._action) == 0:
             self._action = self.tree.search(model, self._maxIterations)
+        if len(self._action) == 0:
+            return [False] * MarioActions.numberOfActions()
         return self._action.pop(0)
 
     def getAgentName(self):
