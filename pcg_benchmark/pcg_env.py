@@ -103,10 +103,10 @@ class PCGEnv:
         if is_content:
             contents = [contents]
         else:
-            is_array = hasattr(contents, "__len__") and not isinstance(contents, dict)
+            is_array = hasattr(contents, "__len__") and not isinstance(contents, dict) and len(contents) > 0
             if is_array:
                 is_content = self.content_space.isSampled(contents[0])
-            
+
         if not is_content:
             raise ValueError(f"wrong input for the function, the contents are not sampled from the content space.")
 
