@@ -199,5 +199,5 @@ class GenericSpace(Space):
     """
     def restructure(self, values, copy=True):
         if copy:
-            values = [] + values
+            values = list(values)
         return _recursiveRestructure(self._value, values)

@@ -84,7 +84,7 @@ class IntegerSpace(Space):
         if len(values) == 0:
             raise ValueError("The input values is empty.")
         if copy:
-            values = [] + values
+            values = list(values)
         value = int(values.pop(0))
         if value < self._min_value:
             value = self._min_value
