@@ -10,7 +10,7 @@ def _getLvl(content):
     content = np.array(content)
     player_locations = _get_certain_tiles(content, [2])
     if len(player_locations) > 0:
-        regions = get_regions_size(content, player_locations, [1,2,3,4,5,6])
+        regions = [get_regions_size(content, [loc], [1,2,3,4,5,6])[0] for loc in player_locations]
         loc = player_locations[np.argmax(regions)]
         color_map = np.full(content.shape, -1)
         _flood_fill(loc[0], loc[1], color_map, content, 1, [1,2,3,4,5,6])
@@ -112,7 +112,7 @@ class DangerDaveProblem(Problem):
         diamond_stats = 0
         if player == 1 and exit == 1 and key == 1:
             play_stats += get_range_reward(info["heuristic"],0,0,0, self._width * self._height)
-            play_stats += get_range_reward(info["num_jumps"],0,self._jumps, max(self._width,self._height))
+            play_stats += get_range_reward(info["num_jumps"],0,self._jumps, float("inf"))
             play_stats = play_stats / 2.0
             for dh in info["diamond_reachable"]:
                 diamond_stats += get_range_reward(dh,0,0,0,self._width * self._height)
@@ -136,7 +136,7 @@ class DangerDaveProblem(Problem):
             path2[a["y"]-min_y][a["x"]-min_x] += 1
         path1_f = np.flip(path1, axis=1)
         diff = min(abs(path1 - path2).sum(), abs(path1_f - path2).sum())
-        return get_range_reward(diff, 0, self._diversity * (self._width + self._height), self._width * self._height)
+        return get_range_reward(diff, 0, self._diversity * (self._width + self._height), float("inf"))
     
     def controlability(self, info, control):
         start_error = self._width * self._height

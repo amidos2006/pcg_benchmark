@@ -292,7 +292,7 @@ class State:
         self.updatePlayer(newX, newY)
 
     def getKey(self):
-        key = str(self.player["x"]) + "," + str(self.player["y"]) + "," + str(self.player["health"]) + "|"
+        key = str(self.player["x"]) + "," + str(self.player["y"]) + "," + str(self.player["health"]) + "," + str(self.player["airTime"]) + "|"
         key += str(self.door["x"]) + "," + str(self.door["y"]) + "|"
         if self.key is not None:
             key += str(self.key["x"]) + "," + str(self.key["y"]) + "|"
