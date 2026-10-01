@@ -13,9 +13,11 @@ def _random_control(self):
         sum_all += control[k]
     remaining = target
     for k in control:
-        control[k] = int((control[k] / sum_all) * target)
+        control[k] = int((control[k] / max(1, sum_all)) * target)
         remaining -= control[k]
     control[self._random.choice(list(control.keys()))] += remaining
+    if max(control.values()) >= target:
+        return _random_control(self)
     return control
 
 def _orient(lvl, width, length, height):
