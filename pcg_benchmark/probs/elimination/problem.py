@@ -7,18 +7,18 @@ from difflib import SequenceMatcher
 import os
 
 def _getWords(letters, dictionary):
-    results = []
+    results = {}
     for i in range(2**len(letters)):
         binary = format(i, f'0{len(letters)}b')
-        if binary.count('1') > len(letters) - 2:
+        if binary.count('1') < 3:
             continue
         word = ""
         for bi,b in enumerate(binary):
             if b == '1':
                 word += letters[bi]
         if word in dictionary:
-            results.append((word, len(max(binary.split('0')))))
-    return results
+            results[word] = max(results.get(word, 0), len(max(binary.split('0'))))
+    return list(results.items())
 
 class EliminationProblem(Problem):
     def __init__(self, **kwargs):
@@ -78,10 +78,12 @@ class EliminationProblem(Problem):
     
     def quality(self, info):
         common_words = 0
-        for i in range(3,self._letters):
+        for i in range(3,self._letters + 1):
             for w in info[f"words_{i}"]:
                 common_words += w[2]
-        common_fitness = get_range_reward(common_words, 0, info["total"])
+        common_fitness = 0.0
+        if info["total"] > 0:
+            common_fitness = get_range_reward(common_words, 0, info["total"])
 
         short_word_common = []
         tshort_word = 0
@@ -96,7 +98,7 @@ class EliminationProblem(Problem):
                 long_word_common.append(w[3])
                 tlong_word += 1
         tunallowed_words = 0
-        for i in range(7,self._letters):
+        for i in range(7,self._letters + 1):
             if len(info[f"words_{i}"]) > 0:
                 tunallowed_words += 1
         constraints = get_range_reward(tshort_word, 0, 1, info["total"]) +\
@@ -117,18 +119,17 @@ class EliminationProblem(Problem):
         return (common_fitness + constraints + added) / 3.0
     
     def diversity(self, info1, info2):
-        ratio = SequenceMatcher(None, info1["word"], info2["word"]).ratio()
+        ratio = max(SequenceMatcher(None, info1["word"], info2["word"]).ratio(), SequenceMatcher(None, info2["word"], info1["word"]).ratio())
         return get_range_reward(1 - ratio, 0, self._diversity, 1.0)
     
     def controlability(self, info, control):
         unallowed_seq = 0
         total_seq = 0
-        for i in range(3, self._letters):
+        for i in range(3, self._letters + 1):
             for w in info[f"words_{i}"]:
-                if w[1] == i:
-                    if i > control["sequence"]:
-                        unallowed_seq += 1
-                    total_seq += 1
+                if w[1] > control["sequence"]:
+                    unallowed_seq += 1
+                total_seq += 1
         if total_seq == 0:
             return 1.0
         return get_range_reward(unallowed_seq, 0, 0, 0, total_seq)
