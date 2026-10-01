@@ -92,8 +92,8 @@ class ZeldaProblem(Problem):
         return get_range_reward(1 - ratio, 0, self._diversity, 1.0)
     
     def controlability(self, info, control):
-        player_key = get_range_reward(info["player_key"], 0, control["player_key"]-self._cerror, control["player_key"]+self._cerror, int(self._width * self._height / 4))
-        key_door = get_range_reward(info["key_door"], 0, control["key_door"]-self._cerror, control["key_door"]+self._cerror, int(self._width * self._height / 4))
+        player_key = get_range_reward(info["player_key"], 0, control["player_key"]-self._cerror, control["player_key"]+self._cerror, self._width * self._height)
+        key_door = get_range_reward(info["key_door"], 0, control["key_door"]-self._cerror, control["key_door"]+self._cerror, self._width * self._height)
         return (player_key + key_door) / 2
     
     def render(self, content):
