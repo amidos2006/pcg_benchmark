@@ -258,7 +258,7 @@ class ArcadeRulesProblem(Problem):
             abs((yellows_1 > 0).astype(int) - (yellows_2 > 0).astype(int)).sum()
         play_div = (abs(player_1 - player_2) > 0).sum()
         
-        return get_range_reward((obj_div + play_div) / 2.0, 0, self._diversity * self._width * self._height, self._width, self._height)
+        return get_range_reward((obj_div + play_div) / 2.0, 0, self._diversity * self._width * self._height, float("inf"))
     
     """
     Calculate the controlability on a content with respect to a control parameter

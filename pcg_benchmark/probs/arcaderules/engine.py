@@ -309,6 +309,6 @@ class Engine:
     
     def checkLose(self, alive, time):
         if self._content["win"] != 0:
-            return time >= self._maxTime
+            return not alive or time >= self._maxTime
         return not alive
     
