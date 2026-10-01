@@ -136,7 +136,7 @@ class DangerDaveProblem(Problem):
             path2[a["y"]-min_y][a["x"]-min_x] += 1
         path1_f = np.flip(path1, axis=1)
         diff = min(abs(path1 - path2).sum(), abs(path1_f - path2).sum())
-        return get_range_reward(diff, 0, self._diversity * (self._width + self._height), float("inf"))
+        return get_range_reward(diff, 0, self._diversity * (self._width + self._height), self._width * self._height)
     
     def controlability(self, info, control):
         start_error = self._width * self._height
