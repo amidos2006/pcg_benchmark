@@ -37,6 +37,7 @@ def _orient(lvl, width, length, height):
             shift_height = max(shift_height, max(v_y) - shift_y)
     if shift_height > shift_width:
         lvl = np.transpose(lvl, axes=[0,2,1])
+        shift_x, shift_y = shift_y, shift_x
     new_lvl = lvl.copy()
     for z in range(height):
         for y in range(length):
