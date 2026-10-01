@@ -66,7 +66,7 @@ class ZeldaProblem(Problem):
             added += playable
             if playable == 1:
                 sol_length = get_range_reward(info["player_key"] + info["key_door"], 0, self._target,\
-                                       self._width * self._height)
+                                       2 * self._width * self._height)
                 added += sol_length
         return (regions + stats + added) / 4.0
 
