@@ -19,9 +19,11 @@ class ZeldaProblem(Problem):
         self._cerror = max(int(self._target / 2 * 0.25), 1)
 
         self._content_space = ArraySpace((self._height, self._width), IntegerSpace(6))
+        max_length = int(self._width * self._height / 4)
+        min_length = min(int(self._target / 2 + self._cerror), max_length - 1)
         self._control_space = DictionarySpace({
-            "player_key": IntegerSpace(int(self._target / 2 + self._cerror), int(self._width * self._height / 4)),
-            "key_door": IntegerSpace(int(self._target / 2 + self._cerror), int(self._width * self._height / 4))
+            "player_key": IntegerSpace(min_length, max_length),
+            "key_door": IntegerSpace(min_length, max_length)
         })
 
     def info(self, content):

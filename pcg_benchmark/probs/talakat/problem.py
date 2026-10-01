@@ -34,9 +34,10 @@ class TalakatProblem(Problem):
         self._render_type = "image"
 
         self._content_space = ArraySpace((self._spawnerComplexity, 100), IntegerSpace(100))
+        min_bullets =self._min_bullets+self._cerror
+        max_bullets = int(self._parameters["maxNumBullets"]/2)-self._cerror
         self._control_space = DictionarySpace({
-            "bullets": ArraySpace((self._pattern_sections), IntegerSpace(self._min_bullets+self._cerror, 
-                                                                         int(self._parameters["maxNumBullets"]/2)-self._cerror))
+            "bullets": ArraySpace((self._pattern_sections), IntegerSpace(min(min_bullets, max_bullets-1), max_bullets))
         })
     
     def info(self, content):
