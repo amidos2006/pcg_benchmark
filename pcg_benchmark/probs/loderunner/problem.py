@@ -28,7 +28,7 @@ class LodeRunnerProblem(Problem):
         self._islands = kwargs.get("islands", 0.1)
         self._decorations = kwargs.get("decorations", 0.75)
         self._used_tiles = kwargs.get("used_tiles", 0.75)
-        self._diversity = kwargs.get("diversity", 0.4)
+        self._diversity = kwargs.get("diversity", 0.6)
 
         self._patterns = []
         with open(os.path.dirname(__file__) + "/patterns.txt") as f:
@@ -159,8 +159,9 @@ class LodeRunnerProblem(Problem):
         stairs = abs((info1["exploration"] == 2).astype(int) - (info2["exploration"] == 2).astype(int)).sum()
         ropes = abs((info1["exploration"] == 3).astype(int) - (info2["exploration"] == 3).astype(int)).sum()
         falling = abs((info1["exploration"] == 4).astype(int) - (info2["exploration"] == 4).astype(int)).sum()
-        return get_range_reward(0.3 * (walking + stairs + ropes) + 0.1 * falling, 0,\
-            self._diversity * self._width * self._height, self._width * self._height)
+        explored = 0.3 * (((info1["exploration"] > 0) & (info1["exploration"] < 4)).sum() + ((info2["exploration"] > 0) & (info2["exploration"] < 4)).sum()) +\
+            0.1 * ((info1["exploration"] == 4).sum() + (info2["exploration"] == 4).sum())
+        return get_range_reward((0.3 * (walking + stairs + ropes) + 0.1 * falling) / max(1e-9, explored), 0, self._diversity, 1)
     
     def controlability(self, info, control):
         ladder = get_range_reward(info["ladder"], 0, control["ladder"] - self._cerror, control["ladder"] + self._cerror, 
