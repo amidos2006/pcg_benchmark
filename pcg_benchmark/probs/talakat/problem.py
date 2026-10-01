@@ -59,6 +59,8 @@ class TalakatProblem(Problem):
 
         bullets = np.zeros((self._pattern_sections, self._parameters["bucketsX"] * self._parameters["bucketsY"]))
         num_bullets = [0.0] * self._pattern_sections
+        frames = np.full(self._pattern_sections, 30.0)
+        frames[-1] = self._maxHealth - 30 * (self._pattern_sections - 1)
         coverage = np.zeros(self._parameters["bucketsX"] * self._parameters["bucketsY"])
         for i, (world, _) in enumerate(result):
             section = min(int(i/30), self._pattern_sections - 1)
@@ -69,9 +71,9 @@ class TalakatProblem(Problem):
         return {
             "script_connectivity": (len(connections) + 1) / self._spawnerComplexity,
             "percentage": len(result) / self._maxHealth,
-            "bullets": np.array(num_bullets) / 30,
+            "bullets": np.array(num_bullets) / frames,
             "bullet_coverage": calculateEntropy(coverage / self._maxHealth),
-            "bullet_locations": bullets / 30,
+            "bullet_locations": bullets / frames[:, None],
         }
     
     def quality(self, info):

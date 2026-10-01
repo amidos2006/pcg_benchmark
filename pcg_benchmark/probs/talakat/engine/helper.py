@@ -20,8 +20,8 @@ def calculateBuckets(width, height, bucketsX, bucketsY, bullets):
     e = Point()
     for b in bullets:
         indeces = []
-        s.x = math.ceil(round(4 * (b.x - b.radius) / bucketWidth)/4)
-        s.y = math.ceil(round(4 * (b.y - b.radius) / bucketHeight)/4)
+        s.x = math.floor(round(4 * (b.x - b.radius) / bucketWidth)/4)
+        s.y = math.floor(round(4 * (b.y - b.radius) / bucketHeight)/4)
         if s.x < 0:
             s.x = 0
         if s.y < 0:
