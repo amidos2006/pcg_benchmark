@@ -18,7 +18,7 @@ class BinaryProblem(Problem):
         self._control_space = DictionarySpace({"path": IntegerSpace(self._target + self._cerror, int(self._width * self._height / 2))})
 
     def info(self, content):
-        content = np.array(content)
+        content = np.array(content).astype(int)
         number_regions = get_number_regions(content, [1])
         longest = get_longest_path(content, [1])
 
